@@ -1,0 +1,99 @@
+NAME
+    Net::Twitter - Perl interface to twitter.com
+
+VERSION
+    This document describes Net::Twitter version 1.0
+
+SYNOPSIS
+        #!/usr/bin/perl
+        use Net::Twitter;
+        
+        my $bot = Net::Twitter->new(username=>"myuser", password=>"mypass" );
+
+	$bot->update("My current Status");
+	
+DESCRIPTION
+	http://www.twitter.com provides a web 2.0 type of ubiquitous presence.
+	This module allows you to set your status, as well as the statuses of
+	your friends.
+
+INTERFACE
+    Net::Twitter exports the following methods.
+
+    ` new '
+        You must pass a hash containing username and password to "new".
+
+    ` update '
+        Set your current status. This returns a hashref containing your most
+	recent status.
+	
+     ` friends '
+        This returns a hashref containing the most recent status of those you
+	have marked as friends in twitter.
+
+     ` friends_timeline '
+        This returns a hashref containing the timeline of those you
+	have marked as friends in twitter.
+
+     ` friends_timeline '
+        This returns a hashref containing the public timeline of all twitter
+	users.
+	
+     ` followers '
+        This returns a hashref containing the timeline of those who follow your
+	status in twitter..
+
+
+CONFIGURATION AND ENVIRONMENT
+    Net::Twitter uses LWP internally. Any environment variables that LWP
+    supports should be supported by Net::Twitter. I hope.
+
+DEPENDENCIES
+    LWP::UserAgent
+    JSON::Syck
+    
+INCOMPATIBILITIES
+    None reported.
+
+BUGS AND LIMITATIONS
+    No bugs have been reported.
+
+    Please report any bugs or feature requests to
+    `bug-net-twitter@rt.cpan.org', or through the web interface at
+    http://rt.cpan.org.
+
+AUTHOR
+    Chris Thompson `<cpan@cthompson.com>'
+
+    The framework of this module is shamelessly stolen from Net::AIML. Big
+    ups to Chris "peregrin" Prather for that.
+    
+LICENCE AND COPYRIGHT
+    Copyright (c) 2007, Chris Thompson `<cpan@cthompson.com>'. All rights
+    reserved.
+
+    This module is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself. See perlartistic.
+
+DISCLAIMER OF WARRANTY
+    BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+    FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+    OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+    PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+    EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+    ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+    YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+    NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+    IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+    WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+    REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+    TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR
+    CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE
+    SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+    RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+    FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+    SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+    DAMAGES.
+
