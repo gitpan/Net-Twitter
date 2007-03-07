@@ -2,47 +2,72 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.0
+    This document describes Net::Twitter version 1.0.1
 
 SYNOPSIS
-        #!/usr/bin/perl
-        use Net::Twitter;
-        
-        my $bot = Net::Twitter->new(username=>"myuser", password=>"mypass" );
+    #!/usr/bin/perl
 
-	$bot->update("My current Status");
-	
+    use Net::Twitter;
+
+    my $bot = Net::Twitter->new(username=>"myuser", password=>"mypass" );
+
+    $bot->update("My current Status");
+
 DESCRIPTION
-	http://www.twitter.com provides a web 2.0 type of ubiquitous presence.
-	This module allows you to set your status, as well as the statuses of
-	your friends.
+    http://www.twitter.com provides a web 2.0 type of ubiquitous presence.
+    This module allows you to set your status, as well as the statuses of
+    your friends.
 
 INTERFACE
     Net::Twitter exports the following methods.
 
-    ` new '
-        You must pass a hash containing username and password to "new".
+    " new "
+        You must supply a hash containing the configuration for the
+        connection.
 
-    ` update '
+        Valid configuration items are:
+
+        " username "
+            Username of your account at twitter.com. This is usually your
+            email address. REQUIRED.
+
+        " password "
+            Password of your account at twitter.com. REQUIRED.
+
+        " apiurl "
+            OPTIONAL. The URL of the API for twitter.com. This defaults to "
+            http://twitter.com/statuses " if not set.
+
+        " apihost "
+        " apirealm "
+            OPTIONAL: If you do point to a different URL, you will also need
+            to set " apihost " and " apirealm " so that the internal LWP can
+            authenticate.
+
+            " apihost " defaults to " www.twitter.com:80 ".
+
+            " apirealm " defaults to " Twitter API ".
+
+    " update "
         Set your current status. This returns a hashref containing your most
-	recent status.
-	
-     ` friends '
-        This returns a hashref containing the most recent status of those you
-	have marked as friends in twitter.
+        recent status. Returns undef if an error occurs.
 
-     ` friends_timeline '
-        This returns a hashref containing the timeline of those you
-	have marked as friends in twitter.
+    " friends "
+        This returns a hashref containing the most recent status of those
+        you have marked as friends in twitter. Returns undef if an error
+        occurs.
 
-     ` friends_timeline '
+    " friends_timeline "
+        This returns a hashref containing the timeline of those you have
+        marked as friends in twitter. Returns undef if an error occurs.
+
+    " public_timeline "
         This returns a hashref containing the public timeline of all twitter
-	users.
-	
-     ` followers '
-        This returns a hashref containing the timeline of those who follow your
-	status in twitter..
+        users. Returns undef if an error occurs.
 
+    " followers "
+        This returns a hashref containing the timeline of those who follow
+        your status in twitter.. Returns undef if an error occurs.
 
 CONFIGURATION AND ENVIRONMENT
     Net::Twitter uses LWP internally. Any environment variables that LWP
@@ -50,8 +75,8 @@ CONFIGURATION AND ENVIRONMENT
 
 DEPENDENCIES
     LWP::UserAgent
-    JSON::Syck
-    
+    JSON::Syck (preferred) or JSON
+
 INCOMPATIBILITIES
     None reported.
 
@@ -59,17 +84,19 @@ BUGS AND LIMITATIONS
     No bugs have been reported.
 
     Please report any bugs or feature requests to
-    `bug-net-twitter@rt.cpan.org', or through the web interface at
-    http://rt.cpan.org.
+    "bug-net-twitter@rt.cpan.org", or through the web interface at
+    <http://rt.cpan.org>.
 
 AUTHOR
-    Chris Thompson `<cpan@cthompson.com>'
+    Chris Thompson <cpan@cthompson.com>
 
     The framework of this module is shamelessly stolen from Net::AIML. Big
     ups to Chris "peregrin" Prather for that.
-    
+
+    The fallback code to load JSON or JSON::Syck is also from Chris Prather.
+
 LICENCE AND COPYRIGHT
-    Copyright (c) 2007, Chris Thompson `<cpan@cthompson.com>'. All rights
+    Copyright (c) 2007, Chris Thompson <cpan@cthompson.com>. All rights
     reserved.
 
     This module is free software; you can redistribute it and/or modify it

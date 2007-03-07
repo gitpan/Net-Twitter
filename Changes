@@ -1,0 +1,11 @@
+Revision history for Net-Twitter
+
+1.0.0 - Wed Mar 07, 2007
+        First Release
+
+1.0.1 - Wed Mar 07, 2007
+        o Removed dependancy on Module::Build and version
+	o Added code from Chris Prather to fall back to pure
+	  perl JSON if JSON::Syck is not found.
+	o Fixed POD inconsistencies.
+	o Added apiurl, apihost and apirealm config options to new
