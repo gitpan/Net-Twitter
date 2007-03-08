@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.0.1
+# v1.02
 # Copyright (c) 2007 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ='1.0.1';
+$VERSION ="1.02";
 use warnings;
 use strict;
 
@@ -229,7 +229,7 @@ L<http://rt.cpan.org>.
 Chris Thompson <cpan@cthompson.com>
 
 The framework of this module is shamelessly stolen from L<Net::AIML>. Big
-ups to Chris "peregrin" Prather for that.
+ups to Chris "perigrin" Prather for that.
     
 The fallback code to load JSON or JSON::Syck is also from Chris Prather.
     

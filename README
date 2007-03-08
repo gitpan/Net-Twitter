@@ -91,7 +91,7 @@ AUTHOR
     Chris Thompson <cpan@cthompson.com>
 
     The framework of this module is shamelessly stolen from Net::AIML. Big
-    ups to Chris "peregrin" Prather for that.
+    ups to Chris "perigrin" Prather for that.
 
     The fallback code to load JSON or JSON::Syck is also from Chris Prather.
 

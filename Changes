@@ -9,3 +9,11 @@ Revision history for Net-Twitter
 	  perl JSON if JSON::Syck is not found.
 	o Fixed POD inconsistencies.
 	o Added apiurl, apihost and apirealm config options to new
+
+1.02 - 	Thu Mar 08, 2007
+	o Fixed Makefile.PL to remove leftover require of version
+	o It's "perigrin", not "peregrin"
+	o Added PREREQ for JSON. JSON::Syck is highly recommended though.
+	o Changed version scheme from three segments to two, I never
+	  wanted three digits to begin with, but Module::Build did it
+	  without asking.
