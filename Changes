@@ -17,3 +17,11 @@ Revision history for Net-Twitter
 	o Changed version scheme from three segments to two, I never
 	  wanted three digits to begin with, but Module::Build did it
 	  without asking.
+
+1.03 - 	Tue Mar 20, 2007
+	o added $self->credentials() to allow changing user/pass to attach to
+	  without having to create mulitple objects. This is especially 
+	  helpful with POE Wheels.
+	o Cleaned up documentation.
+	o Added note about the twitter account for Net::Twitter itself
+	  at http://twitter.com/net_twitter

@@ -2,70 +2,84 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.0.1
+    This document describes Net::Twitter version 1.03
 
 SYNOPSIS
-    #!/usr/bin/perl
+       #!/usr/bin/perl
 
-    use Net::Twitter;
+       use Net::Twitter;
 
-    my $bot = Net::Twitter->new(username=>"myuser", password=>"mypass" );
+       my $twit = Net::Twitter->new(username=>"myuser", password=>"mypass" );
 
-    $bot->update("My current Status");
+       $result = $twit->update("My current Status");
+
+       $twit->credentials("otheruser", "otherpass");
+
+       $result = $twit->update("Status for otheruser");
 
 DESCRIPTION
     http://www.twitter.com provides a web 2.0 type of ubiquitous presence.
     This module allows you to set your status, as well as the statuses of
     your friends.
 
+    You can view the latest status of Net::Twitter on it's own twitter
+    timeline at http://twitter.com/net_twitter
+
 INTERFACE
     Net::Twitter exports the following methods.
 
-    " new "
+    "new(...)"
         You must supply a hash containing the configuration for the
         connection.
 
         Valid configuration items are:
 
-        " username "
+        "username"
             Username of your account at twitter.com. This is usually your
             email address. REQUIRED.
 
-        " password "
+        "password"
             Password of your account at twitter.com. REQUIRED.
 
-        " apiurl "
-            OPTIONAL. The URL of the API for twitter.com. This defaults to "
-            http://twitter.com/statuses " if not set.
+        "apiurl"
+            OPTIONAL. The URL of the API for twitter.com. This defaults to
+            "http://twitter.com/statuses" if not set.
 
-        " apihost "
-        " apirealm "
+        "apihost"
+        "apirealm"
             OPTIONAL: If you do point to a different URL, you will also need
-            to set " apihost " and " apirealm " so that the internal LWP can
+            to set "apihost" and "apirealm" so that the internal LWP can
             authenticate.
 
-            " apihost " defaults to " www.twitter.com:80 ".
+            "apihost" defaults to "www.twitter.com:80".
 
-            " apirealm " defaults to " Twitter API ".
+            "apirealm" defaults to "Twitter API".
 
-    " update "
+    "credentials($username, $password, $apihost, $apiurl)"
+        Change the credentials for logging into twitter. This is helpful
+        when managing multiple accounts.
+
+        "apirealm" and "apihost" are optional and will default to the
+        standard twitter versions if omitted.
+
+    "update($status)"
         Set your current status. This returns a hashref containing your most
         recent status. Returns undef if an error occurs.
 
-    " friends "
+    "friends()"
         This returns a hashref containing the most recent status of those
         you have marked as friends in twitter. Returns undef if an error
         occurs.
 
-    " friends_timeline "
+    "friends_timeline()"
         This returns a hashref containing the timeline of those you have
         marked as friends in twitter. Returns undef if an error occurs.
 
-    " public_timeline "
+    "public_timeline()"
         This returns a hashref containing the public timeline of all twitter
         users. Returns undef if an error occurs.
 
-    " followers "
+    "followers()"
         This returns a hashref containing the timeline of those who follow
         your status in twitter.. Returns undef if an error occurs.
 

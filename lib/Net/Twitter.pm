@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.02
+# v1.03
 # Copyright (c) 2007 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.02";
+$VERSION ="1.03";
 use warnings;
 use strict;
 
@@ -66,6 +66,19 @@ sub update {
     return ($req->is_success) ?  $self->_parse_json($req->content) : undef;
 }
 
+sub credentials {
+my ($self, $username, $password, $apihost, $apirealm) = @_;
+
+$apirealm ||= 'Twitter API';
+$apihost ||= 'twitter.com:80';
+
+    $self->{ua}->credentials($apihost,
+    			$apirealm,
+			$username,
+			$password
+			);
+}
+
 sub followers {
     my ( $self ) = @_;
 
@@ -109,23 +122,30 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.0.1
+This document describes Net::Twitter version 1.03
 
 =head1 SYNOPSIS
 
-#!/usr/bin/perl
+   #!/usr/bin/perl
 
-use Net::Twitter;
+   use Net::Twitter;
 
-my $bot = Net::Twitter->new(username=>"myuser", password=>"mypass" );
+   my $twit = Net::Twitter->new(username=>"myuser", password=>"mypass" );
 
-$bot->update("My current Status");
+   $result = $twit->update("My current Status");
+
+   $twit->credentials("otheruser", "otherpass");
+
+   $result = $twit->update("Status for otheruser");
 
 =head1 DESCRIPTION
 
 http://www.twitter.com provides a web 2.0 type of ubiquitous presence.
 This module allows you to set your status, as well as the statuses of
 your friends.
+
+You can view the latest status of Net::Twitter on it's own twitter timeline
+at http://twitter.com/net_twitter
 
 
 =head1 INTERFACE
@@ -134,7 +154,7 @@ Net::Twitter exports the following methods.
 
 =over
 
-=item C< new >
+=item C<new(...)>
 
 You must supply a hash containing the configuration for the connection.
 
@@ -142,54 +162,62 @@ Valid configuration items are:
 
 =over
 
-=item C< username >
+=item C<username>
 
 Username of your account at twitter.com. This is usually your email address. 
 REQUIRED.
 
-=item C< password >
+=item C<password>
 
 Password of your account at twitter.com. REQUIRED.
 
-=item C< apiurl >
+=item C<apiurl>
 
 OPTIONAL. The URL of the API for twitter.com. This defaults to 
-C< http://twitter.com/statuses > if not set.
+C<http://twitter.com/statuses> if not set.
 
-=item C< apihost >
+=item C<apihost>
 
-=item C< apirealm >
+=item C<apirealm>
 
-OPTIONAL: If you do point to a different URL, you will also need to set C< apihost > and
-C< apirealm > so that the internal LWP can authenticate. 
+OPTIONAL: If you do point to a different URL, you will also need to set C<apihost> and
+C<apirealm> so that the internal LWP can authenticate. 
 
-C< apihost > defaults to C< www.twitter.com:80 >.
+C<apihost> defaults to C<www.twitter.com:80>.
 
-C< apirealm > defaults to C< Twitter API >.
+C<apirealm> defaults to C<Twitter API>.
 
 =back
 
-=item C< update >
+=item C<credentials($username, $password, $apihost, $apiurl)>
+
+Change the credentials for logging into twitter. This is helpful when managing
+multiple accounts.
+
+C<apirealm> and C<apihost> are optional and will default to the standard
+twitter versions if omitted.
+
+=item C<update($status)>
 
 Set your current status. This returns a hashref containing your most
 recent status. Returns undef if an error occurs.
 	
-=item C< friends >
+=item C<friends()>
 
 This returns a hashref containing the most recent status of those you
 have marked as friends in twitter. Returns undef if an error occurs.
 
-=item C< friends_timeline >
+=item C<friends_timeline()>
 
 This returns a hashref containing the timeline of those you
 have marked as friends in twitter. Returns undef if an error occurs.
 
-=item C< public_timeline >
+=item C<public_timeline()>
 
 This returns a hashref containing the public timeline of all twitter
 users. Returns undef if an error occurs.
 	
-=item C< followers >
+=item C<followers()>
 
 This returns a hashref containing the timeline of those who follow your
 status in twitter.. Returns undef if an error occurs.
