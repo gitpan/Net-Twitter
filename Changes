@@ -25,3 +25,7 @@ Revision history for Net-Twitter
 	o Cleaned up documentation.
 	o Added note about the twitter account for Net::Twitter itself
 	  at http://twitter.com/net_twitter
+
+1.04 - Fri Mar 23, 2007
+	o Changed module dependencies, now requires JSON::Any, instead of a direct
+	  requirement of a JSON parsing module.

@@ -1,32 +1,16 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.03
+# v1.04
 # Copyright (c) 2007 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.03";
+$VERSION ="1.04";
 use warnings;
 use strict;
 
 use LWP::UserAgent;
-
-BEGIN { 
-	require constant;
-	eval { 
-		require JSON::Syck;
-		JSON::Syck->import();
-	};
-	
-	unless($@) {
-		constant->import(JSON_SYCK => 1);
-	}
-	else {
-		eval { require JSON; JSON->import() };
-		die "Couldn't find a JSON Package, install JSON::Syck or JSON" if $@;
-		constant->import(JSON_SYCK => 0);
-	}
-}
+use JSON::Any;
 
 sub new {
     my $class = shift;
@@ -48,22 +32,11 @@ sub new {
     return bless {%conf}, $class;
 }
 
-sub _parse_json {
-    my ( $self, $json ) = @_;	
-    
-    if (JSON_SYCK) {
-       return JSON::Syck::Load($json);
-    } else {
-       return JSON::jsonToObj($json);
-    }
-    
-}
-
 sub update {
     my ( $self, $status ) = @_;
 
     my $req = $self->{ua}->post($self->{apiurl} . "/update.json", [ status => $status ]);
-    return ($req->is_success) ?  $self->_parse_json($req->content) : undef;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
 sub credentials {
@@ -83,7 +56,7 @@ sub followers {
     my ( $self ) = @_;
 
     my $req = $self->{ua}->post($self->{apiurl} . "/followers.json");
-    return ($req->is_success) ?  $self->_parse_json($req->content) : undef;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
 
@@ -91,7 +64,7 @@ sub friends {
     my ( $self ) = @_;
 
     my $req = $self->{ua}->post($self->{apiurl} . "/friends.json");
-    return ($req->is_success) ?  $self->_parse_json($req->content) : undef;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
 
@@ -99,7 +72,7 @@ sub friends_timeline {
     my ( $self ) = @_;
 
     my $req = $self->{ua}->post($self->{apiurl} . "/friends_timeline.json");
-    return ($req->is_success) ?  $self->_parse_json($req->content) : undef;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
 
@@ -107,7 +80,7 @@ sub public_timeline {
     my ( $self ) = @_;
 
     my $req = $self->{ua}->post($self->{apiurl} . "/public_timeline.json");
-    return ($req->is_success) ?  $self->_parse_json($req->content) : undef;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
 
@@ -122,7 +95,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.03
+This document describes Net::Twitter version 1.04
 
 =head1 SYNOPSIS
 
@@ -235,7 +208,11 @@ supports should be supported by Net::Twitter. I hope.
 
 =item L<LWP::UserAgent>
 
-=item L<JSON::Syck> (preferred) or L<JSON>
+=item L<JSON::Any>
+
+Starting with version 1.04, Net::Twitter requires JSON::Any instead of a specific
+JSON handler module. Net::Twitter currently accepts JSON::Any's default order
+for loading handlers.
 
 =back
 
@@ -258,9 +235,7 @@ Chris Thompson <cpan@cthompson.com>
 
 The framework of this module is shamelessly stolen from L<Net::AIML>. Big
 ups to Chris "perigrin" Prather for that.
-    
-The fallback code to load JSON or JSON::Syck is also from Chris Prather.
-    
+       
 =head1 LICENCE AND COPYRIGHT
 
 Copyright (c) 2007, Chris Thompson <cpan@cthompson.com>. All rights
