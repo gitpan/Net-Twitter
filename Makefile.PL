@@ -10,6 +10,7 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
         'LWP::UserAgent'	=> 0,
+        'URI::Escape'	        => 0,
         'Test::More'		=> 0,
 	'JSON::Any'		=> 0,
     },

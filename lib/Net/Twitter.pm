@@ -1,15 +1,16 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.05
+# v1.06
 # Copyright (c) 2007 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.05";
+$VERSION ="1.06";
 use warnings;
 use strict;
 
 use LWP::UserAgent;
+use URI::Escape;
 use JSON::Any;
 
 sub new {
@@ -19,17 +20,23 @@ sub new {
     $conf{apiurl} = 'http://twitter.com' unless defined $conf{apiurl};
     $conf{apihost} = 'twitter.com:80' unless defined $conf{apihost};
     $conf{apirealm} = 'Twitter API' unless defined $conf{apirealm};
+
+    $conf{tvurl} = 'http://api.twittervision.com' unless defined $conf{tvurl};
+    $conf{tvhost} = 'api.twittervision.com:80' unless defined $conf{tvhost};
+    $conf{tvrealm} = 'Web Password' unless defined $conf{tvrealm};
+
     $conf{useragent} = "Net::Twitter/$Net::Twitter::VERSION (PERL)" unless defined $conf{useragent};
     $conf{clientname} = 'Perl Net::Twitter' unless defined $conf{clientname};
     $conf{clientver} = $Net::Twitter::VERSION unless defined $conf{clientver};
     $conf{clienturl} = "http://x4.net/twitter/meta.xml" unless defined $conf{clienturl};
 
+    $conf{twittervision} = '0' unless defined $conf{twittervision};
 
     $conf{ua} = LWP::UserAgent->new();
     $conf{ua}->credentials($conf{apihost},
-    			$conf{apirealm},
-				$conf{username},
-				$conf{password}
+    	  		   $conf{apirealm},
+			   $conf{username},
+			   $conf{password}
 			);
     $conf{ua}->agent("Net::Twitter/$Net::Twitter::VERSION");
     $conf{ua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
@@ -37,6 +44,21 @@ sub new {
     $conf{ua}->default_header( "X-Twitter-Client-URL:" => $conf{clienturl} );
 
     $conf{ua}->env_proxy();
+
+    if ($conf{twittervision}) {
+    $conf{tvua} = LWP::UserAgent->new();
+    $conf{tvua}->credentials($conf{tvhost},
+    	  		   $conf{tvrealm},
+			   $conf{username},
+			   $conf{password}
+			);
+    $conf{tvua}->agent("Net::Twitter/$Net::Twitter::VERSION");
+    $conf{tvua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
+    $conf{tvua}->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
+    $conf{tvua}->default_header( "X-Twitter-Client-URL:" => $conf{clienturl} );
+
+    $conf{tvua}->env_proxy();
+    }
 
     return bless {%conf}, $class;
 }
@@ -70,6 +92,11 @@ sub public_timeline {
 }
 
 sub friends_timeline {
+    my ( $self, $args ) = @_;
+    return $self->following_timeline($args);
+}
+
+sub following_timeline {
     my ( $self, $args ) = @_;
 
     my $url = $self->{apiurl} . "/statuses/friends_timeline";
@@ -115,6 +142,23 @@ sub update {
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
+sub update_twittervision {
+    my ( $self, $location ) = @_;
+    my $response = ();
+
+    if ($self->{twittervision}) {
+      my $tvreq = $self->{tvua}->post($self->{tvurl} . 
+                          "/user/update_location.json",
+			  [location => uri_escape($location)]
+                          );
+      if ($tvreq->content ne "User not found") {
+        $response = JSON::Any->jsonToObj($tvreq->content);
+      }
+    }
+
+    return $response;
+}
+
 sub replies {
     my ( $self, $page) = @_;
 
@@ -137,6 +181,11 @@ sub destroy_status {
 ########################################################################
 
 sub friends {
+    my ( $self, $id ) = @_;
+    return $self->following($id);
+}
+
+sub following {
     my ( $self, $id ) = @_;
     my $url = $self->{apiurl} . "/statuses/friends" ;
        $url .= (defined $id) ? "/$id.json" : ".json";
@@ -165,8 +214,17 @@ sub show_user {
     my ( $self, $id ) = @_;
 
     my $req = $self->{ua}->get($self->{apiurl} . "/users/show/$id.json");
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
+    my $response = JSON::Any->jsonToObj($req->content);
+
+    if ($self->{twittervision}) {
+      my $tvreq = $self->{tvua}->get($self->{tvurl} . "/user/current_status/$id.json");
+      if ($tvreq->content ne "User not found") {
+        $response->{twittervision} = JSON::Any->jsonToObj($tvreq->content);
+      }
+    }
+
+    return (defined $response) ?  $response : undef;
 }
 
 ########################################################################
@@ -226,12 +284,22 @@ sub destroy_direct_message {
 
 sub create_friend {
     my ( $self, $id ) = @_;
+    return $self->follow($id);
+}
+
+sub follow {
+    my ( $self, $id ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/friendships/create/$id.json");
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
 sub destroy_friend {
+    my ( $self, $id ) = @_;
+    return $self->stop_following($id);
+}
+
+sub stop_following {
     my ( $self, $id ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/friendships/destroy/$id.json");
@@ -265,7 +333,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.05
+This document describes Net::Twitter version 1.06
 
 =head1 SYNOPSIS
 
@@ -293,9 +361,7 @@ at http://twitter.com/net_twitter
 
 =head1 INTERFACE
 
-Net::Twitter exports the following methods.
-
-=cut
+=over
 
 =item C<new(...)>
 
@@ -357,6 +423,14 @@ C<apihost> defaults to C<www.twitter.com:80>.
 
 C<apirealm> defaults to C<Twitter API>.
 
+=item C<twittervision>
+
+OPTIONAL: If the C<twittervision> argument is passed with a true value, the
+module will enable use of the L<http://www.twittervision.com> API. If
+enabled, the C<show_user> method will include relevant location data in
+its response hashref. Also, the C<update_twittervision> method will
+allow setting of the current location.
+
 =back
 
 =item C<credentials($username, $password, $apihost, $apiurl)>
@@ -371,6 +445,16 @@ twitter versions if omitted.
 
 Set your current status. This returns a hashref containing your most
 recent status. Returns undef if an error occurs.
+
+=item C<update_twittervision($location)>
+
+If the C<twittervision> argument is passed to C<new> when the object is 
+created, this method will update your location setting at
+twittervision.com. 
+
+If the C<twittervision> arg is not set at object creation, this method will
+return an empty hashref, otherwise it will return a hashref containing the
+location data.
 
 =item C<replies([$page])>
 
@@ -388,12 +472,18 @@ This returns a hashref containing a list of the users currently
 featured on the site with their current statuses inline. Returns undef if an error occurs.
 
 	
-=item C<friends()>
+=item C<following()>
+
+=item C<friends()> DEPRECATED
 
 This returns a hashref containing the most recent status of those you
 have marked as friends in twitter. Returns undef if an error occurs.
 
-=item C<friends_timeline(...)>
+C<friends()> is DEPRECATED, see note below.
+
+=item C<following_timeline(...)>
+
+=item C<friends_timeline(...)> DEPRECATED
 
 This returns a hashref containing the timeline of those you
 have marked as friends in twitter. Returns undef if an error occurs.
@@ -401,6 +491,7 @@ have marked as friends in twitter. Returns undef if an error occurs.
 Accepts an optional argument hashref:
 
 =over
+
 =item C<id>
 
 User id or email address of a user other than the authenticated user,
@@ -416,6 +507,8 @@ specified HTTP-formatted date.
 Gets the 20 next most recent statuses from the authenticating user and that user's friends, eg "page=3"
 
 =back
+
+C<friends_timeline()> is DEPRECATED, see note below.
 
 =item C<user_timeline(...)>
 
@@ -444,11 +537,24 @@ specified HTTP-formatted date.
 Destroys the status specified by the required ID parameter.  The 
 authenticating user must be the author of the specified status.
 
-=item C<destroy_friend($id)>
+=item C<follow($id)>
+
+=item C<create_friend($id)> DEPRECATED
+
+Befriends the user specified in the ID parameter as the authenticating user.
+Returns the befriended user in the requested format when successful.
+
+C<create_friend> is DEPRECATED, see note below.
+
+=item C<stop_following($id)>
+
+=item C<destroy_friend($id)> DEPRECATED
 
 Discontinues friendship with the user specified in the ID parameter as the 
 authenticating user.  Returns the un-friended user in the requested format 
 when successful.
+
+C<create_friend> is DEPRECATED, see note below.
 
 =item C<show_status($id)>
 
@@ -461,6 +567,11 @@ The argument is the ID or email address of the twitter user to pull, and is REQU
 Returns extended information of a single user.
 
 The argument is the ID or email address of the twitter user to pull, and is REQUIRED.
+
+If the C<twittervision> argument is passed to C<new> when the object is 
+created, this method will include the location information for the user
+from twittervision.com, placing it inside the returned hashref under the
+key C<twittervision>.
 
 =item C<public_timeline([12345])>
 
@@ -546,6 +657,20 @@ Text of direct message.
 Destroys the direct message specified in the required ID parameter.  The 
 authenticating user must be the recipient of the specified direct message.
 
+=item C<verify_credentials()>
+
+Returns an HTTP 200 OK response code and a format-specific response if 
+authentication was successful.  Use this method to test if supplied user 
+credentials are valid with minimal overhead.
+
+=item C<end_session()>
+
+Ends the session of the authenticating user, returning a null cookie.  Use
+this method to sign users out of client-facing applications like widgets.
+
+
+=back
+
 =head1 CONFIGURATION AND ENVIRONMENT
   
 Net::Twitter uses LWP internally. Any environment variables that LWP
@@ -564,6 +689,26 @@ JSON handler module. Net::Twitter currently accepts JSON::Any's default order
 for loading handlers.
 
 =back
+
+=head1 TWITTER TERMINOLOGY CHANGES
+
+As of July 19th, 2007, the Twitter team has implemented a change in the
+terminology used for friends and followers to alleviate confusion. 
+
+Details of the change are at:
+
+L<http://twitter.com/blog/2007/07/friends-followers-and-notifications.html>
+
+As there are probable changes to the Twitter API in the future, the
+Net::Twitter API has been enhanced to use the new terminology.
+
+People who follow you are still "followers". People you follow are now
+"following".
+
+It is HIGHLY recommended that you use the newer terminology in the
+Net::Twitter API as indicated. The friends terminology is DEPRECATED, and
+will begin throwing warnings to that effect in a future revision. It is
+also possible that it will be removed entirely in a future revision.
 
 =head1 INCOMPATIBILITIES
 

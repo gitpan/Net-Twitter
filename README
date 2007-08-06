@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.03
+    This document describes Net::Twitter version 1.06
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -26,8 +26,6 @@ DESCRIPTION
     timeline at http://twitter.com/net_twitter
 
 INTERFACE
-    Net::Twitter exports the following methods.
-
     "new(...)"
         You must supply a hash containing the configuration for the
         connection.
@@ -41,9 +39,37 @@ INTERFACE
         "password"
             Password of your account at twitter.com. REQUIRED.
 
+        "useragent"
+            OPTIONAL: Sets the User Agent header in the HTTP request. If
+            omitted, this will default to
+            "Net::Twitter/$Net::Twitter::Version (Perl)"
+
+        "clientname"
+            OPTIONAL: Sets the X-Twitter-Client-Name: HTTP Header. If
+            omitted, this defaults to "Perl Net::Twitter"
+
+        "clientver"
+            OPTIONAL: Sets the X-Twitter-Client-Version: HTTP Header. If
+            omitted, this defaults to the current Net::Twitter version,
+            $Net::Twitter::VERSION.
+
+        "clienturl"
+            OPTIONAL: Sets the X-Twitter-Client-URL: HTTP Header. If
+            omitted, this defaults to "http://x4.net/Net-Twitter/meta.xml".
+            By standard, this file should be in XML format, as at the
+            default location.
+
         "apiurl"
             OPTIONAL. The URL of the API for twitter.com. This defaults to
-            "http://twitter.com/statuses" if not set.
+            "http://twitter.com/" if not set.
+
+            NOTICE: As of Net::Twitter 1.05 the default URL has changed from
+            "http://twitter.com/statuses" to "http://twitter.com/" to
+            reflect the expansion of the API outside the "/statuses" area.
+            If your code was written to Net::Twitter 1.04 or earlier, and
+            you set apiurl, including /statuses in the URL, you will have to
+            remove it. the top level "directory" for the API is now added
+            individually in each method.
 
         "apihost"
         "apirealm"
@@ -54,6 +80,14 @@ INTERFACE
             "apihost" defaults to "www.twitter.com:80".
 
             "apirealm" defaults to "Twitter API".
+
+        "twittervision"
+            OPTIONAL: If the "twittervision" argument is passed with a true
+            value, the module will enable use of the
+            <http://www.twittervision.com> API. If enabled, the "show_user"
+            method will include relevant location data in its response
+            hashref. Also, the "update_twittervision" method will allow
+            setting of the current location.
 
     "credentials($username, $password, $apihost, $apiurl)"
         Change the credentials for logging into twitter. This is helpful
@@ -66,22 +100,184 @@ INTERFACE
         Set your current status. This returns a hashref containing your most
         recent status. Returns undef if an error occurs.
 
-    "friends()"
+    "update_twittervision($location)"
+        If the "twittervision" argument is passed to "new" when the object
+        is created, this method will update your location setting at
+        twittervision.com.
+
+        If the "twittervision" arg is not set at object creation, this
+        method will return an empty hashref, otherwise it will return a
+        hashref containing the location data.
+
+    "replies([$page])"
+        Returns the 20 most recent replies (status updates prefixed with
+        @username posted by users who are friends with the user being
+        replied to) to the authenticating user.
+
+        Accepts an optional argument for page to retrieve, which will the 20
+        next most recent statuses from the authenticating user and that
+        user's friends, eg "page=3"
+
+    "featured()"
+        This returns a hashref containing a list of the users currently
+        featured on the site with their current statuses inline. Returns
+        undef if an error occurs.
+
+    "following()"
+    "friends()" DEPRECATED
         This returns a hashref containing the most recent status of those
         you have marked as friends in twitter. Returns undef if an error
         occurs.
 
-    "friends_timeline()"
+        "friends()" is DEPRECATED, see note below.
+
+    "following_timeline(...)"
+    "friends_timeline(...)" DEPRECATED
         This returns a hashref containing the timeline of those you have
         marked as friends in twitter. Returns undef if an error occurs.
 
-    "public_timeline()"
+        Accepts an optional argument hashref:
+
+        "id"
+            User id or email address of a user other than the authenticated
+            user, in order to retrieve that user's friends_timeline.
+
+        "since"
+            Narrows the returned results to just those statuses created
+            after the specified HTTP-formatted date.
+
+        "page"
+            Gets the 20 next most recent statuses from the authenticating
+            user and that user's friends, eg "page=3"
+
+        "friends_timeline()" is DEPRECATED, see note below.
+
+    "user_timeline(...)"
+        This returns a hashref containing the timeline of the authenticating
+        user. Returns undef if an error occurs.
+
+        Accepts an optional argument of a hashref:
+
+        "id"
+            ID or email address of a user other than the authenticated user,
+            in order to retrieve that user's friends_timeline.
+
+        "count"
+            Narrows the returned results to a certain number of statuses.
+            This is limited to 20.
+
+        "since" Narrows the returned results to just those statuses created
+        after the specified HTTP-formatted date.
+
+    "destroy_status($id)"
+        Destroys the status specified by the required ID parameter. The
+        authenticating user must be the author of the specified status.
+
+    "follow($id)"
+    "create_friend($id)" DEPRECATED
+        Befriends the user specified in the ID parameter as the
+        authenticating user. Returns the befriended user in the requested
+        format when successful.
+
+        "create_friend" is DEPRECATED, see note below.
+
+    "stop_following($id)"
+    "destroy_friend($id)" DEPRECATED
+        Discontinues friendship with the user specified in the ID parameter
+        as the authenticating user. Returns the un-friended user in the
+        requested format when successful.
+
+        "create_friend" is DEPRECATED, see note below.
+
+    "show_status($id)"
+        Returns status of a single tweet. The status' author will be
+        returned inline.
+
+        The argument is the ID or email address of the twitter user to pull,
+        and is REQUIRED.
+
+    "show_user($id)"
+        Returns extended information of a single user.
+
+        The argument is the ID or email address of the twitter user to pull,
+        and is REQUIRED.
+
+        If the "twittervision" argument is passed to "new" when the object
+        is created, this method will include the location information for
+        the user from twittervision.com, placing it inside the returned
+        hashref under the key "twittervision".
+
+    "public_timeline([12345])"
         This returns a hashref containing the public timeline of all twitter
         users. Returns undef if an error occurs.
 
+        Accepts an optional argument containing a status ID, and limits
+        responses to only statuses greater than this ID
+
     "followers()"
         This returns a hashref containing the timeline of those who follow
-        your status in twitter.. Returns undef if an error occurs.
+        your status in twitter. Returns undef if an error occurs.
+
+    "direct_messages()"
+        Returns a list of the direct messages sent to the authenticating
+        user.
+
+        Accepts an optional hashref for arguments:
+
+        "page"
+            Retrieves the 20 next most recent direct messages.
+
+        "since"
+            Narrows the returned results to just those statuses created
+            after the specified HTTP-formatted date.
+
+        "since_id"
+            Narrows the returned results to just those statuses created
+            after the specified ID.
+
+    "sent_direct_messages()"
+        Returns a list of the direct messages sent by the authenticating
+        user.
+
+        Accepts an optional hashref for arguments:
+
+        "page"
+            Retrieves the 20 next most recent direct messages.
+
+        "since"
+            Narrows the returned results to just those statuses created
+            after the specified HTTP-formatted date.
+
+        "since_id"
+            Narrows the returned results to just those statuses created
+            after the specified ID.
+
+    "new_direct_message($args)"
+        Sends a new direct message to the specified user from the
+        authenticating user.
+
+        REQUIRES an argument of a hashref:
+
+        "user"
+            ID or email address of user to send direct message to.
+
+        "text"
+            Text of direct message.
+
+    "destroy_direct_message($id)"
+        Destroys the direct message specified in the required ID parameter.
+        The authenticating user must be the recipient of the specified
+        direct message.
+
+    "verify_credentials()"
+        Returns an HTTP 200 OK response code and a format-specific response
+        if authentication was successful. Use this method to test if
+        supplied user credentials are valid with minimal overhead.
+
+    "end_session()"
+        Ends the session of the authenticating user, returning a null
+        cookie. Use this method to sign users out of client-facing
+        applications like widgets.
 
 CONFIGURATION AND ENVIRONMENT
     Net::Twitter uses LWP internally. Any environment variables that LWP
@@ -89,10 +285,38 @@ CONFIGURATION AND ENVIRONMENT
 
 DEPENDENCIES
     LWP::UserAgent
-    JSON::Syck (preferred) or JSON
+    JSON::Any
+        Starting with version 1.04, Net::Twitter requires JSON::Any instead
+        of a specific JSON handler module. Net::Twitter currently accepts
+        JSON::Any's default order for loading handlers.
+
+TWITTER TERMINOLOGY CHANGES
+    As of July 19th, 2007, the Twitter team has implemented a change in the
+    terminology used for friends and followers to alleviate confusion.
+
+    Details of the change are at:
+
+    <http://twitter.com/blog/2007/07/friends-followers-and-notifications.htm
+    l>
+
+    As there are probable changes to the Twitter API in the future, the
+    Net::Twitter API has been enhanced to use the new terminology.
+
+    People who follow you are still "followers". People you follow are now
+    "following".
+
+    It is HIGHLY recommended that you use the newer terminology in the
+    Net::Twitter API as indicated. The friends terminology is DEPRECATED,
+    and will begin throwing warnings to that effect in a future revision. It
+    is also possible that it will be removed entirely in a future revision.
 
 INCOMPATIBILITIES
-    None reported.
+    The X-Twitter-Client-Name, X-Twitter-Client-Version, and
+    X-Twitter-Client-URL, headers (See: "new") are currently a de facto
+    standard that have not been fully codified and accepted by Twitter.
+
+    Though they are expected to be accepted as valid (And optional), they
+    could possibly change in the future.
 
 BUGS AND LIMITATIONS
     No bugs have been reported.
@@ -106,8 +330,6 @@ AUTHOR
 
     The framework of this module is shamelessly stolen from Net::AIML. Big
     ups to Chris "perigrin" Prather for that.
-
-    The fallback code to load JSON or JSON::Syck is also from Chris Prather.
 
 LICENCE AND COPYRIGHT
     Copyright (c) 2007, Chris Thompson <cpan@cthompson.com>. All rights

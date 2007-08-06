@@ -27,5 +27,20 @@ Revision history for Net-Twitter
 	  at http://twitter.com/net_twitter
 
 1.04 - Fri Mar 23, 2007
-	o Changed module dependencies, now requires JSON::Any, instead of a direct
-	  requirement of a JSON parsing module.
+	o Changed module dependencies, now requires JSON::Any, instead of a 
+          direct requirement of a JSON parsing module.
+
+1.05 - Thu Aug 2, 2007
+        o After much delay, Net::Twitter now supports the full Twitter API,
+          including replies, direct_messages, and all the rest.
+
+1.06 - Mon Aug 6, 2007
+	o Added support for retrieving and updating location information
+	  from http://www.twittervision.com.
+	o Deprecated all "friend/friends" language to match twitter.com
+          terminology change as of July 19. new terminology is
+	  "follow/following". See:
+	  http://twitter.com/blog/2007/07/friends-followers-and-notifications.html
+        o Fixed POD errors which were causing the automatic CPANtesters to
+          have fits.
+	
