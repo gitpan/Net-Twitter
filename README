@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.06
+    This document describes Net::Twitter version 1.07
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -44,6 +44,22 @@ INTERFACE
             omitted, this will default to
             "Net::Twitter/$Net::Twitter::Version (Perl)"
 
+        "source"
+            OPTIONAL: Sets the source name, so messages will appear as "from
+            <source>" instead of "from web". Defaults to displaying "Perl
+            Net::Twitter". Note: see Twitter FAQ, your client source needs
+            to be included at twitter manually.
+
+            This value will be a code which is assigned to you by Twitter.
+            For example, the default value is "twitterpm", which causes
+            Twitter to display the "from Perl Net::Twitter" in your
+            timeline.
+
+            Twitter claims that specifying a nonexistant code will cause the
+            system to default to "from web". Some testing with invalid
+            source codes has caused certain requests to fail, returning
+            undef. If you don't have a code from twitter, don't set one.
+
         "clientname"
             OPTIONAL: Sets the X-Twitter-Client-Name: HTTP Header. If
             omitted, this defaults to "Perl Net::Twitter"
@@ -62,14 +78,6 @@ INTERFACE
         "apiurl"
             OPTIONAL. The URL of the API for twitter.com. This defaults to
             "http://twitter.com/" if not set.
-
-            NOTICE: As of Net::Twitter 1.05 the default URL has changed from
-            "http://twitter.com/statuses" to "http://twitter.com/" to
-            reflect the expansion of the API outside the "/statuses" area.
-            If your code was written to Net::Twitter 1.04 or earlier, and
-            you set apiurl, including /statuses in the URL, you will have to
-            remove it. the top level "directory" for the API is now added
-            individually in each method.
 
         "apihost"
         "apirealm"
@@ -95,6 +103,12 @@ INTERFACE
 
         "apirealm" and "apihost" are optional and will default to the
         standard twitter versions if omitted.
+
+    "http_code"
+        Returns the HTTP response code of the most recent request.
+
+    "http_message"
+        Returns the HTTP response message of the most recent request.
 
     "update($status)"
         Set your current status. This returns a hashref containing your most
@@ -129,6 +143,13 @@ INTERFACE
         you have marked as friends in twitter. Returns undef if an error
         occurs.
 
+        "id"
+            OPTIONAL: User id or email address of a user other than the
+            authenticated user, in order to retrieve that user's friends.
+
+        "page"
+            Gets the 100 next most recent friends, eg "page=3".
+
         "friends()" is DEPRECATED, see note below.
 
     "following_timeline(...)"
@@ -148,7 +169,12 @@ INTERFACE
 
         "page"
             Gets the 20 next most recent statuses from the authenticating
-            user and that user's friends, eg "page=3"
+            user and that user's friends, eg "page=3".
+
+            As of February 13, 2008, the Twitter API documentation at
+            <http://groups.google.com/group/twitter-development-talk/web/api
+            -documentation> lists the "page" parameter as TEMPORARILY
+            DISABLED.
 
         "friends_timeline()" is DEPRECATED, see note below.
 
@@ -166,8 +192,9 @@ INTERFACE
             Narrows the returned results to a certain number of statuses.
             This is limited to 20.
 
-        "since" Narrows the returned results to just those statuses created
-        after the specified HTTP-formatted date.
+        "since"
+            Narrows the returned results to just those statuses created
+            after the specified HTTP-formatted date.
 
     "destroy_status($id)"
         Destroys the status specified by the required ID parameter. The
@@ -196,11 +223,18 @@ INTERFACE
         The argument is the ID or email address of the twitter user to pull,
         and is REQUIRED.
 
-    "show_user($id)"
+    "show_user()"
         Returns extended information of a single user.
 
-        The argument is the ID or email address of the twitter user to pull,
-        and is REQUIRED.
+        The argument is a hashref containing either the user's ID or email
+        address:
+
+        "id"
+            The ID or screen name of the user.
+
+        "email"
+            The email address of the user. If "email" is specified, "id" is
+            ignored.
 
         If the "twittervision" argument is passed to "new" when the object
         is created, this method will include the location information for
@@ -279,84 +313,178 @@ INTERFACE
         cookie. Use this method to sign users out of client-facing
         applications like widgets.
 
-CONFIGURATION AND ENVIRONMENT
-    Net::Twitter uses LWP internally. Any environment variables that LWP
-    supports should be supported by Net::Twitter. I hope.
+    "favorites()"
+        Returns the 20 most recent favorite statuses for the authenticating
+        user or user specified by the ID parameter.
+
+        This takes a hashref as an argument:
+
+        "id"
+            Optional. The ID or screen name of the user for whom to request
+            a list of favorite statuses.
+
+        "page"
+            OPTIONAL: Gets the 20 next most recent favorite statuses, eg
+            "page=3".
+
+    "create_favorite()"
+        Sets the specified ID as a favorite for the authenticating user.
+
+        This takes a hashref as an argument:
+
+        "id" Required. The ID of the status to favorite.
+
+    "destroy_favorite()"
+        Removes the specified ID as a favorite for the authenticating user.
+
+        This takes a hashref as an argument:
+
+        "id" Required. The ID of the status to un-favorite.
+
+    "enable_notifications()"
+        Enables notifications for updates from the specified user to the
+        authenticating user. Returns the specified user when successful.
+
+        This takes a hashref as an argument:
+
+        "id" Required. The ID or screen name of the user to receive notices
+        from.
+
+    "disable_notifications()"
+        Disables notifications for updates from the specified user to the
+        authenticating user. Returns the specified user when successful.
+
+        This takes a hashref as an argument:
+
+        "id" Required. The ID or screen name of the user to stop receiving
+        notices from.
+
+        Net::Twitter uses LWP internally. Any environment variables that LWP
+        supports should be supported by Net::Twitter. I hope.
 
 DEPENDENCIES
-    LWP::UserAgent
-    JSON::Any
-        Starting with version 1.04, Net::Twitter requires JSON::Any instead
-        of a specific JSON handler module. Net::Twitter currently accepts
-        JSON::Any's default order for loading handlers.
+        LWP::UserAgent
+        JSON::Any
+            Starting with version 1.04, Net::Twitter requires JSON::Any
+            instead of a specific JSON handler module. Net::Twitter
+            currently accepts JSON::Any's default order for loading
+            handlers.
+
+HTTP RESPONSE CODES
+        The Twitter API attempts to return appropriate HTTP status codes for
+        every request.
+
+        200 OK: everything went awesome.
+        304 Not Modified: there was no new data to return.
+        400 Bad Request: your request is invalid, and we'll return an error
+        message that tells you why. This is the status code returned if
+        you've exceeded the rate limit (see below).
+        401 Not Authorized: either you need to provide authentication
+        credentials, or the credentials provided aren't valid.
+        403 Forbidden: we understand your request, but are refusing to
+        fulfill it. An accompanying error message should explain why.
+        404 Not Found: either you're requesting an invalid URI or the
+        resource in question doesn't exist (ex: no such user).
+        500 Internal Server Error: we did something wrong. Please post to
+        the group about it and the Twitter team will investigate.
+        502 Bad Gateway: returned if Twitter is down or being upgraded.
+        503 Service Unavailable: the Twitter servers are up, but are
+        overloaded with requests. Try again later.
+
+        You can view the HTTP code and message returned after each request
+        with the "http_code" and "http_message" functions.
+
+TWITTER SOURCES
+        All tweets are set with a source, so that setting your status from
+        the web interface would display as "from web", and through an
+        instant messenger would show "from im".
+
+        It is possible to request a source entry from Twitter which will
+        allow your tweets to show as "from YourWidget".
+
+        Beginning in Net::Twitter 1.07 you may set this source by passing
+        the "source" parameter to the "new" constructor. See above.
+
+        Because of this, all statuses set through Net::Twitter 1.07 and
+        above will now show as "from Perl Net::Twitter" instead of "from
+        web".
+
+        For more information, see "How do I get "from [my_application]"
+        appended to updates sent from my API application?" at:
+
+        <http://groups.google.com/group/twitter-development-talk/web/api-doc
+        umentation>
 
 TWITTER TERMINOLOGY CHANGES
-    As of July 19th, 2007, the Twitter team has implemented a change in the
-    terminology used for friends and followers to alleviate confusion.
+        As of July 19th, 2007, the Twitter team has implemented a change in
+        the terminology used for friends and followers to alleviate
+        confusion.
 
-    Details of the change are at:
+        Details of the change are at:
 
-    <http://twitter.com/blog/2007/07/friends-followers-and-notifications.htm
-    l>
+        <http://twitter.com/blog/2007/07/friends-followers-and-notifications
+        .html>
 
-    As there are probable changes to the Twitter API in the future, the
-    Net::Twitter API has been enhanced to use the new terminology.
+        As there are probable changes to the Twitter API in the future, the
+        Net::Twitter API has been enhanced to use the new terminology.
 
-    People who follow you are still "followers". People you follow are now
-    "following".
+        People who follow you are still "followers". People you follow are
+        now "following".
 
-    It is HIGHLY recommended that you use the newer terminology in the
-    Net::Twitter API as indicated. The friends terminology is DEPRECATED,
-    and will begin throwing warnings to that effect in a future revision. It
-    is also possible that it will be removed entirely in a future revision.
+        It is HIGHLY recommended that you use the newer terminology in the
+        Net::Twitter API as indicated. The friends terminology is
+        DEPRECATED, and will begin throwing warnings to that effect in a
+        future revision. It is also possible that it will be removed
+        entirely in a future revision.
 
 INCOMPATIBILITIES
-    The X-Twitter-Client-Name, X-Twitter-Client-Version, and
-    X-Twitter-Client-URL, headers (See: "new") are currently a de facto
-    standard that have not been fully codified and accepted by Twitter.
+        The X-Twitter-Client-Name, X-Twitter-Client-Version, and
+        X-Twitter-Client-URL, headers (See: "new") are currently a de facto
+        standard that have not been fully codified and accepted by Twitter.
 
-    Though they are expected to be accepted as valid (And optional), they
-    could possibly change in the future.
+        Though they are expected to be accepted as valid (And optional),
+        they could possibly change in the future.
 
 BUGS AND LIMITATIONS
-    No bugs have been reported.
+        No bugs have been reported.
 
-    Please report any bugs or feature requests to
-    "bug-net-twitter@rt.cpan.org", or through the web interface at
-    <http://rt.cpan.org>.
+        Please report any bugs or feature requests to
+        "bug-net-twitter@rt.cpan.org", or through the web interface at
+        <http://rt.cpan.org>.
 
 AUTHOR
-    Chris Thompson <cpan@cthompson.com>
+        Chris Thompson <cpan@cthompson.com>
 
-    The framework of this module is shamelessly stolen from Net::AIML. Big
-    ups to Chris "perigrin" Prather for that.
+        The framework of this module is shamelessly stolen from Net::AIML.
+        Big ups to Chris "perigrin" Prather for that.
 
 LICENCE AND COPYRIGHT
-    Copyright (c) 2007, Chris Thompson <cpan@cthompson.com>. All rights
-    reserved.
+        Copyright (c) 2008, Chris Thompson <cpan@cthompson.com>. All rights
+        reserved.
 
-    This module is free software; you can redistribute it and/or modify it
-    under the same terms as Perl itself. See perlartistic.
+        This module is free software; you can redistribute it and/or modify
+        it under the same terms as Perl itself. See perlartistic.
 
 DISCLAIMER OF WARRANTY
-    BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-    FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
-    OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-    PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
-    EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
-    ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
-    YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
-    NECESSARY SERVICING, REPAIR, OR CORRECTION.
+        BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO
+        WARRANTY FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE
+        LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS
+        AND/OR OTHER PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY
+        OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED
+        TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+        PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND
+        PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE SOFTWARE PROVE
+        DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR,
+        OR CORRECTION.
 
-    IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-    WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-    REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
-    TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR
-    CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE
-    SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
-    RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
-    FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
-    SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
-    DAMAGES.
+        IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN
+        WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY
+        AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE,
+        BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL,
+        INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR
+        INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF
+        DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR
+        THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER
+        SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF
+        THE POSSIBILITY OF SUCH DAMAGES.
 

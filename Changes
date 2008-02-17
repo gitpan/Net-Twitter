@@ -44,3 +44,12 @@ Revision history for Net-Twitter
         o Fixed POD errors which were causing the automatic CPANtesters to
           have fits.
 	
+1.07 - Sat Feb 16, 2008
+	o Added support for the "source" arg to the update item, allowing a
+	  script to have its tweets show up as "from SomeWidget" instead of
+	  "from web"
+	o Because of this, a Net::Twitter source code was requested from Twitter
+	  and all tweets will now show up as "from Perl Net::Twitter".
+	o Added http_code and http_message to allow the retrieval of the HTTP response
+	  after each request.
+	o Brought API up to date as of Feb 13.

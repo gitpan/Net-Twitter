@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.06
-# Copyright (c) 2007 Chris Thompson
+# v1.07
+# Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.06";
+$VERSION ="1.07";
 use warnings;
 use strict;
 
@@ -16,7 +16,7 @@ use JSON::Any;
 sub new {
     my $class = shift;
     my %conf = @_;
-    
+
     $conf{apiurl} = 'http://twitter.com' unless defined $conf{apiurl};
     $conf{apihost} = 'twitter.com:80' unless defined $conf{apihost};
     $conf{apirealm} = 'Twitter API' unless defined $conf{apirealm};
@@ -29,6 +29,7 @@ sub new {
     $conf{clientname} = 'Perl Net::Twitter' unless defined $conf{clientname};
     $conf{clientver} = $Net::Twitter::VERSION unless defined $conf{clientver};
     $conf{clienturl} = "http://x4.net/twitter/meta.xml" unless defined $conf{clienturl};
+    $conf{source} = 'twitterpm' unless defined $conf{source};
 
     $conf{twittervision} = '0' unless defined $conf{twittervision};
 
@@ -76,6 +77,15 @@ $apihost ||= 'twitter.com:80';
 			);
 }
 
+sub http_code {
+ my $self = shift;
+ return $self->{response_code};
+}
+
+sub http_message {
+ my $self = shift;
+ return $self->{response_message};
+}
 
 ########################################################################
 #### STATUS METHODS
@@ -88,6 +98,8 @@ sub public_timeline {
     $url .= ($since_id) ? '?since_id=' . $since_id : "";
 
     my $req=$self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -107,6 +119,8 @@ sub following_timeline {
     $url .= (defined $args->{page}) ? "page=" . $args->{page} : "";
     }
     my $req = $self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -131,6 +145,8 @@ sub show_status {
     my ( $self, $id ) = @_;
 
     my $req = $self->{ua}->get($self->{apiurl} . "/statuses/show/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
@@ -138,7 +154,10 @@ sub show_status {
 sub update {
     my ( $self, $status ) = @_;
 
-    my $req = $self->{ua}->post($self->{apiurl} . "/statuses/update.json", [ status => $status ]);
+    print "URL: " . $self->{apiurl} . "/statuses/update.json status => $status, source => $self->{source} \n";
+    my $req = $self->{ua}->post($self->{apiurl} . "/statuses/update.json", [ status => $status, source => $self->{source} ]);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -166,6 +185,8 @@ sub replies {
     $url .=   ($page) ? '?page=' . $page : "";
 
     my $req = $self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -173,6 +194,8 @@ sub destroy_status {
     my ( $self, $id ) = @_;
 
     my $req = $self->{ua}->get($self->{apiurl} . "/statuses/destroy/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -186,18 +209,26 @@ sub friends {
 }
 
 sub following {
-    my ( $self, $id ) = @_;
-    my $url = $self->{apiurl} . "/statuses/friends" ;
-       $url .= (defined $id) ? "/$id.json" : ".json";
-    my $req = $self->{ua}->get($url);
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    my ( $self, $args ) = @_;
+    $args = { id => $args } unless ref($args);
 
+    my $url = $self->{apiurl} . "/statuses/friends" ;
+       $url .= (defined $args->{id}) ? "/" . $args->{id} . ".json" : ".json";
+       $url .= (defined $args->{page}) ? "?page=" . $args->{page} : "";
+
+    my $req = $self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
 sub followers {
-    my ( $self ) = @_;
-
-    my $req = $self->{ua}->get($self->{apiurl} . "/statuses/followers.json"); 
+    my ( $self, $args ) = @_;
+    my $url = $self->{apiurl} . "/statuses/followers.json"; 
+       $url .= ($args->{lite}) ? "?lite=true" : "";
+    my $req = $self->{ua}->get($url); 
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
@@ -206,19 +237,27 @@ sub featured {
     my ( $self ) = @_;
 
     my $req = $self->{ua}->get($self->{apiurl} . "/statuses/featured.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
 
 sub show_user {
-    my ( $self, $id ) = @_;
+    my ( $self, $args ) = @_;
 
-    my $req = $self->{ua}->get($self->{apiurl} . "/users/show/$id.json");
+    $args = { id => $args } unless ref($args);
+
+    my $url = $self->{apiurl} . "/users/show";
+    $url .= ($args->{email}) ? ".xml?email=" . $args->{email} : "/" . $args->{id} . ".json";
+    my $req = $self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
 
     my $response = JSON::Any->jsonToObj($req->content);
 
     if ($self->{twittervision}) {
-      my $tvreq = $self->{tvua}->get($self->{tvurl} . "/user/current_status/$id.json");
+      my $tvreq = $self->{tvua}->get($self->{tvurl} . "/user/current_status/" . $args->{id} . ".json");
       if ($tvreq->content ne "User not found") {
         $response->{twittervision} = JSON::Any->jsonToObj($tvreq->content);
       }
@@ -243,6 +282,8 @@ sub direct_messages {
       }
 
     my $req = $self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
@@ -259,6 +300,8 @@ sub sent_direct_messages {
       }
 
     my $req = $self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
@@ -267,6 +310,8 @@ sub new_direct_message {
     my ( $self, $args ) = @_;
 
     my $req = $self->{ua}->post($self->{apiurl} . "/direct_messages/new.json", $args);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
@@ -275,6 +320,8 @@ sub destroy_direct_message {
     my ( $self, $id ) = @_;
 
     my $req = $self->{ua}->get($self->{apiurl} . "/direct_messages/destroy/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -291,6 +338,8 @@ sub follow {
     my ( $self, $id ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/friendships/create/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -303,6 +352,8 @@ sub stop_following {
     my ( $self, $id ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/friendships/destroy/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -314,6 +365,8 @@ sub verify_credentials {
     my ( $self ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/account/verify_credentials.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
@@ -321,8 +374,76 @@ sub end_session {
     my ( $self ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/account/end_session");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
+
+########################################################################
+#### FAVORITE METHODS
+########################################################################
+
+sub favorites {
+    my ( $self, $args ) = @_;
+    my $url =$self->{apiurl} . "/favorites/" . $args->{id} . ".json";
+    $url .= (defined $args->{page}) ? "?page=" . $args->{page} : "";
+
+    my $req=$self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub create_favorite {
+    my ( $self, $args ) = @_;
+    my $url =$self->{apiurl} . "/favorites/create/" . $args->{id} . ".json";
+
+    my $req=$self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub destroy_favorite {
+    my ( $self, $args ) = @_;
+    my $url =$self->{apiurl} . "/favorites/destroy/" . $args->{id} . ".json";
+
+    my $req=$self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+
+########################################################################
+#### NOTIFICATION METHODS
+########################################################################
+
+sub enable_notifications {
+    my ( $self, $args ) = @_;
+    my $url =$self->{apiurl} . "/notifications/follow/" . $args->{id} . ".json";
+
+    my $req=$self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub disable_notifications {
+    my ( $self, $args ) = @_;
+    my $url =$self->{apiurl} . "/notifications/leave/" . $args->{id} . ".json";
+
+    my $req=$self->{ua}->get($url);
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
 
 1;
 __END__
@@ -333,7 +454,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.06
+This document describes Net::Twitter version 1.07
 
 =head1 SYNOPSIS
 
@@ -385,6 +506,20 @@ Password of your account at twitter.com. REQUIRED.
 OPTIONAL: Sets the User Agent header in the HTTP request. If omitted, this will default to
 "Net::Twitter/$Net::Twitter::Version (Perl)"
 
+=item C<source>
+
+OPTIONAL: Sets the source name, so messages will appear as "from <source>" instead
+of "from web". Defaults to displaying "Perl Net::Twitter". Note: see Twitter FAQ,
+your client source needs to be included at twitter manually.
+
+This value will be a code which is assigned to you by Twitter. For example, the
+default value is "twitterpm", which causes Twitter to display the "from Perl
+Net::Twitter" in your timeline. 
+
+Twitter claims that specifying a nonexistant code will cause the system to default to
+"from web". Some testing with invalid source codes has caused certain requests to
+fail, returning undef. If you don't have a code from twitter, don't set one.
+
 =item C<clientname>
 
 OPTIONAL: Sets the X-Twitter-Client-Name: HTTP Header. If omitted, this defaults to
@@ -405,12 +540,6 @@ default location.
 
 OPTIONAL. The URL of the API for twitter.com. This defaults to 
 C<http://twitter.com/> if not set.
-
-B<NOTICE: As of Net::Twitter 1.05 the default URL has changed from C<http://twitter.com/statuses> to
-C<http://twitter.com/> to reflect the expansion of the API outside the C</statuses> area. If your
-code was written to Net::Twitter 1.04 or earlier, and you set apiurl, including /statuses in the URL, 
-you will have to remove it. the top level "directory" for the API is now added individually in each
-method.>
 
 =item C<apihost>
 
@@ -440,6 +569,14 @@ multiple accounts.
 
 C<apirealm> and C<apihost> are optional and will default to the standard
 twitter versions if omitted.
+
+=item C<http_code>
+
+Returns the HTTP response code of the most recent request.
+
+=item C<http_message>
+
+Returns the HTTP response message of the most recent request.
 
 =item C<update($status)>
 
@@ -479,7 +616,22 @@ featured on the site with their current statuses inline. Returns undef if an err
 This returns a hashref containing the most recent status of those you
 have marked as friends in twitter. Returns undef if an error occurs.
 
+=over
+
+=item C<id>
+
+OPTIONAL: User id or email address of a user other than the authenticated user,
+in order to retrieve that user's friends.
+
+=item C<page>
+
+Gets the 100 next most recent friends, eg "page=3". 
+
+=back
+
 C<friends()> is DEPRECATED, see note below.
+
+
 
 =item C<following_timeline(...)>
 
@@ -504,7 +656,12 @@ specified HTTP-formatted date.
 
 =item C<page>
 
-Gets the 20 next most recent statuses from the authenticating user and that user's friends, eg "page=3"
+Gets the 20 next most recent statuses from the authenticating user and that user's
+friends, eg "page=3". 
+
+As of February 13, 2008, the Twitter API documentation at
+L<http://groups.google.com/group/twitter-development-talk/web/api-documentation> lists
+the C<page> parameter as TEMPORARILY DISABLED.
 
 =back
 
@@ -527,6 +684,7 @@ ID or email address of a user other than the authenticated user, in order to ret
 Narrows the returned results to a certain number of statuses. This is limited to 20.
 
 =item C<since>
+
 Narrows the returned results to just those statuses created after the 
 specified HTTP-formatted date.
 
@@ -562,11 +720,23 @@ Returns status of a single tweet.  The status' author will be returned inline.
 
 The argument is the ID or email address of the twitter user to pull, and is REQUIRED.
 
-=item C<show_user($id)>
+=item C<show_user()>
 
 Returns extended information of a single user.
 
-The argument is the ID or email address of the twitter user to pull, and is REQUIRED.
+The argument is a hashref containing either the user's ID or email address:
+
+=over
+
+=item C<id>
+
+The ID or screen name of the user.
+
+=item C<email>
+
+The email address of the user. If C<email> is specified, C<id> is ignored.
+
+=back
 
 If the C<twittervision> argument is passed to C<new> when the object is 
 created, this method will include the location information for the user
@@ -668,9 +838,80 @@ credentials are valid with minimal overhead.
 Ends the session of the authenticating user, returning a null cookie.  Use
 this method to sign users out of client-facing applications like widgets.
 
+=item C<favorites()>
+
+Returns the 20 most recent favorite statuses for the authenticating user or user
+specified by the ID parameter.
+
+This takes a hashref as an argument:
+
+=over
+    
+=item C<id>
+
+Optional.  The ID or screen name of the user for whom to request a list of favorite
+statuses.
+
+=item C<page>
+
+OPTIONAL: Gets the 20 next most recent favorite statuses, eg "page=3". 
 
 =back
 
+=item C<create_favorite()>
+
+Sets the specified ID as a favorite for the authenticating user.
+
+This takes a hashref as an argument:
+
+=over
+    
+=item C<id>
+Required. The ID of the status to favorite.
+
+=back
+
+
+=item C<destroy_favorite()>
+
+Removes the specified ID as a favorite for the authenticating user.
+
+This takes a hashref as an argument:
+
+=over
+    
+=item C<id>
+Required. The ID of the status to un-favorite.
+
+=back
+
+=item C<enable_notifications()>
+
+Enables notifications for updates from the specified user to the authenticating user.
+Returns the specified user when successful.
+
+This takes a hashref as an argument:
+
+=over
+    
+=item C<id>
+Required. The ID or screen name of the user to receive notices from.
+
+=back
+
+=item C<disable_notifications()>
+
+Disables notifications for updates from the specified user to the authenticating user.
+Returns the specified user when successful.
+
+This takes a hashref as an argument:
+
+=over
+    
+=item C<id>
+Required. The ID or screen name of the user to stop receiving notices from.
+
+=back
 =head1 CONFIGURATION AND ENVIRONMENT
   
 Net::Twitter uses LWP internally. Any environment variables that LWP
@@ -689,6 +930,62 @@ JSON handler module. Net::Twitter currently accepts JSON::Any's default order
 for loading handlers.
 
 =back
+
+=head1 HTTP RESPONSE CODES 
+
+The Twitter API attempts to return appropriate HTTP status codes for every request.
+
+=over
+
+=item 200 OK: everything went awesome.
+
+=item 304 Not Modified: there was no new data to return.
+
+=item 400 Bad Request: your request is invalid, and we'll return an error message that
+tells you why. This is the status code returned if you've exceeded the rate limit (see
+below). 
+
+=item 401 Not Authorized: either you need to provide authentication credentials, or
+the credentials provided aren't valid.
+
+=item 403 Forbidden: we understand your request, but are refusing to fulfill it.  An
+accompanying error message should explain why.
+
+=item 404 Not Found: either you're requesting an invalid URI or the resource in
+question doesn't exist (ex: no such user). 
+
+=item 500 Internal Server Error: we did something wrong.  Please post to the group
+about it and the Twitter team will investigate.
+
+=item 502 Bad Gateway: returned if Twitter is down or being upgraded.
+
+=item 503 Service Unavailable: the Twitter servers are up, but are overloaded with
+requests.  Try again later.
+
+=back
+
+You can view the HTTP code and message returned after each request with the
+C<http_code> and C<http_message> functions.
+
+
+=head1 TWITTER SOURCES 
+
+All tweets are set with a source, so that setting your status from the web interface
+would display as "from web", and through an instant messenger would show "from im".
+
+It is possible to request a source entry from Twitter which will allow your tweets to
+show as "from YourWidget". 
+
+Beginning in Net::Twitter 1.07 you may set this source by passing the C<source>
+parameter to the C<new> constructor. See above. 
+
+Because of this, all statuses set through Net::Twitter 1.07 and above will now show as
+"from Perl Net::Twitter" instead of "from web". 
+
+For more information, see "How do I get "from [my_application]" appended to updates
+sent from my API application?" at:
+
+L<http://groups.google.com/group/twitter-development-talk/web/api-documentation>
 
 =head1 TWITTER TERMINOLOGY CHANGES
 
@@ -736,7 +1033,7 @@ ups to Chris "perigrin" Prather for that.
        
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2007, Chris Thompson <cpan@cthompson.com>. All rights
+Copyright (c) 2008, Chris Thompson <cpan@cthompson.com>. All rights
 reserved.
 
 This module is free software; you can redistribute it and/or

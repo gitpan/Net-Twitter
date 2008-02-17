@@ -1,5 +1,3 @@
-.cvsignore
-.releaserc
 examples/setstatus.pl
 lib/Net/Twitter.pm
 Makefile.PL
