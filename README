@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.07
+    This document describes Net::Twitter version 1.08
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -356,135 +356,132 @@ INTERFACE
 
         This takes a hashref as an argument:
 
-        "id" Required. The ID or screen name of the user to stop receiving
-        notices from.
+        "id"
+            Required. The ID or screen name of the user to stop receiving
+            notices from.
 
-        Net::Twitter uses LWP internally. Any environment variables that LWP
-        supports should be supported by Net::Twitter. I hope.
+CONFIGURATION AND ENVIRONMENT
+    Net::Twitter uses LWP internally. Any environment variables that LWP
+    supports should be supported by Net::Twitter. I hope.
 
 DEPENDENCIES
-        LWP::UserAgent
-        JSON::Any
-            Starting with version 1.04, Net::Twitter requires JSON::Any
-            instead of a specific JSON handler module. Net::Twitter
-            currently accepts JSON::Any's default order for loading
-            handlers.
+    LWP::UserAgent
+    JSON::Any
+        Starting with version 1.04, Net::Twitter requires JSON::Any instead
+        of a specific JSON handler module. Net::Twitter currently accepts
+        JSON::Any's default order for loading handlers.
 
 HTTP RESPONSE CODES
-        The Twitter API attempts to return appropriate HTTP status codes for
-        every request.
+    The Twitter API attempts to return appropriate HTTP status codes for
+    every request.
 
-        200 OK: everything went awesome.
-        304 Not Modified: there was no new data to return.
-        400 Bad Request: your request is invalid, and we'll return an error
-        message that tells you why. This is the status code returned if
-        you've exceeded the rate limit (see below).
-        401 Not Authorized: either you need to provide authentication
-        credentials, or the credentials provided aren't valid.
-        403 Forbidden: we understand your request, but are refusing to
-        fulfill it. An accompanying error message should explain why.
-        404 Not Found: either you're requesting an invalid URI or the
-        resource in question doesn't exist (ex: no such user).
-        500 Internal Server Error: we did something wrong. Please post to
-        the group about it and the Twitter team will investigate.
-        502 Bad Gateway: returned if Twitter is down or being upgraded.
-        503 Service Unavailable: the Twitter servers are up, but are
-        overloaded with requests. Try again later.
+    200 OK: everything went awesome.
+    304 Not Modified: there was no new data to return.
+    400 Bad Request: your request is invalid, and we'll return an error
+    message that tells you why. This is the status code returned if you've
+    exceeded the rate limit (see below).
+    401 Not Authorized: either you need to provide authentication
+    credentials, or the credentials provided aren't valid.
+    403 Forbidden: we understand your request, but are refusing to fulfill
+    it. An accompanying error message should explain why.
+    404 Not Found: either you're requesting an invalid URI or the resource
+    in question doesn't exist (ex: no such user).
+    500 Internal Server Error: we did something wrong. Please post to the
+    group about it and the Twitter team will investigate.
+    502 Bad Gateway: returned if Twitter is down or being upgraded.
+    503 Service Unavailable: the Twitter servers are up, but are overloaded
+    with requests. Try again later.
 
-        You can view the HTTP code and message returned after each request
-        with the "http_code" and "http_message" functions.
+    You can view the HTTP code and message returned after each request with
+    the "http_code" and "http_message" functions.
 
 TWITTER SOURCES
-        All tweets are set with a source, so that setting your status from
-        the web interface would display as "from web", and through an
-        instant messenger would show "from im".
+    All tweets are set with a source, so that setting your status from the
+    web interface would display as "from web", and through an instant
+    messenger would show "from im".
 
-        It is possible to request a source entry from Twitter which will
-        allow your tweets to show as "from YourWidget".
+    It is possible to request a source entry from Twitter which will allow
+    your tweets to show as "from YourWidget".
 
-        Beginning in Net::Twitter 1.07 you may set this source by passing
-        the "source" parameter to the "new" constructor. See above.
+    Beginning in Net::Twitter 1.07 you may set this source by passing the
+    "source" parameter to the "new" constructor. See above.
 
-        Because of this, all statuses set through Net::Twitter 1.07 and
-        above will now show as "from Perl Net::Twitter" instead of "from
-        web".
+    Because of this, all statuses set through Net::Twitter 1.07 and above
+    will now show as "from Perl Net::Twitter" instead of "from web".
 
-        For more information, see "How do I get "from [my_application]"
-        appended to updates sent from my API application?" at:
+    For more information, see "How do I get "from [my_application]" appended
+    to updates sent from my API application?" at:
 
-        <http://groups.google.com/group/twitter-development-talk/web/api-doc
-        umentation>
+    <http://groups.google.com/group/twitter-development-talk/web/api-documen
+    tation>
 
 TWITTER TERMINOLOGY CHANGES
-        As of July 19th, 2007, the Twitter team has implemented a change in
-        the terminology used for friends and followers to alleviate
-        confusion.
+    As of July 19th, 2007, the Twitter team has implemented a change in the
+    terminology used for friends and followers to alleviate confusion.
 
-        Details of the change are at:
+    Details of the change are at:
 
-        <http://twitter.com/blog/2007/07/friends-followers-and-notifications
-        .html>
+    <http://twitter.com/blog/2007/07/friends-followers-and-notifications.htm
+    l>
 
-        As there are probable changes to the Twitter API in the future, the
-        Net::Twitter API has been enhanced to use the new terminology.
+    As there are probable changes to the Twitter API in the future, the
+    Net::Twitter API has been enhanced to use the new terminology.
 
-        People who follow you are still "followers". People you follow are
-        now "following".
+    People who follow you are still "followers". People you follow are now
+    "following".
 
-        It is HIGHLY recommended that you use the newer terminology in the
-        Net::Twitter API as indicated. The friends terminology is
-        DEPRECATED, and will begin throwing warnings to that effect in a
-        future revision. It is also possible that it will be removed
-        entirely in a future revision.
+    It is HIGHLY recommended that you use the newer terminology in the
+    Net::Twitter API as indicated. The friends terminology is DEPRECATED,
+    and will begin throwing warnings to that effect in a future revision. It
+    is also possible that it will be removed entirely in a future revision.
 
 INCOMPATIBILITIES
-        The X-Twitter-Client-Name, X-Twitter-Client-Version, and
-        X-Twitter-Client-URL, headers (See: "new") are currently a de facto
-        standard that have not been fully codified and accepted by Twitter.
+    The X-Twitter-Client-Name, X-Twitter-Client-Version, and
+    X-Twitter-Client-URL, headers (See: "new") are currently a de facto
+    standard that have not been fully codified and accepted by Twitter.
 
-        Though they are expected to be accepted as valid (And optional),
-        they could possibly change in the future.
+    Though they are expected to be accepted as valid (And optional), they
+    could possibly change in the future.
 
 BUGS AND LIMITATIONS
-        No bugs have been reported.
+    No bugs have been reported.
 
-        Please report any bugs or feature requests to
-        "bug-net-twitter@rt.cpan.org", or through the web interface at
-        <http://rt.cpan.org>.
+    Please report any bugs or feature requests to
+    "bug-net-twitter@rt.cpan.org", or through the web interface at
+    <http://rt.cpan.org>.
 
 AUTHOR
-        Chris Thompson <cpan@cthompson.com>
+    Chris Thompson <cpan@cthompson.com>
 
-        The framework of this module is shamelessly stolen from Net::AIML.
-        Big ups to Chris "perigrin" Prather for that.
+    The framework of this module is shamelessly stolen from Net::AIML. Big
+    ups to Chris "perigrin" Prather for that.
 
 LICENCE AND COPYRIGHT
-        Copyright (c) 2008, Chris Thompson <cpan@cthompson.com>. All rights
-        reserved.
+    Copyright (c) 2008, Chris Thompson <cpan@cthompson.com>. All rights
+    reserved.
 
-        This module is free software; you can redistribute it and/or modify
-        it under the same terms as Perl itself. See perlartistic.
+    This module is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself. See perlartistic.
 
 DISCLAIMER OF WARRANTY
-        BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO
-        WARRANTY FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE
-        LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS
-        AND/OR OTHER PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY
-        OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED
-        TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-        PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND
-        PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE SOFTWARE PROVE
-        DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR,
-        OR CORRECTION.
+    BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+    FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+    OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+    PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+    EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+    ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+    YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+    NECESSARY SERVICING, REPAIR, OR CORRECTION.
 
-        IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN
-        WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY
-        AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE,
-        BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL,
-        INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR
-        INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF
-        DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR
-        THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER
-        SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF
-        THE POSSIBILITY OF SUCH DAMAGES.
+    IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+    WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+    REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+    TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR
+    CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE
+    SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+    RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+    FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+    SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+    DAMAGES.
 

@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.07
+# v1.08
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.07";
+$VERSION ="1.08";
 use warnings;
 use strict;
 
@@ -454,7 +454,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.07
+This document describes Net::Twitter version 1.08
 
 =head1 SYNOPSIS
 
@@ -909,9 +909,13 @@ This takes a hashref as an argument:
 =over
     
 =item C<id>
+
 Required. The ID or screen name of the user to stop receiving notices from.
 
 =back
+
+=back
+
 =head1 CONFIGURATION AND ENVIRONMENT
   
 Net::Twitter uses LWP internally. Any environment variables that LWP

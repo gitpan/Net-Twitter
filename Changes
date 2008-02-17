@@ -53,3 +53,7 @@ Revision history for Net-Twitter
 	o Added http_code and http_message to allow the retrieval of the HTTP response
 	  after each request.
 	o Brought API up to date as of Feb 13.
+
+1.08 - Sun Feb 17, 2008
+	o Never release late at night. There is a POD error in 1.07 that prevents
+          make test from working. This fixes it.
