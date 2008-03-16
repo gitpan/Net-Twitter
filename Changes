@@ -1,22 +1,41 @@
 Revision history for Net-Twitter
 
-1.0.0 - Wed Mar 07, 2007
-        First Release
 
-1.0.1 - Wed Mar 07, 2007
-        o Removed dependancy on Module::Build and version
-	o Added code from Chris Prather to fall back to pure
-	  perl JSON if JSON::Syck is not found.
-	o Fixed POD inconsistencies.
-	o Added apiurl, apihost and apirealm config options to new
+1.09 - Sun Mar 16, 2008
+	o Turns out I'm a moron and like to release stuff with debug code in it.
+	  This release fixes http://rt.cpan.org/Public/Bug/Display.html?id=34122
+	
+1.08 - Sun Feb 17, 2008
+	o Never release late at night. There is a POD error in 1.07 that 
+	  prevents make test from working. This fixes it.
 
-1.02 - 	Thu Mar 08, 2007
-	o Fixed Makefile.PL to remove leftover require of version
-	o It's "perigrin", not "peregrin"
-	o Added PREREQ for JSON. JSON::Syck is highly recommended though.
-	o Changed version scheme from three segments to two, I never
-	  wanted three digits to begin with, but Module::Build did it
-	  without asking.
+1.07 - Sat Feb 16, 2008
+	o Added support for the "source" arg to the update item, allowing a
+	  script to have its tweets show up as "from SomeWidget" instead of
+	  "from web"
+	o Because of this, a Net::Twitter source code was requested from Twitter
+	  and all tweets will now show up as "from Perl Net::Twitter".
+	o Added http_code and http_message to allow the retrieval of the HTTP
+	  response after each request.
+	o Brought API up to date as of Feb 13.
+
+1.06 - Mon Aug 6, 2007
+	o Added support for retrieving and updating location information
+	  from http://www.twittervision.com.
+	o Deprecated all "friend/friends" language to match twitter.com
+      terminology change as of July 19. new terminology is "follow/following".
+	  See:
+	  http://twitter.com/blog/2007/07/friends-followers-and-notifications.html
+	o Fixed POD errors which were causing the automatic CPANtesters to
+	  have fits.
+
+1.05 - Thu Aug 2, 2007
+	o After much delay, Net::Twitter now supports the full Twitter API,
+	  including replies, direct_messages, and all the rest.
+
+1.04 - Fri Mar 23, 2007
+	o Changed module dependencies, now requires JSON::Any, instead of a
+	  direct requirement of a JSON parsing module.
 
 1.03 - 	Tue Mar 20, 2007
 	o added $self->credentials() to allow changing user/pass to attach to
@@ -26,34 +45,20 @@ Revision history for Net-Twitter
 	o Added note about the twitter account for Net::Twitter itself
 	  at http://twitter.com/net_twitter
 
-1.04 - Fri Mar 23, 2007
-	o Changed module dependencies, now requires JSON::Any, instead of a 
-          direct requirement of a JSON parsing module.
+1.02 - 	Thu Mar 08, 2007
+	o Fixed Makefile.PL to remove leftover require of version
+	o It's "perigrin", not "peregrin"
+	o Added PREREQ for JSON. JSON::Syck is highly recommended though.
+	o Changed version scheme from three segments to two, I never
+	  wanted three digits to begin with, but Module::Build did it
+	  without asking.
 
-1.05 - Thu Aug 2, 2007
-        o After much delay, Net::Twitter now supports the full Twitter API,
-          including replies, direct_messages, and all the rest.
+1.0.1 - Wed Mar 07, 2007
+	o Removed dependancy on Module::Build and version
+	o Added code from Chris Prather to fall back to pure
+	  perl JSON if JSON::Syck is not found.
+	o Fixed POD inconsistencies.
+	o Added apiurl, apihost and apirealm config options to new
 
-1.06 - Mon Aug 6, 2007
-	o Added support for retrieving and updating location information
-	  from http://www.twittervision.com.
-	o Deprecated all "friend/friends" language to match twitter.com
-          terminology change as of July 19. new terminology is
-	  "follow/following". See:
-	  http://twitter.com/blog/2007/07/friends-followers-and-notifications.html
-        o Fixed POD errors which were causing the automatic CPANtesters to
-          have fits.
-	
-1.07 - Sat Feb 16, 2008
-	o Added support for the "source" arg to the update item, allowing a
-	  script to have its tweets show up as "from SomeWidget" instead of
-	  "from web"
-	o Because of this, a Net::Twitter source code was requested from Twitter
-	  and all tweets will now show up as "from Perl Net::Twitter".
-	o Added http_code and http_message to allow the retrieval of the HTTP response
-	  after each request.
-	o Brought API up to date as of Feb 13.
-
-1.08 - Sun Feb 17, 2008
-	o Never release late at night. There is a POD error in 1.07 that prevents
-          make test from working. This fixes it.
+1.0.0 - Wed Mar 07, 2007
+	o First Release

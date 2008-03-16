@@ -1,14 +1,17 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Net-Twitter
-version:      1.08
-version_from: lib/Net/Twitter.pm
-installdirs:  site
-requires:
+--- #YAML:1.0
+name:                Net-Twitter
+version:             1.09
+abstract:            Perl interface to twitter.com
+license:             ~
+author:              
+    - Chris Thompson <cpan@cthompson.com>
+generated_by:        ExtUtils::MakeMaker version 6.42
+distribution_type:   module
+requires:     
     JSON::Any:                     0
     LWP::UserAgent:                0
     Test::More:                    0
     URI::Escape:                   0
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30_01
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3

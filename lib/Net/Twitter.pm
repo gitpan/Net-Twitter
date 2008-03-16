@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.08
+# v1.09
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.08";
+$VERSION ="1.09";
 use warnings;
 use strict;
 
@@ -154,7 +154,6 @@ sub show_status {
 sub update {
     my ( $self, $status ) = @_;
 
-    print "URL: " . $self->{apiurl} . "/statuses/update.json status => $status, source => $self->{source} \n";
     my $req = $self->{ua}->post($self->{apiurl} . "/statuses/update.json", [ status => $status, source => $self->{source} ]);
     $self->{response_code} = $req->code;
     $self->{response_message} = $req->message;
@@ -454,7 +453,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.08
+This document describes Net::Twitter version 1.09
 
 =head1 SYNOPSIS
 
