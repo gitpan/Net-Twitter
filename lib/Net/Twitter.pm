@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.09
+# v1.10
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.09";
+$VERSION ="1.10";
 use warnings;
 use strict;
 
@@ -34,11 +34,16 @@ sub new {
     $conf{twittervision} = '0' unless defined $conf{twittervision};
 
     $conf{ua} = LWP::UserAgent->new();
+
+    $conf{username} = $conf{user} if defined $conf{user};
+    $conf{password} = $conf{pass} if defined $conf{pass};
+
     $conf{ua}->credentials($conf{apihost},
     	  		   $conf{apirealm},
 			   $conf{username},
 			   $conf{password}
 			);
+
     $conf{ua}->agent("Net::Twitter/$Net::Twitter::VERSION");
     $conf{ua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
     $conf{ua}->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
@@ -453,7 +458,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.09
+This document describes Net::Twitter version 1.10
 
 =head1 SYNOPSIS
 
@@ -493,12 +498,13 @@ Valid configuration items are:
 
 =item C<username>
 
-Username of your account at twitter.com. This is usually your email address. 
-REQUIRED.
+Username of your account at twitter.com. This is usually your email address.
+"user" is an alias for "username".  REQUIRED.
 
 =item C<password>
 
-Password of your account at twitter.com. REQUIRED.
+Password of your account at twitter.com. "pass" is an alias for "password"
+REQUIRED.
 
 =item C<useragent>
 

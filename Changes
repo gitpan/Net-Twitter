@@ -1,6 +1,9 @@
 Revision history for Net-Twitter
 
 
+1.10 - Wed Apr 16, 2008
+        o Added "user" and "pass" aliases to new() for less verbose inline use.
+
 1.09 - Sun Mar 16, 2008
 	o Turns out I'm a moron and like to release stuff with debug code in it.
 	  This release fixes http://rt.cpan.org/Public/Bug/Display.html?id=34122

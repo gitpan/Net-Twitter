@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.09
+    This document describes Net::Twitter version 1.10
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -34,10 +34,11 @@ INTERFACE
 
         "username"
             Username of your account at twitter.com. This is usually your
-            email address. REQUIRED.
+            email address. "user" is an alias for "username". REQUIRED.
 
         "password"
-            Password of your account at twitter.com. REQUIRED.
+            Password of your account at twitter.com. "pass" is an alias for
+            "password" REQUIRED.
 
         "useragent"
             OPTIONAL: Sets the User Agent header in the HTTP request. If
