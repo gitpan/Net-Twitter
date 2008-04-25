@@ -1,6 +1,11 @@
 Revision history for Net-Twitter
 
 
+1.11 - Wed Apr 23, 2008
+        o Fixed Missing response_code and response_method on user_timeline
+          -- Found by Roger Linder.
+        o Fixed file perms on README and Twitter.pm re: bug 35344
+
 1.10 - Wed Apr 16, 2008
         o Added "user" and "pass" aliases to new() for less verbose inline use.
 

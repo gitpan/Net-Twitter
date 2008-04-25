@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.10
+# v1.11
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.10";
+$VERSION ="1.11";
 use warnings;
 use strict;
 
@@ -141,7 +141,8 @@ sub user_timeline {
 	$url .= (defined $args->{count}) ? 'count=' . $args->{count} : "";
     }
     my $req = $self->{ua}->get($url);
-		
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 
 }
@@ -458,7 +459,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.10
+This document describes Net::Twitter version 1.11
 
 =head1 SYNOPSIS
 

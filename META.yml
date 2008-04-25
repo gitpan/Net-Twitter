@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Net-Twitter
-version:             1.10
+version:             1.11
 abstract:            Perl interface to twitter.com
 license:             ~
 author:              
