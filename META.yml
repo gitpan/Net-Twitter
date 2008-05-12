@@ -1,11 +1,11 @@
 --- #YAML:1.0
 name:                Net-Twitter
-version:             1.11
+version:             1.12
 abstract:            Perl interface to twitter.com
 license:             ~
 author:              
     - Chris Thompson <cpan@cthompson.com>
-generated_by:        ExtUtils::MakeMaker version 6.42
+generated_by:        ExtUtils::MakeMaker version 6.44
 distribution_type:   module
 requires:     
     JSON::Any:                     0

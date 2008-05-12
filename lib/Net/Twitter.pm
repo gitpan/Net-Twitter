@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.11
+# v1.12
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.11";
+$VERSION ="1.12";
 use warnings;
 use strict;
 
@@ -44,7 +44,7 @@ sub new {
 			   $conf{password}
 			);
 
-    $conf{ua}->agent("Net::Twitter/$Net::Twitter::VERSION");
+    $conf{ua}->agent($conf{useragent});
     $conf{ua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
     $conf{ua}->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
     $conf{ua}->default_header( "X-Twitter-Client-URL:" => $conf{clienturl} );
@@ -362,6 +362,20 @@ sub stop_following {
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
+sub relationship_exists {
+    my ( $self, $user_a, $user_b ) = @_;
+
+    my $url = $self->{apiurl}."/friendships/exists.json";
+    $url .= "?user_a=$user_a";
+    $url .= "?user_b=$user_b";
+
+    my $req=$self->{ua}->get($self->{apiurl}."/friendships/exists.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+	
+}
+
 ########################################################################
 #### ACCOUNT METHODS
 ########################################################################
@@ -379,6 +393,44 @@ sub end_session {
     my ( $self ) = @_;
 
     my $req=$self->{ua}->get($self->{apiurl}."/account/end_session");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub archive {
+    my ( $self, $args ) = @_;
+
+    my $url = $self->{apiurl}."/account/archive.json";
+      if (defined $args) {
+       $url .= "?";
+       $url .= (defined $args->{since}) ? 'since=' . $args->{since} . "&" : "";
+       $url .= (defined $args->{since_id}) ? 'since_id=' . $args->{since_id} . "&" : "";
+       $url .= (defined $args->{page}) ? 'page=' . $args->{page} : "";
+      }
+
+    my $req=$self->{ua}->get($url);
+
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub update_location {
+    my ( $self, $location ) = @_;
+
+    my $req=$self->{ua}->post($self->{apiurl}."/account/update_location.json", [ location => $location ]);
+
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub update_delivery_device {
+    my ( $self, $device ) = @_;
+
+    my $req=$self->{ua}->post($self->{apiurl}."/account/update_delivery_device.json", [ device => $device ]);
+
     $self->{response_code} = $req->code;
     $self->{response_message} = $req->message;
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
@@ -449,6 +501,49 @@ sub disable_notifications {
     return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
 }
 
+########################################################################
+#### BLOCK METHODS
+########################################################################
+
+sub create_block {
+    my ( $self, $id ) = @_;
+
+    my $req=$self->{ua}->get($self->{apiurl}."/blocks/create/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub destroy_block {
+    my ( $self, $id ) = @_;
+
+    my $req=$self->{ua}->get($self->{apiurl}."/blocks/destroy/$id.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+########################################################################
+#### HELP METHODS
+########################################################################
+
+sub test {
+    my ( $self ) = @_;
+
+    my $req=$self->{ua}->get($self->{apiurl}."/help/test.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
+
+sub downtime_schedule {
+    my ( $self ) = @_;
+
+    my $req=$self->{ua}->get($self->{apiurl}."/help/downtime_schedule.json");
+    $self->{response_code} = $req->code;
+    $self->{response_message} = $req->message;
+    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+}
 
 1;
 __END__
@@ -459,7 +554,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.11
+This document describes Net::Twitter version 1.12
 
 =head1 SYNOPSIS
 
@@ -484,8 +579,6 @@ your friends.
 You can view the latest status of Net::Twitter on it's own twitter timeline
 at http://twitter.com/net_twitter
 
-
-=head1 INTERFACE
 
 =over
 
@@ -584,6 +677,12 @@ Returns the HTTP response code of the most recent request.
 
 Returns the HTTP response message of the most recent request.
 
+=back
+
+=head2 STATUS METHODS
+
+=over
+
 =item C<update($status)>
 
 Set your current status. This returns a hashref containing your most
@@ -599,49 +698,52 @@ If the C<twittervision> arg is not set at object creation, this method will
 return an empty hashref, otherwise it will return a hashref containing the
 location data.
 
-=item C<replies([$page])>
+=item C<show_status($id)>
 
-Returns the 20 most recent replies (status updates prefixed with @username 
-posted by users who are friends with the user being replied to) to the 
-authenticating user.
+Returns status of a single tweet.  The status' author will be returned inline.
 
-Accepts an optional argument for page to retrieve, which will the 20 next 
-most recent statuses from the authenticating user and that user's friends, 
-eg "page=3"
+The argument is the ID or email address of the twitter user to pull, and is REQUIRED.
 
-=item C<featured()>
+=item C<destroy_status($id)>
 
-This returns a hashref containing a list of the users currently 
-featured on the site with their current statuses inline. Returns undef if an error occurs.
+Destroys the status specified by the required ID parameter.  The 
+authenticating user must be the author of the specified status.
 
-	
-=item C<following()>
+=item C<user_timeline(...)>
 
-=item C<friends()> DEPRECATED
+This returns a hashref containing the timeline of the authenticating user. Returns undef if an error occurs.
 
-This returns a hashref containing the most recent status of those you
-have marked as friends in twitter. Returns undef if an error occurs.
+Accepts an optional argument of a hashref:
 
 =over
 
 =item C<id>
 
-OPTIONAL: User id or email address of a user other than the authenticated user,
-in order to retrieve that user's friends.
+ID or email address of a user other than the authenticated user, in order to retrieve that user's friends_timeline.
 
-=item C<page>
+=item C<count>
 
-Gets the 100 next most recent friends, eg "page=3". 
+Narrows the returned results to a certain number of statuses. This is limited to 20.
+
+=item C<since>
+
+Narrows the returned results to just those statuses created after the 
+specified HTTP-formatted date.
 
 =back
 
-C<friends()> is DEPRECATED, see note below.
 
+=item C<public_timeline([12345])>
 
+This returns a hashref containing the public timeline of all twitter
+users. Returns undef if an error occurs.
 
-=item C<following_timeline(...)>
+Accepts an optional argument containing a status ID, and limits
+responses to only statuses greater than this ID
 
-=item C<friends_timeline(...)> DEPRECATED
+=item C<following_timeline(...)> DEPRECATED
+
+=item C<friends_timeline(...)>
 
 This returns a hashref containing the timeline of those you
 have marked as friends in twitter. Returns undef if an error occurs.
@@ -671,60 +773,55 @@ the C<page> parameter as TEMPORARILY DISABLED.
 
 =back
 
-C<friends_timeline()> is DEPRECATED, see note below.
+C<following_timeline()> is DEPRECATED, see note below.
 
-=item C<user_timeline(...)>
+=item C<replies([$page])>
 
-This returns a hashref containing the timeline of the authenticating user. Returns undef if an error occurs.
+Returns the 20 most recent replies (status updates prefixed with @username 
+posted by users who are friends with the user being replied to) to the 
+authenticating user.
 
-Accepts an optional argument of a hashref:
+Accepts an optional argument for page to retrieve, which will the 20 next 
+most recent statuses from the authenticating user and that user's friends, 
+eg "page=3"
+
+=back
+
+=head2 USER METHODS
+
+=over
+
+=item C<following()> DEPRECATED
+
+=item C<friends()>
+
+This returns a hashref containing the most recent status of those you
+have marked as friends in twitter. Returns undef if an error occurs.
 
 =over
 
 =item C<id>
 
-ID or email address of a user other than the authenticated user, in order to retrieve that user's friends_timeline.
+OPTIONAL: User id or email address of a user other than the authenticated user,
+in order to retrieve that user's friends.
 
-=item C<count>
+=item C<page>
 
-Narrows the returned results to a certain number of statuses. This is limited to 20.
-
-=item C<since>
-
-Narrows the returned results to just those statuses created after the 
-specified HTTP-formatted date.
+Gets the 100 next most recent friends, eg "page=3". 
 
 =back
 
-=item C<destroy_status($id)>
+C<following()> is DEPRECATED, see note below.
 
-Destroys the status specified by the required ID parameter.  The 
-authenticating user must be the author of the specified status.
+=item C<followers()>
 
-=item C<follow($id)>
+This returns a hashref containing the timeline of those who follow your
+status in twitter. Returns undef if an error occurs.
 
-=item C<create_friend($id)> DEPRECATED
+=item C<featured()>
 
-Befriends the user specified in the ID parameter as the authenticating user.
-Returns the befriended user in the requested format when successful.
-
-C<create_friend> is DEPRECATED, see note below.
-
-=item C<stop_following($id)>
-
-=item C<destroy_friend($id)> DEPRECATED
-
-Discontinues friendship with the user specified in the ID parameter as the 
-authenticating user.  Returns the un-friended user in the requested format 
-when successful.
-
-C<create_friend> is DEPRECATED, see note below.
-
-=item C<show_status($id)>
-
-Returns status of a single tweet.  The status' author will be returned inline.
-
-The argument is the ID or email address of the twitter user to pull, and is REQUIRED.
+This returns a hashref containing a list of the users currently 
+featured on the site with their current statuses inline. Returns undef if an error occurs.
 
 =item C<show_user()>
 
@@ -749,18 +846,11 @@ created, this method will include the location information for the user
 from twittervision.com, placing it inside the returned hashref under the
 key C<twittervision>.
 
-=item C<public_timeline([12345])>
+=back
 
-This returns a hashref containing the public timeline of all twitter
-users. Returns undef if an error occurs.
+=head2 DIRECT MESSAGE METHODS
 
-Accepts an optional argument containing a status ID, and limits
-responses to only statuses greater than this ID
-	
-=item C<followers()>
-
-This returns a hashref containing the timeline of those who follow your
-status in twitter. Returns undef if an error occurs.
+=over
 
 =item C<direct_messages()>
 
@@ -833,6 +923,41 @@ Text of direct message.
 Destroys the direct message specified in the required ID parameter.  The 
 authenticating user must be the recipient of the specified direct message.
 
+=back
+
+=head2 FRIENDSHIP METHODS
+
+=over
+
+=item C<follow($id)> DEPRECATED
+
+=item C<create_friend($id)>
+
+Befriends the user specified in the ID parameter as the authenticating user.
+Returns the befriended user in the requested format when successful.
+
+C<follow> is DEPRECATED, see note below.
+
+=item C<stop_following($id)> DEPRECATED
+
+=item C<destroy_friend($id)>
+
+Discontinues friendship with the user specified in the ID parameter as the 
+authenticating user.  Returns the un-friended user in the requested format 
+when successful.
+
+C<stop_following> is DEPRECATED, see note below.
+
+=item C<friendship_exists($user_a, $user_b)>
+
+Tests if friendship exists between the two users specified as arguments.
+
+=back
+
+=head2 ACCOUNT METHODS
+
+=over
+
 =item C<verify_credentials()>
 
 Returns an HTTP 200 OK response code and a format-specific response if 
@@ -843,6 +968,49 @@ credentials are valid with minimal overhead.
 
 Ends the session of the authenticating user, returning a null cookie.  Use
 this method to sign users out of client-facing applications like widgets.
+
+=item C<archive()>
+
+Returns 80 statuses per page for the authenticating user, ordered by
+descending date of posting.  Use this method to rapidly export your archive
+of statuses.
+
+Accepts an optional hashref for arguments:
+
+=over
+
+=item C<page>
+
+Retrieves the 20 next most recent direct messages.
+
+=item C<since>
+
+Narrows the returned results to just those statuses created after the
+specified HTTP-formatted date.
+
+=item C<since_id>
+
+Narrows the returned results to just those statuses created after the
+specified ID.
+
+=back
+
+=item C<update_location($location)>
+
+Updates the location attribute of the authenticating user, as displayed on
+the side of their profile and returned in various API methods. 
+
+=item C<update_delivery_device($device)>
+
+Sets which device Twitter delivers updates to for the authenticating user.
+$device must be one of: "sms", "im", or "none".  Sending none as the device
+parameter will disable IM or SMS updates.
+
+=back
+
+=head2 FAVORITE METHODS
+
+=over
 
 =item C<favorites()>
 
@@ -891,6 +1059,12 @@ Required. The ID of the status to un-favorite.
 
 =back
 
+=back
+
+=head2 NOTIFICATION METHODS
+
+=over
+
 =item C<enable_notifications()>
 
 Enables notifications for updates from the specified user to the authenticating user.
@@ -919,6 +1093,41 @@ This takes a hashref as an argument:
 Required. The ID or screen name of the user to stop receiving notices from.
 
 =back
+
+=back
+
+=head2 BLOCK METHODS
+
+=over
+
+=item C<create_block($id)>
+
+Blocks the user specified in the ID parameter as the authenticating user.
+Returns the blocked user in the requested format when successful. 
+
+You can find more information about blocking at
+L<http://help.twitter.com/index.php?pg=kb.page&id=69>.
+
+=item C<destroy_block($id)>
+
+Un-blocks the user specified in the ID parameter as the authenticating
+user.  Returns the un-blocked user in the requested format when successful. 
+
+=back
+
+=head2 HELP METHODS
+
+=over
+
+=item C<test()>
+
+Returns the string "ok" in the requested format with a 200 OK HTTP status
+code.
+
+=item C<downtime_schedule()>
+
+Returns the same text displayed on L<http://twitter.com/home> when a
+maintenance window is scheduled, in the requested format. 
 
 =back
 
@@ -977,7 +1186,6 @@ requests.  Try again later.
 You can view the HTTP code and message returned after each request with the
 C<http_code> and C<http_message> functions.
 
-
 =head1 TWITTER SOURCES 
 
 All tweets are set with a source, so that setting your status from the web interface
@@ -999,23 +1207,17 @@ L<http://groups.google.com/group/twitter-development-talk/web/api-documentation>
 
 =head1 TWITTER TERMINOLOGY CHANGES
 
+=head2 NEW IN 1.12
+
 As of July 19th, 2007, the Twitter team has implemented a change in the
 terminology used for friends and followers to alleviate confusion. 
 
-Details of the change are at:
+All Net::Twitter versions from 1.06 to 1.11 contained a documentation error
+which indicated that "friends" terminology is deprecated, and that "following"
+terminology is preferred. This is completely reversed.
 
-L<http://twitter.com/blog/2007/07/friends-followers-and-notifications.html>
-
-As there are probable changes to the Twitter API in the future, the
-Net::Twitter API has been enhanced to use the new terminology.
-
-People who follow you are still "followers". People you follow are now
-"following".
-
-It is HIGHLY recommended that you use the newer terminology in the
-Net::Twitter API as indicated. The friends terminology is DEPRECATED, and
-will begin throwing warnings to that effect in a future revision. It is
-also possible that it will be removed entirely in a future revision.
+Beginning with 1.12, the documentation has been fixed to indicate the correct
+deprecation. The actual code behind this has been unchanged.
 
 =head1 INCOMPATIBILITIES
 

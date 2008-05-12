@@ -1,6 +1,19 @@
 Revision history for Net-Twitter
 
 
+1.12 - Mon May 12, 2008
+	o Fixed internals so that the useragent is actually sent if
+	  modified in new().
+          -- Found by Ryo Okamoto
+	o Brought current with API as of April 29. Added archive(),
+	  update_location(), update_delivery_device(), create_block(),
+ 	  destroy_block(), test(), and downtime_schedule().
+	o Fixed boneheaded documentation error in place since 1.06 where the
+	  "friends"/"followers" terminology change listed which was
+	  deprecated backwards.
+	o Reorganized documentation so that similar methods are grouped
+	  together, and each group is labeled.
+
 1.11 - Wed Apr 23, 2008
         o Fixed Missing response_code and response_method on user_timeline
           -- Found by Roger Linder.
