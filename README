@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.12
+    This document describes Net::Twitter version 1.13
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -307,7 +307,7 @@ DESCRIPTION
 
         "stop_following" is DEPRECATED, see note below.
 
-    "friendship_exists($user_a, $user_b)"
+    "relationship_exists($user_a, $user_b)"
         Tests if friendship exists between the two users specified as
         arguments.
 

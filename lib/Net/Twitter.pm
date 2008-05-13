@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.12
+# v1.13
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.12";
+$VERSION ="1.13";
 use warnings;
 use strict;
 
@@ -554,7 +554,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.12
+This document describes Net::Twitter version 1.13
 
 =head1 SYNOPSIS
 
@@ -948,7 +948,7 @@ when successful.
 
 C<stop_following> is DEPRECATED, see note below.
 
-=item C<friendship_exists($user_a, $user_b)>
+=item C<relationship_exists($user_a, $user_b)>
 
 Tests if friendship exists between the two users specified as arguments.
 
