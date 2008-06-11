@@ -1,6 +1,14 @@
 Revision history for Net-Twitter
 
 
+1.14 - Wed Jun 11, 2008
+        o Minor POD corrections. The documentation for user_timeline and
+          friends_timeline did not correctly indicate that they're limited
+	  to tweets for the past 24 hours.
+        o Changed POD to address http://annocpan.org/~CTHOM/Net-Twitter-1.13/lib/Net/Twitter.pm#note_1922
+        o This release is solely a cleanup, in anticipation of handing off
+          maintenance of the module.
+
 1.13 - Tue May 13, 2008
 	o 1.12 had a POD error that caused make test to fail, which it
 	  didn't do on my box because Ubuntu perl doesn't have

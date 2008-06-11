@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.13
+# v1.14
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.13";
+$VERSION ="1.14";
 use warnings;
 use strict;
 
@@ -554,7 +554,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.13
+This document describes Net::Twitter version 1.14
 
 =head1 SYNOPSIS
 
@@ -573,7 +573,7 @@ This document describes Net::Twitter version 1.13
 =head1 DESCRIPTION
 
 http://www.twitter.com provides a web 2.0 type of ubiquitous presence.
-This module allows you to set your status, as well as the statuses of
+This module allows you to set your status, as well as review the statuses of
 your friends.
 
 You can view the latest status of Net::Twitter on it's own twitter timeline
@@ -711,7 +711,9 @@ authenticating user must be the author of the specified status.
 
 =item C<user_timeline(...)>
 
-This returns a hashref containing the timeline of the authenticating user. Returns undef if an error occurs.
+Returns the 20 most recent statuses posted in the last 24 hours from the
+authenticating user.  It's also possible to request another user's timeline
+via the id parameter below.
 
 Accepts an optional argument of a hashref:
 
@@ -719,7 +721,7 @@ Accepts an optional argument of a hashref:
 
 =item C<id>
 
-ID or email address of a user other than the authenticated user, in order to retrieve that user's friends_timeline.
+ID or email address of a user other than the authenticated user, in order to retrieve that user's user_timeline.
 
 =item C<count>
 
@@ -745,8 +747,9 @@ responses to only statuses greater than this ID
 
 =item C<friends_timeline(...)>
 
-This returns a hashref containing the timeline of those you
-have marked as friends in twitter. Returns undef if an error occurs.
+Returns the 20 most recent statuses posted in the last 24 hours from the
+authenticating user and that user's friends.  It's also possible to request
+another user's friends_timeline via the id parameter below.
 
 Accepts an optional argument hashref:
 
