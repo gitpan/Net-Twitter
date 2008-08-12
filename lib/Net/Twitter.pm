@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.14
+# v1.15
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION ="1.14";
+$VERSION = "1.15";
 use warnings;
 use strict;
 
@@ -15,20 +15,22 @@ use JSON::Any;
 
 sub new {
     my $class = shift;
-    my %conf = @_;
+    my %conf  = @_;
 
-    $conf{apiurl} = 'http://twitter.com' unless defined $conf{apiurl};
-    $conf{apihost} = 'twitter.com:80' unless defined $conf{apihost};
-    $conf{apirealm} = 'Twitter API' unless defined $conf{apirealm};
+    $conf{apiurl}   = 'http://twitter.com' unless defined $conf{apiurl};
+    $conf{apihost}  = 'twitter.com:80'     unless defined $conf{apihost};
+    $conf{apirealm} = 'Twitter API'        unless defined $conf{apirealm};
 
-    $conf{tvurl} = 'http://api.twittervision.com' unless defined $conf{tvurl};
-    $conf{tvhost} = 'api.twittervision.com:80' unless defined $conf{tvhost};
+    $conf{tvurl}  = 'http://api.twittervision.com' unless defined $conf{tvurl};
+    $conf{tvhost} = 'api.twittervision.com:80'     unless defined $conf{tvhost};
     $conf{tvrealm} = 'Web Password' unless defined $conf{tvrealm};
 
-    $conf{useragent} = "Net::Twitter/$Net::Twitter::VERSION (PERL)" unless defined $conf{useragent};
-    $conf{clientname} = 'Perl Net::Twitter' unless defined $conf{clientname};
-    $conf{clientver} = $Net::Twitter::VERSION unless defined $conf{clientver};
-    $conf{clienturl} = "http://x4.net/twitter/meta.xml" unless defined $conf{clienturl};
+    $conf{useragent} = "Net::Twitter/$Net::Twitter::VERSION (PERL)"
+      unless defined $conf{useragent};
+    $conf{clientname} = 'Perl Net::Twitter'    unless defined $conf{clientname};
+    $conf{clientver}  = $Net::Twitter::VERSION unless defined $conf{clientver};
+    $conf{clienturl} = "http://x4.net/twitter/meta.xml"
+      unless defined $conf{clienturl};
     $conf{source} = 'twitterpm' unless defined $conf{source};
 
     $conf{twittervision} = '0' unless defined $conf{twittervision};
@@ -38,58 +40,52 @@ sub new {
     $conf{username} = $conf{user} if defined $conf{user};
     $conf{password} = $conf{pass} if defined $conf{pass};
 
-    $conf{ua}->credentials($conf{apihost},
-    	  		   $conf{apirealm},
-			   $conf{username},
-			   $conf{password}
-			);
+    $conf{ua}->credentials( $conf{apihost}, $conf{apirealm}, $conf{username},
+        $conf{password} );
 
-    $conf{ua}->agent($conf{useragent});
+    $conf{ua}->agent( $conf{useragent} );
     $conf{ua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
-    $conf{ua}->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
+    $conf{ua}
+      ->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
     $conf{ua}->default_header( "X-Twitter-Client-URL:" => $conf{clienturl} );
 
     $conf{ua}->env_proxy();
 
-    if ($conf{twittervision}) {
-    $conf{tvua} = LWP::UserAgent->new();
-    $conf{tvua}->credentials($conf{tvhost},
-    	  		   $conf{tvrealm},
-			   $conf{username},
-			   $conf{password}
-			);
-    $conf{tvua}->agent("Net::Twitter/$Net::Twitter::VERSION");
-    $conf{tvua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
-    $conf{tvua}->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
-    $conf{tvua}->default_header( "X-Twitter-Client-URL:" => $conf{clienturl} );
+    if ( $conf{twittervision} ) {
+        $conf{tvua} = LWP::UserAgent->new();
+        $conf{tvua}
+          ->credentials( $conf{tvhost}, $conf{tvrealm}, $conf{username},
+            $conf{password} );
+        $conf{tvua}->agent("Net::Twitter/$Net::Twitter::VERSION");
+        $conf{tvua}->default_header( "X-Twitter-Client:" => $conf{clientname} );
+        $conf{tvua}
+          ->default_header( "X-Twitter-Client-Version:" => $conf{clientver} );
+        $conf{tvua}
+          ->default_header( "X-Twitter-Client-URL:" => $conf{clienturl} );
 
-    $conf{tvua}->env_proxy();
+        $conf{tvua}->env_proxy();
     }
 
     return bless {%conf}, $class;
 }
 
 sub credentials {
-my ($self, $username, $password, $apihost, $apirealm) = @_;
+    my ( $self, $username, $password, $apihost, $apirealm ) = @_;
 
-$apirealm ||= 'Twitter API';
-$apihost ||= 'twitter.com:80';
+    $apirealm ||= 'Twitter API';
+    $apihost  ||= 'twitter.com:80';
 
-    $self->{ua}->credentials($apihost,
-    			$apirealm,
-			$username,
-			$password
-			);
+    $self->{ua}->credentials( $apihost, $apirealm, $username, $password );
 }
 
 sub http_code {
- my $self = shift;
- return $self->{response_code};
+    my $self = shift;
+    return $self->{response_code};
 }
 
 sub http_message {
- my $self = shift;
- return $self->{response_message};
+    my $self = shift;
+    return $self->{response_message};
 }
 
 ########################################################################
@@ -102,10 +98,10 @@ sub public_timeline {
     my $url = $self->{apiurl} . "/statuses/public_timeline.json";
     $url .= ($since_id) ? '?since_id=' . $since_id : "";
 
-    my $req=$self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->get($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub friends_timeline {
@@ -117,91 +113,117 @@ sub following_timeline {
     my ( $self, $args ) = @_;
 
     my $url = $self->{apiurl} . "/statuses/friends_timeline";
-    $url .= (defined $args->{id}) ? "/" . $args->{id} . ".json" : ".json";
-    if ((defined $args->{since}) or (defined $args->{page})) {
-    $url .= "?";
-    $url .= (defined $args->{since}) ? "since=" . $args->{since} . "&" : "";
-    $url .= (defined $args->{page}) ? "page=" . $args->{page} : "";
+    $url .= ( defined $args->{id} ) ? "/" . $args->{id} . ".json" : ".json";
+    if (   ( defined $args->{since} )
+        or ( defined $args->{since_id} )
+        or ( defined $args->{count} )
+        or ( defined $args->{page} ) )
+    {
+        $url .= "?";
+        $url .=
+          ( defined $args->{since} ) ? "since=" . $args->{since} . "&" : "";
+        $url .=
+          ( defined $args->{since_id} )
+          ? "since_id=" . $args->{since_id} . "&"
+          : "";
+        $url .=
+          ( defined $args->{count} ) ? "count=" . $args->{count} . "&" : "";
+        $url .= ( defined $args->{page} ) ? "page=" . $args->{page} : "";
     }
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub user_timeline {
     my ( $self, $args ) = @_;
 
     my $url = $self->{apiurl} . "/statuses/user_timeline";
-    $url .= (defined $args->{id}) ? "/" . $args->{id} . ".json" : ".json";
+    $url .= ( defined $args->{id} ) ? "/" . $args->{id} . ".json" : ".json";
 
-    if ((defined $args->{since}) || (defined $args->{count})) {
- 	$url .= "?";
-	$url .=	(defined $args->{since}) ? 'since=' . $args->{since} . "&" : "";
-	$url .= (defined $args->{count}) ? 'count=' . $args->{count} : "";
+    if (   ( defined $args->{since} )
+        or ( defined $args->{since_id} )
+        or ( defined $args->{count} )
+        or ( defined $args->{page} ) )
+    {
+        $url .= "?";
+        $url .=
+          ( defined $args->{since} ) ? "since=" . $args->{since} . "&" : "";
+        $url .=
+          ( defined $args->{since_id} )
+          ? "since_id=" . $args->{since_id} . "&"
+          : "";
+        $url .=
+          ( defined $args->{count} ) ? "count=" . $args->{count} . "&" : "";
+        $url .= ( defined $args->{page} ) ? "page=" . $args->{page} : "";
     }
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
 sub show_status {
     my ( $self, $id ) = @_;
 
-    my $req = $self->{ua}->get($self->{apiurl} . "/statuses/show/$id.json");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->get( $self->{apiurl} . "/statuses/show/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
 sub update {
     my ( $self, $status ) = @_;
 
-    my $req = $self->{ua}->post($self->{apiurl} . "/statuses/update.json", [ status => $status, source => $self->{source} ]);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post(
+        $self->{apiurl} . "/statuses/update.json",
+        [ status => $status, source => $self->{source} ]
+    );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub update_twittervision {
     my ( $self, $location ) = @_;
     my $response = ();
 
-    if ($self->{twittervision}) {
-      my $tvreq = $self->{tvua}->post($self->{tvurl} . 
-                          "/user/update_location.json",
-			  [location => uri_escape($location)]
-                          );
-      if ($tvreq->content ne "User not found") {
-        $response = JSON::Any->jsonToObj($tvreq->content);
-      }
+    if ( $self->{twittervision} ) {
+        my $tvreq = $self->{tvua}->post(
+            $self->{tvurl} . "/user/update_location.json",
+            [ location => uri_escape($location) ]
+        );
+        if ( $tvreq->content ne "User not found" ) {
+            $response = JSON::Any->jsonToObj( $tvreq->content );
+        }
     }
 
     return $response;
 }
 
 sub replies {
-    my ( $self, $page) = @_;
+    my ( $self, $page ) = @_;
 
     my $url = $self->{apiurl} . "/statuses/replies.json";
-    $url .=   ($page) ? '?page=' . $page : "";
+    $url .= ($page) ? '?page=' . $page : "";
 
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub destroy_status {
     my ( $self, $id ) = @_;
 
-    my $req = $self->{ua}->get($self->{apiurl} . "/statuses/destroy/$id.json");
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/statuses/destroy/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 ########################################################################
@@ -217,34 +239,34 @@ sub following {
     my ( $self, $args ) = @_;
     $args = { id => $args } unless ref($args);
 
-    my $url = $self->{apiurl} . "/statuses/friends" ;
-       $url .= (defined $args->{id}) ? "/" . $args->{id} . ".json" : ".json";
-       $url .= (defined $args->{page}) ? "?page=" . $args->{page} : "";
+    my $url = $self->{apiurl} . "/statuses/friends";
+    $url .= ( defined $args->{id} )   ? "/" . $args->{id} . ".json" : ".json";
+    $url .= ( defined $args->{page} ) ? "?page=" . $args->{page}    : "";
 
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub followers {
     my ( $self, $args ) = @_;
-    my $url = $self->{apiurl} . "/statuses/followers.json"; 
-       $url .= ($args->{lite}) ? "?lite=true" : "";
-    my $req = $self->{ua}->get($url); 
-    $self->{response_code} = $req->code;
+    my $url = $self->{apiurl} . "/statuses/followers.json";
+    $url .= ( $args->{lite} ) ? "?lite=true" : "";
+    my $req = $self->{ua}->get($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
 sub featured {
-    my ( $self ) = @_;
+    my ($self) = @_;
 
-    my $req = $self->{ua}->get($self->{apiurl} . "/statuses/featured.json");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->get( $self->{apiurl} . "/statuses/featured.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
@@ -254,21 +276,27 @@ sub show_user {
     $args = { id => $args } unless ref($args);
 
     my $url = $self->{apiurl} . "/users/show";
-    $url .= ($args->{email}) ? ".xml?email=" . $args->{email} : "/" . $args->{id} . ".json";
+    $url .=
+      ( $args->{email} )
+      ? ".xml?email=" . $args->{email}
+      : "/" . $args->{id} . ".json";
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
 
-    my $response = JSON::Any->jsonToObj($req->content);
+    my $response = JSON::Any->jsonToObj( $req->content );
 
-    if ($self->{twittervision}) {
-      my $tvreq = $self->{tvua}->get($self->{tvurl} . "/user/current_status/" . $args->{id} . ".json");
-      if ($tvreq->content ne "User not found") {
-        $response->{twittervision} = JSON::Any->jsonToObj($tvreq->content);
-      }
+    if ( $self->{twittervision} ) {
+        my $tvreq =
+          $self->{tvua}->get(
+            $self->{tvurl} . "/user/current_status/" . $args->{id} . ".json" );
+        if ( $tvreq->content ne "User not found" ) {
+            $response->{twittervision} =
+              JSON::Any->jsonToObj( $tvreq->content );
+        }
     }
 
-    return (defined $response) ?  $response : undef;
+    return ( defined $response ) ? $response : undef;
 }
 
 ########################################################################
@@ -279,17 +307,21 @@ sub direct_messages {
     my ( $self, $args ) = @_;
 
     my $url = $self->{apiurl} . "/direct_messages.json";
-      if (defined $args) {
-       $url .= "?";
-       $url .= (defined $args->{since}) ? 'since=' . $args->{since} . "&" : "";
-       $url .= (defined $args->{since_id}) ? 'since_id=' . $args->{since_id} . "&" : "";
-       $url .= (defined $args->{page}) ? 'page=' . $args->{page} : "";
-      }
+    if ( defined $args ) {
+        $url .= "?";
+        $url .=
+          ( defined $args->{since} ) ? 'since=' . $args->{since} . "&" : "";
+        $url .=
+          ( defined $args->{since_id} )
+          ? 'since_id=' . $args->{since_id} . "&"
+          : "";
+        $url .= ( defined $args->{page} ) ? 'page=' . $args->{page} : "";
+    }
 
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
@@ -297,37 +329,44 @@ sub sent_direct_messages {
     my ( $self, $args ) = @_;
 
     my $url = $self->{apiurl} . "/direct_messages/sent.json";
-      if (defined $args) {
-       $url .= "?";
-       $url .= (defined $args->{since}) ? 'since=' . $args->{since} . "&" : "";
-       $url .= (defined $args->{since_id}) ? 'since_id=' . $args->{since_id} . "&" : "";
-       $url .= (defined $args->{page}) ? 'page=' . $args->{page} : "";
-      }
+    if ( defined $args ) {
+        $url .= "?";
+        $url .=
+          ( defined $args->{since} ) ? 'since=' . $args->{since} . "&" : "";
+        $url .=
+          ( defined $args->{since_id} )
+          ? 'since_id=' . $args->{since_id} . "&"
+          : "";
+        $url .= ( defined $args->{page} ) ? 'page=' . $args->{page} : "";
+    }
 
     my $req = $self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
 sub new_direct_message {
     my ( $self, $args ) = @_;
 
-    my $req = $self->{ua}->post($self->{apiurl} . "/direct_messages/new.json", $args);
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/direct_messages/new.json", $args );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 
 }
 
 sub destroy_direct_message {
     my ( $self, $id ) = @_;
 
-    my $req = $self->{ua}->get($self->{apiurl} . "/direct_messages/destroy/$id.json");
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}
+      ->post( $self->{apiurl} . "/direct_messages/destroy/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 ########################################################################
@@ -342,10 +381,11 @@ sub create_friend {
 sub follow {
     my ( $self, $id ) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/friendships/create/$id.json");
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/friendships/create/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub destroy_friend {
@@ -356,24 +396,25 @@ sub destroy_friend {
 sub stop_following {
     my ( $self, $id ) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/friendships/destroy/$id.json");
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/friendships/destroy/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub relationship_exists {
     my ( $self, $user_a, $user_b ) = @_;
 
-    my $url = $self->{apiurl}."/friendships/exists.json";
+    my $url = $self->{apiurl} . "/friendships/exists.json";
     $url .= "?user_a=$user_a";
     $url .= "?user_b=$user_b";
 
-    my $req=$self->{ua}->get($self->{apiurl}."/friendships/exists.json");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->get( $self->{apiurl} . "/friendships/exists.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
-	
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+
 }
 
 ########################################################################
@@ -381,59 +422,80 @@ sub relationship_exists {
 ########################################################################
 
 sub verify_credentials {
-    my ( $self ) = @_;
+    my ($self) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/account/verify_credentials.json");
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}->get( $self->{apiurl} . "/account/verify_credentials.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub end_session {
-    my ( $self ) = @_;
+    my ($self) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/account/end_session");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post( $self->{apiurl} . "/account/end_session" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub archive {
     my ( $self, $args ) = @_;
 
-    my $url = $self->{apiurl}."/account/archive.json";
-      if (defined $args) {
-       $url .= "?";
-       $url .= (defined $args->{since}) ? 'since=' . $args->{since} . "&" : "";
-       $url .= (defined $args->{since_id}) ? 'since_id=' . $args->{since_id} . "&" : "";
-       $url .= (defined $args->{page}) ? 'page=' . $args->{page} : "";
-      }
+    my $url = $self->{apiurl} . "/account/archive.json";
+    if ( defined $args ) {
+        $url .= "?";
+        $url .=
+          ( defined $args->{since} ) ? 'since=' . $args->{since} . "&" : "";
+        $url .=
+          ( defined $args->{since_id} )
+          ? 'since_id=' . $args->{since_id} . "&"
+          : "";
+        $url .= ( defined $args->{page} ) ? 'page=' . $args->{page} : "";
+    }
 
-    my $req=$self->{ua}->get($url);
+    my $req = $self->{ua}->get($url);
 
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub update_location {
     my ( $self, $location ) = @_;
 
-    my $req=$self->{ua}->post($self->{apiurl}."/account/update_location.json", [ location => $location ]);
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/account/update_location.json",
+        [ location => $location ] );
 
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub update_delivery_device {
     my ( $self, $device ) = @_;
 
-    my $req=$self->{ua}->post($self->{apiurl}."/account/update_delivery_device.json", [ device => $device ]);
+    my $req =
+      $self->{ua}
+      ->post( $self->{apiurl} . "/account/update_delivery_device.json",
+        [ device => $device ] );
 
-    $self->{response_code} = $req->code;
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+}
+
+sub rate_limit_status {
+    my ($self) = @_;
+
+    my $req =
+      $self->{ua}->get( $self->{apiurl} . "/account/rate_limit_status.json" );
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 ########################################################################
@@ -442,38 +504,37 @@ sub update_delivery_device {
 
 sub favorites {
     my ( $self, $args ) = @_;
-    my $url =$self->{apiurl} . "/favorites/" . $args->{id} . ".json";
-    $url .= (defined $args->{page}) ? "?page=" . $args->{page} : "";
+    my $url = $self->{apiurl} . "/favorites/" . $args->{id} . ".json";
+    $url .= ( defined $args->{page} ) ? "?page=" . $args->{page} : "";
 
-    my $req=$self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->get($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
 
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub create_favorite {
     my ( $self, $args ) = @_;
-    my $url =$self->{apiurl} . "/favorites/create/" . $args->{id} . ".json";
+    my $url = $self->{apiurl} . "/favorites/create/" . $args->{id} . ".json";
 
-    my $req=$self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
 
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub destroy_favorite {
     my ( $self, $args ) = @_;
-    my $url =$self->{apiurl} . "/favorites/destroy/" . $args->{id} . ".json";
+    my $url = $self->{apiurl} . "/favorites/destroy/" . $args->{id} . ".json";
 
-    my $req=$self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
 
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
-
 
 ########################################################################
 #### NOTIFICATION METHODS
@@ -481,24 +542,25 @@ sub destroy_favorite {
 
 sub enable_notifications {
     my ( $self, $args ) = @_;
-    my $url =$self->{apiurl} . "/notifications/follow/" . $args->{id} . ".json";
+    my $url =
+      $self->{apiurl} . "/notifications/follow/" . $args->{id} . ".json";
 
-    my $req=$self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
 
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub disable_notifications {
     my ( $self, $args ) = @_;
-    my $url =$self->{apiurl} . "/notifications/leave/" . $args->{id} . ".json";
+    my $url = $self->{apiurl} . "/notifications/leave/" . $args->{id} . ".json";
 
-    my $req=$self->{ua}->get($url);
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post($url);
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
 
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 ########################################################################
@@ -508,19 +570,19 @@ sub disable_notifications {
 sub create_block {
     my ( $self, $id ) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/blocks/create/$id.json");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post( $self->{apiurl} . "/blocks/create/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub destroy_block {
     my ( $self, $id ) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/blocks/destroy/$id.json");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->post( $self->{apiurl} . "/blocks/destroy/$id.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 ########################################################################
@@ -528,21 +590,22 @@ sub destroy_block {
 ########################################################################
 
 sub test {
-    my ( $self ) = @_;
+    my ($self) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/help/test.json");
-    $self->{response_code} = $req->code;
+    my $req = $self->{ua}->get( $self->{apiurl} . "/help/test.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 sub downtime_schedule {
-    my ( $self ) = @_;
+    my ($self) = @_;
 
-    my $req=$self->{ua}->get($self->{apiurl}."/help/downtime_schedule.json");
-    $self->{response_code} = $req->code;
+    my $req =
+      $self->{ua}->get( $self->{apiurl} . "/help/downtime_schedule.json" );
+    $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ($req->is_success) ?  JSON::Any->jsonToObj($req->content) : undef;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
 1;
@@ -554,7 +617,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.14
+This document describes Net::Twitter version 1.15
 
 =head1 SYNOPSIS
 
@@ -723,14 +786,24 @@ Accepts an optional argument of a hashref:
 
 ID or email address of a user other than the authenticated user, in order to retrieve that user's user_timeline.
 
-=item C<count>
-
-Narrows the returned results to a certain number of statuses. This is limited to 20.
-
 =item C<since>
 
-Narrows the returned results to just those statuses created after the 
+Narrows the returned results to just those statuses created after the
 specified HTTP-formatted date.
+
+=item C<since_id>
+
+Narrows the returned results to just those statuses created after the
+specified ID.
+
+=item C<count>
+
+Narrows the returned results to a certain number of statuses. This is limited to 200.
+
+=item C<page>
+
+Gets the 20 next most recent statuses from the authenticating user and that user's
+friends, eg "page=3". 
 
 =back
 
@@ -765,14 +838,19 @@ in order to retrieve that user's friends_timeline.
 Narrows the returned results to just those statuses created after the
 specified HTTP-formatted date.
 
+=item C<since_id>
+
+Narrows the returned results to just those statuses created after the
+specified ID.
+
+=item C<count>
+
+Narrows the returned results to a certain number of statuses. This is limited to 200.
+
 =item C<page>
 
 Gets the 20 next most recent statuses from the authenticating user and that user's
 friends, eg "page=3". 
-
-As of February 13, 2008, the Twitter API documentation at
-L<http://groups.google.com/group/twitter-development-talk/web/api-documentation> lists
-the C<page> parameter as TEMPORARILY DISABLED.
 
 =back
 
@@ -974,6 +1052,10 @@ this method to sign users out of client-facing applications like widgets.
 
 =item C<archive()>
 
+WARNING: As of August 11th, 2008  the C<archive()> function is no longer listed
+in the twitter API documentation, despite being listed in the table of contents.
+This method has been retained in this module, but may not function properly.
+
 Returns 80 statuses per page for the authenticating user, ordered by
 descending date of posting.  Use this method to rapidly export your archive
 of statuses.
@@ -1008,6 +1090,13 @@ the side of their profile and returned in various API methods.
 Sets which device Twitter delivers updates to for the authenticating user.
 $device must be one of: "sms", "im", or "none".  Sending none as the device
 parameter will disable IM or SMS updates.
+
+=item C<rate_limit_status>
+
+Returns the remaining number of API requests available to the authenticating 
+user before the API limit is reached for the current hour. Calls to 
+rate_limit_status require authentication, but will not count against 
+the rate limit. 
 
 =back
 

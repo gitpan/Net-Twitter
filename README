@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.14
+    This document describes Net::Twitter version 1.15
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -146,13 +146,21 @@ DESCRIPTION
             ID or email address of a user other than the authenticated user,
             in order to retrieve that user's user_timeline.
 
-        "count"
-            Narrows the returned results to a certain number of statuses.
-            This is limited to 20.
-
         "since"
             Narrows the returned results to just those statuses created
             after the specified HTTP-formatted date.
+
+        "since_id"
+            Narrows the returned results to just those statuses created
+            after the specified ID.
+
+        "count"
+            Narrows the returned results to a certain number of statuses.
+            This is limited to 200.
+
+        "page"
+            Gets the 20 next most recent statuses from the authenticating
+            user and that user's friends, eg "page=3".
 
     "public_timeline([12345])"
         This returns a hashref containing the public timeline of all twitter
@@ -178,14 +186,17 @@ DESCRIPTION
             Narrows the returned results to just those statuses created
             after the specified HTTP-formatted date.
 
+        "since_id"
+            Narrows the returned results to just those statuses created
+            after the specified ID.
+
+        "count"
+            Narrows the returned results to a certain number of statuses.
+            This is limited to 200.
+
         "page"
             Gets the 20 next most recent statuses from the authenticating
             user and that user's friends, eg "page=3".
-
-            As of February 13, 2008, the Twitter API documentation at
-            <http://groups.google.com/group/twitter-development-talk/web/api
-            -documentation> lists the "page" parameter as TEMPORARILY
-            DISABLED.
 
         "following_timeline()" is DEPRECATED, see note below.
 
@@ -326,6 +337,11 @@ DESCRIPTION
         applications like widgets.
 
     "archive()"
+        WARNING: As of August 11th, 2008 the "archive()" function is no
+        longer listed in the twitter API documentation, despite being listed
+        in the table of contents. This method has been retained in this
+        module, but may not function properly.
+
         Returns 80 statuses per page for the authenticating user, ordered by
         descending date of posting. Use this method to rapidly export your
         archive of statuses.
@@ -352,6 +368,12 @@ DESCRIPTION
         Sets which device Twitter delivers updates to for the authenticating
         user. $device must be one of: "sms", "im", or "none". Sending none
         as the device parameter will disable IM or SMS updates.
+
+    "rate_limit_status"
+        Returns the remaining number of API requests available to the
+        authenticating user before the API limit is reached for the current
+        hour. Calls to rate_limit_status require authentication, but will
+        not count against the rate limit.
 
   FAVORITE METHODS
     "favorites()"

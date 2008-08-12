@@ -1,6 +1,13 @@
 Revision history for Net-Twitter
 
 
+1.15 - Mon Aug 11, 2008
+	o Twitter is now requiring POST for some request and failing GET
+          requests, for whatever reason. Changed requests to use post for
+          those.
+	o Update args to friends_timeline and user_timeline for July 7 API changes
+	o Add rate_limit_status
+	
 1.14 - Wed Jun 11, 2008
         o Minor POD corrections. The documentation for user_timeline and
           friends_timeline did not correctly indicate that they're limited
