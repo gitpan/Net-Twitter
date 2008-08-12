@@ -1,6 +1,12 @@
 Revision history for Net-Twitter
 
 
+1.16 - Tue Aug 12, 2008
+	o For old times sake, I released 1.15 broken. Temp files from textmate 
+	  made their way into the dist, which breaks make test. The best part is
+	  it did so in a way that made all my tests pass. Good Times. 1.16 is
+	  functionally equivalent to 1.15, just with the files removed.
+
 1.15 - Mon Aug 11, 2008
 	o Twitter is now requiring POST for some request and failing GET
           requests, for whatever reason. Changed requests to use post for
