@@ -1,6 +1,10 @@
 Revision history for Net-Twitter
 
 
+1.17 - Tue Aug 12, 2008
+	o For some reason OSX is creating bad packages, which work fine on OSX
+          and fail elsewhere. This one was packaged on Linux and should work.
+
 1.16 - Tue Aug 12, 2008
 	o For old times sake, I released 1.15 broken. Temp files from textmate 
 	  made their way into the dist, which breaks make test. The best part is
