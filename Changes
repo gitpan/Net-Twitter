@@ -1,5 +1,20 @@
 Revision history for Net-Twitter
 
+1.18 - Mon Dec 15, 2008
+    o Brought up to date with twitter API specification.
+	o Removed "since_id" from public_timeline
+	o added "in_reply_to_status_id" to update
+	o added "since" and "since_id" to replies
+	o added "since" to friends
+	o removed the "featured" method.
+	o removed previously undocumented "lite" parameter from followers
+	     and enabled "page".
+	o added "follow" argument to create_friend
+	o removed archive
+	o update_location method is now deprecated, use update_profile.
+	o added update_profile, update_profile_colors, update_profile_image and
+	     update_profile_background_image methods
+	o documentation cleanup
 
 1.17 - Tue Aug 12, 2008
 	o For some reason OSX is creating bad packages, which work fine on OSX

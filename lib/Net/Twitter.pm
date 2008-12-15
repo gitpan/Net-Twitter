@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.17
+# v1.18
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "1.17";
+$VERSION = "1.18";
 use warnings;
 use strict;
 
@@ -93,10 +93,9 @@ sub http_message {
 ########################################################################
 
 sub public_timeline {
-    my ( $self, $since_id ) = @_;
+    my ($self) = @_;
 
     my $url = $self->{apiurl} . "/statuses/public_timeline.json";
-    $url .= ($since_id) ? '?since_id=' . $since_id : "";
 
     my $req = $self->{ua}->get($url);
     $self->{response_code}    = $req->code;
@@ -104,12 +103,12 @@ sub public_timeline {
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
-sub friends_timeline {
+sub following_timeline {
     my ( $self, $args ) = @_;
-    return $self->following_timeline($args);
+    return $self->friends_timeline($args);
 }
 
-sub following_timeline {
+sub friends_timeline {
     my ( $self, $args ) = @_;
 
     my $url = $self->{apiurl} . "/statuses/friends_timeline";
@@ -176,12 +175,12 @@ sub show_status {
 }
 
 sub update {
-    my ( $self, $status ) = @_;
+    my ( $self, $args ) = @_;
+    $args = { status => $args } unless ref($args);
+    $args->{source} = $self->{source};
 
-    my $req = $self->{ua}->post(
-        $self->{apiurl} . "/statuses/update.json",
-        [ status => $status, source => $self->{source} ]
-    );
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/statuses/update.json", $args );
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
@@ -205,10 +204,17 @@ sub update_twittervision {
 }
 
 sub replies {
-    my ( $self, $page ) = @_;
+    my ( $self, $args ) = @_;
+    $args = { page => $args } unless ref($args);
 
     my $url = $self->{apiurl} . "/statuses/replies.json";
-    $url .= ($page) ? '?page=' . $page : "";
+
+    if ($args) {
+        $url .= "?";
+        foreach my $arg ( sort keys %$args ) {
+            $url .= "$arg=" . $args->{$arg} . "&";
+        }
+    }
 
     my $req = $self->{ua}->get($url);
     $self->{response_code}    = $req->code;
@@ -230,18 +236,19 @@ sub destroy_status {
 #### USER METHODS
 ########################################################################
 
-sub friends {
+sub following {
     my ( $self, $id ) = @_;
-    return $self->following($id);
+    return $self->friends($id);
 }
 
-sub following {
+sub friends {
     my ( $self, $args ) = @_;
     $args = { id => $args } unless ref($args);
 
     my $url = $self->{apiurl} . "/statuses/friends";
-    $url .= ( defined $args->{id} )   ? "/" . $args->{id} . ".json" : ".json";
-    $url .= ( defined $args->{page} ) ? "?page=" . $args->{page}    : "";
+    $url .= ( defined $args->{id} )    ? "/" . $args->{id} . ".json" : ".json";
+    $url .= ( defined $args->{page} )  ? "?page=" . $args->{page}    : "";
+    $url .= ( defined $args->{since} ) ? "?since=" . $args->{since}  : "";
 
     my $req = $self->{ua}->get($url);
     $self->{response_code}    = $req->code;
@@ -252,18 +259,18 @@ sub following {
 sub followers {
     my ( $self, $args ) = @_;
     my $url = $self->{apiurl} . "/statuses/followers.json";
-    $url .= ( $args->{lite} ) ? "?lite=true" : "";
+
+    if ($args) {
+        $url .= "?";
+        foreach my $arg ( sort keys %$args ) {
+            $url .= "$arg=" . $args->{$arg} . "&";
+        }
+    }
+
+    $url =~ s/(.*)&$/$1/;
+    print $url;
+
     my $req = $self->{ua}->get($url);
-    $self->{response_code}    = $req->code;
-    $self->{response_message} = $req->message;
-    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
-
-}
-
-sub featured {
-    my ($self) = @_;
-
-    my $req = $self->{ua}->get( $self->{apiurl} . "/statuses/featured.json" );
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
@@ -373,27 +380,45 @@ sub destroy_direct_message {
 #### FRIENDSHIP METHODS
 ########################################################################
 
-sub create_friend {
-    my ( $self, $id ) = @_;
-    return $self->follow($id);
+sub follow {
+    my ( $self, $args ) = @_;
+    return $self->create_friend($args);
 }
 
-sub follow {
-    my ( $self, $id ) = @_;
+sub create_friend {
+    my ( $self, $args ) = @_;
+    my ( $id, $follow );
 
-    my $req =
-      $self->{ua}->post( $self->{apiurl} . "/friendships/create/$id.json" );
+    if ( ref $args ) {
+        $id = $args->{id};
+        $follow = ( $args->{follow} ) ? "true" : 0;
+    }
+    else {
+        $id     = $args;
+        $follow = 0;
+    }
+
+    my $req;
+    if ($follow) {
+        $req =
+          $self->{ua}->post( $self->{apiurl} . "/friendships/create/$id.json",
+            [ follow => $follow ] );
+    }
+    else {
+        $req =
+          $self->{ua}->post( $self->{apiurl} . "/friendships/create/$id.json" );
+    }
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
-sub destroy_friend {
+sub stop_following {
     my ( $self, $id ) = @_;
-    return $self->stop_following($id);
+    return $self->destroy_friend($id);
 }
 
-sub stop_following {
+sub destroy_friend {
     my ( $self, $id ) = @_;
 
     my $req =
@@ -440,34 +465,49 @@ sub end_session {
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
-sub archive {
-    my ( $self, $args ) = @_;
-
-    my $url = $self->{apiurl} . "/account/archive.json";
-    if ( defined $args ) {
-        $url .= "?";
-        $url .=
-          ( defined $args->{since} ) ? 'since=' . $args->{since} . "&" : "";
-        $url .=
-          ( defined $args->{since_id} )
-          ? 'since_id=' . $args->{since_id} . "&"
-          : "";
-        $url .= ( defined $args->{page} ) ? 'page=' . $args->{page} : "";
-    }
-
-    my $req = $self->{ua}->get($url);
-
-    $self->{response_code}    = $req->code;
-    $self->{response_message} = $req->message;
-    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
-}
-
 sub update_location {
     my ( $self, $location ) = @_;
 
     my $req =
       $self->{ua}->post( $self->{apiurl} . "/account/update_location.json",
         [ location => $location ] );
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+}
+
+sub update_profile_colors {
+    my ( $self, $args ) = @_;
+
+    my $req =
+      $self->{ua}
+      ->post( $self->{apiurl} . "/account/update_profile_colors.json", $args );
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+}
+
+sub update_profile_image {
+    my ( $self, $image ) = @_;
+
+    my $req =
+      $self->{ua}->post( $self->{apiurl} . "/account/update_profile_image.json",
+        [ image => $image ] );
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+}
+
+sub update_profile_background_image {
+    my ( $self, $image ) = @_;
+
+    my $req =
+      $self->{ua}
+      ->post( $self->{apiurl} . "/account/update_profile_background_image.json",
+        [ image => $image ] );
 
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
@@ -492,6 +532,18 @@ sub rate_limit_status {
 
     my $req =
       $self->{ua}->get( $self->{apiurl} . "/account/rate_limit_status.json" );
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+}
+
+sub update_profile {
+    my ( $self, $args ) = @_;
+
+    my $req =
+      $self->{ua}
+      ->post( $self->{apiurl} . "/account/update_profile.json", $args );
 
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
@@ -617,7 +669,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.17
+This document describes Net::Twitter version 1.18
 
 =head1 SYNOPSIS
 
@@ -732,6 +784,8 @@ multiple accounts.
 C<apirealm> and C<apihost> are optional and will default to the standard
 twitter versions if omitted.
 
+=over
+
 =item C<http_code>
 
 Returns the HTTP response code of the most recent request.
@@ -746,10 +800,30 @@ Returns the HTTP response message of the most recent request.
 
 =over
 
-=item C<update($status)>
+=item C<update(...)>
 
 Set your current status. This returns a hashref containing your most
 recent status. Returns undef if an error occurs.
+
+This method's args changed slightly starting with Net::Twitter 1.18. In 1.17
+and back this method took a single argument of a string to set as update. For backwards
+compatibility, this manner of calling update is still valid.
+
+As of 1.18 Net::Twitter will also accept a hashref containing one or two arguments.
+
+=over
+
+=item C<status>
+
+REQUIRED.  The text of your status update.
+
+=item C<in_reply_to_status_id>
+
+OPTIONAL. The ID of an existing status that the status to be posted is in reply to.  
+This implicitly sets the in_reply_to_user_id attribute of the resulting status to 
+the user ID of the message being replied to.  Invalid/missing status IDs will be ignored.
+
+=back
 
 =item C<update_twittervision($location)>
 
@@ -808,13 +882,13 @@ friends, eg "page=3".
 =back
 
 
-=item C<public_timeline([12345])>
+=item C<public_timeline()>
 
 This returns a hashref containing the public timeline of all twitter
 users. Returns undef if an error occurs.
 
-Accepts an optional argument containing a status ID, and limits
-responses to only statuses greater than this ID
+WARNING: Twitter has removed the optional argument of a status ID limiting responses 
+to only statuses greater than that ID. As of Net::Twitter 1.18 this parameter has been removed.
 
 =item C<following_timeline(...)> DEPRECATED
 
@@ -856,15 +930,32 @@ friends, eg "page=3".
 
 C<following_timeline()> is DEPRECATED, see note below.
 
-=item C<replies([$page])>
+=item C<replies(...)>
 
 Returns the 20 most recent replies (status updates prefixed with @username 
 posted by users who are friends with the user being replied to) to the 
 authenticating user.
 
-Accepts an optional argument for page to retrieve, which will the 20 next 
-most recent statuses from the authenticating user and that user's friends, 
-eg "page=3"
+This method's args changed slightly starting with Net::Twitter 1.18. In 1.17
+and back this method took a single argument of a page to retrieve, to retrieve the next
+20 most recent statuses. For backwards compatibility, this manner of calling replies is still valid.
+
+As of 1.18 Net::Twitter will also accept a hashref containing up to three arguments.
+
+=over
+
+=item C<since>
+
+OPTIONAL: Narrows the returned results to just those replies created after the specified HTTP-formatted date, 
+up to 24 hours old.
+
+=item C<since_id>
+
+OPTIONAL: Returns only statuses with an ID greater than (that is, more recent than) the specified ID.
+
+=item C<page>
+
+OPTIONAL: Gets the 20 next most recent replies.
 
 =back
 
@@ -872,14 +963,17 @@ eg "page=3"
 
 =over
 
-=item C<following()> DEPRECATED
-
 =item C<friends()>
 
 This returns a hashref containing the most recent status of those you
 have marked as friends in twitter. Returns undef if an error occurs.
 
 =over
+
+=item C<since>
+
+OPTIONAL: Narrows the returned results to just those friendships created after the specified HTTP-formatted date, 
+up to 24 hours old.
 
 =item C<id>
 
@@ -899,11 +993,20 @@ C<following()> is DEPRECATED, see note below.
 This returns a hashref containing the timeline of those who follow your
 status in twitter. Returns undef if an error occurs.
 
-=item C<featured()>
+Accepts an optional hashref for arguments:
 
-This returns a hashref containing a list of the users currently 
-featured on the site with their current statuses inline. Returns undef if an error occurs.
+=over
 
+=item C<id>
+
+OPTIONAL: The ID or screen name of the user for whom to request a list of followers.
+
+=item C<page>
+
+Retrieves the next 100 followers.
+
+=back
+ 
 =item C<show_user()>
 
 Returns extended information of a single user.
@@ -1010,14 +1113,29 @@ authenticating user must be the recipient of the specified direct message.
 
 =over
 
-=item C<follow($id)> DEPRECATED
+=item C<create_friend(...)>
 
-=item C<create_friend($id)>
-
-Befriends the user specified in the ID parameter as the authenticating user.
+Befriends the user specified in the id parameter as the authenticating user.
 Returns the befriended user in the requested format when successful.
 
-C<follow> is DEPRECATED, see note below.
+This method's args changed slightly starting with Net::Twitter 1.18. In 1.17
+and back this method took a single argument of id to befriend. For backwards
+compatibility, this manner of calling update is still valid.
+
+As of 1.18 Net::Twitter will also accept a hashref containing one or two arguments.
+
+=over
+
+=item C<id>
+
+REQUIRED. The ID or screen name of the user to befriend. 
+
+=item C<follow>
+
+OPTIONAL. Enable notifications for the target user in addition to becoming friends.
+
+=back
+
 
 =item C<stop_following($id)> DEPRECATED
 
@@ -1050,37 +1168,10 @@ credentials are valid with minimal overhead.
 Ends the session of the authenticating user, returning a null cookie.  Use
 this method to sign users out of client-facing applications like widgets.
 
-=item C<archive()>
-
-WARNING: As of August 11th, 2008  the C<archive()> function is no longer listed
-in the twitter API documentation, despite being listed in the table of contents.
-This method has been retained in this module, but may not function properly.
-
-Returns 80 statuses per page for the authenticating user, ordered by
-descending date of posting.  Use this method to rapidly export your archive
-of statuses.
-
-Accepts an optional hashref for arguments:
-
-=over
-
-=item C<page>
-
-Retrieves the 20 next most recent direct messages.
-
-=item C<since>
-
-Narrows the returned results to just those statuses created after the
-specified HTTP-formatted date.
-
-=item C<since_id>
-
-Narrows the returned results to just those statuses created after the
-specified ID.
-
-=back
-
 =item C<update_location($location)>
+
+WARNING: This method has been deprecated in favor of the update_profile method below. It still functions today
+but will be removed in future versions.
 
 Updates the location attribute of the authenticating user, as displayed on
 the side of their profile and returned in various API methods. 
@@ -1091,12 +1182,80 @@ Sets which device Twitter delivers updates to for the authenticating user.
 $device must be one of: "sms", "im", or "none".  Sending none as the device
 parameter will disable IM or SMS updates.
 
+=item C<update_profile_colors(...)>
+
+Sets one or more hex values that control the color scheme of the authenticating user's profile 
+page on twitter.com.  These values are also returned in the show_user method.
+
+This method takes a hashref as an argument, with the following optional fields containing a hex color string.
+
+=over
+
+=item C<profile_background_color>  
+
+=item C<profile_text_color>
+
+=item C<profile_link_color>
+
+=item C<profile_sidebar_fill_color>
+
+=item C<profile_sidebar_border_color>
+
+=back
+
+=item C<update_profile_image(...)>)
+
+Updates the authenticating user's profile image.  
+
+This takes as an argument a GIF, JPG or PNG image, no larger than 700k in size. Expects raw image data, 
+not a pathname or URL to the image.
+
+=item C<update_profile_background_image(...)>)
+
+Updates the authenticating user's profile background image.  
+
+This takes as an argument a GIF, JPG or PNG image, no larger than 800k in size. Expects raw image data, 
+not a pathname or URL to the image.
+
+
 =item C<rate_limit_status>
 
 Returns the remaining number of API requests available to the authenticating 
 user before the API limit is reached for the current hour. Calls to 
 rate_limit_status require authentication, but will not count against 
 the rate limit. 
+
+=item C<update_profile>
+
+Sets values that users are able to set under the "Account" tab of their settings page. 
+
+Takes as an argument a hashref containing fields to be updated. Only the parameters specified 
+will be updated. For example, to only update the "name" attribute, for example, 
+only include that parameter in the hashref.
+
+=over
+
+=item C<name>  
+
+Twitter user's name. Maximum of 40 characters.
+
+=item C<email> 
+ 
+Email address. Maximum of 40 characters. Must be a valid email address.
+
+=item C<url>  
+
+Homepage URL. Maximum of 100 characters. Will be prepended with "http://" if not present.
+
+=item C<location>  
+
+Geographic location. Maximum of 30 characters. The contents are not normalized or geocoded in any way.
+
+=item C<description> 
+
+Personal description. Maximum of 160 characters.
+
+=back
 
 =back
 
@@ -1299,29 +1458,16 @@ L<http://groups.google.com/group/twitter-development-talk/web/api-documentation>
 
 =head1 TWITTER TERMINOLOGY CHANGES
 
-=head2 NEW IN 1.12
+=head2 1.12 through 1.18
 
 As of July 19th, 2007, the Twitter team has implemented a change in the
 terminology used for friends and followers to alleviate confusion. 
 
-All Net::Twitter versions from 1.06 to 1.11 contained a documentation error
-which indicated that "friends" terminology is deprecated, and that "following"
-terminology is preferred. This is completely reversed.
-
-Beginning with 1.12, the documentation has been fixed to indicate the correct
-deprecation. The actual code behind this has been unchanged.
-
-=head1 INCOMPATIBILITIES
-
-The X-Twitter-Client-Name, X-Twitter-Client-Version, and X-Twitter-Client-URL, headers (See: C<new>)
-are currently a de facto standard that have not been fully codified and accepted by Twitter.
-
-Though they are expected to be accepted as valid (And optional), they could possibly 
-change in the future.
+Beginning in Net::Twitter 1.12 the methods were renamed, with the old ones listed as DEPRECATED.
+Version 1.18 will be the last version to offer the old terminology, and is written to throw warnings
+when they are called. Beginning with 1.19 these methods will go away.
 
 =head1 BUGS AND LIMITATIONS
-
-No bugs have been reported.
 
 Please report any bugs or feature requests to
 C<bug-net-twitter@rt.cpan.org>, or through the web interface at
