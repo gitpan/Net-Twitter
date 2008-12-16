@@ -2,7 +2,7 @@ NAME
     Net::Twitter - Perl interface to twitter.com
 
 VERSION
-    This document describes Net::Twitter version 1.18
+    This document describes Net::Twitter version 1.20
 
 SYNOPSIS
        #!/usr/bin/perl
@@ -188,7 +188,6 @@ DESCRIPTION
         limiting responses to only statuses greater than that ID. As of
         Net::Twitter 1.18 this parameter has been removed.
 
-    "following_timeline(...)" DEPRECATED
     "friends_timeline(...)"
         Returns the 20 most recent statuses posted in the last 24 hours from
         the authenticating user and that user's friends. It's also possible
@@ -216,8 +215,6 @@ DESCRIPTION
         "page"
             Gets the 20 next most recent statuses from the authenticating
             user and that user's friends, eg "page=3".
-
-        "following_timeline()" is DEPRECATED, see note below.
 
     "replies(...)"
         Returns the 20 most recent replies (status updates prefixed with
@@ -262,8 +259,6 @@ DESCRIPTION
 
         "page"
             Gets the 100 next most recent friends, eg "page=3".
-
-        "following()" is DEPRECATED, see note below.
 
     "followers()"
         This returns a hashref containing the timeline of those who follow
@@ -369,13 +364,10 @@ DESCRIPTION
             OPTIONAL. Enable notifications for the target user in addition
             to becoming friends.
 
-    "stop_following($id)" DEPRECATED
     "destroy_friend($id)"
         Discontinues friendship with the user specified in the ID parameter
         as the authenticating user. Returns the un-friended user in the
         requested format when successful.
-
-        "stop_following" is DEPRECATED, see note below.
 
     "relationship_exists($user_a, $user_b)"
         Tests if friendship exists between the two users specified as
@@ -600,9 +592,8 @@ TWITTER TERMINOLOGY CHANGES
     terminology used for friends and followers to alleviate confusion.
 
     Beginning in Net::Twitter 1.12 the methods were renamed, with the old
-    ones listed as DEPRECATED. Version 1.18 will be the last version to
-    offer the old terminology, and is written to throw warnings when they
-    are called. Beginning with 1.19 these methods will go away.
+    ones listed as DEPRECATED. Beginning with 1.19 these methods have been
+    removed.
 
 BUGS AND LIMITATIONS
     Please report any bugs or feature requests to
@@ -643,14 +634,4 @@ DISCLAIMER OF WARRANTY
     FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
     SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
     DAMAGES.
-
-POD ERRORS
-    Hey! The above document had some coding errors, which are explained
-    below:
-
-    Around line 799:
-        You forgot a '=back' before '=head2'
-
-    Around line 962:
-        You forgot a '=back' before '=head2'
 

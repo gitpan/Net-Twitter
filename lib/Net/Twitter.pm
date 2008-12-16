@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.19
+# v1.20
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "1.19";
+$VERSION = "1.20";
 use warnings;
 use strict;
 
@@ -101,11 +101,6 @@ sub public_timeline {
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
-}
-
-sub following_timeline {
-    my ( $self, $args ) = @_;
-    return $self->friends_timeline($args);
 }
 
 sub friends_timeline {
@@ -403,11 +398,6 @@ sub create_friend {
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
 }
 
-sub stop_following {
-    my ( $self, $id ) = @_;
-    return $self->destroy_friend($id);
-}
-
 sub destroy_friend {
     my ( $self, $id ) = @_;
 
@@ -423,9 +413,9 @@ sub relationship_exists {
 
     my $url = $self->{apiurl} . "/friendships/exists.json";
     $url .= "?user_a=$user_a";
-    $url .= "?user_b=$user_b";
+    $url .= "&user_b=$user_b";
 
-    my $req = $self->{ua}->get( $self->{apiurl} . "/friendships/exists.json" );
+    my $req = $self->{ua}->get( $url );
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
@@ -659,7 +649,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.19
+This document describes Net::Twitter version 1.20
 
 =head1 SYNOPSIS
 

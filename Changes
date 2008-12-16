@@ -1,5 +1,10 @@
 Revision history for Net-Twitter
 
+1.20 - Mon Dec 15, 2008
+	o Man I'm good. Missed a patch before bundling up the dist.
+	o Fixes problem with relationship_exists from http://rt.cpan.org/Ticket/Display.html?id=41667
+	o Never release while on cold medication. Somehow I broke POD again for 1.19.
+	
 1.19 - Mon Dec 15, 2008
 	o Fixed bad POD coverage.
 	o Removed deprecated methods.

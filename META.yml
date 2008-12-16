@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Net-Twitter
-version:            1.19
+version:            1.20
 abstract:           Perl interface to twitter.com
 author:
     - Chris Thompson <cpan@cthompson.com>
