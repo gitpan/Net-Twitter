@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.18
+# v1.19
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "1.18";
+$VERSION = "1.19";
 use warnings;
 use strict;
 
@@ -236,11 +236,6 @@ sub destroy_status {
 #### USER METHODS
 ########################################################################
 
-sub following {
-    my ( $self, $id ) = @_;
-    return $self->friends($id);
-}
-
 sub friends {
     my ( $self, $args ) = @_;
     $args = { id => $args } unless ref($args);
@@ -379,11 +374,6 @@ sub destroy_direct_message {
 ########################################################################
 #### FRIENDSHIP METHODS
 ########################################################################
-
-sub follow {
-    my ( $self, $args ) = @_;
-    return $self->create_friend($args);
-}
 
 sub create_friend {
     my ( $self, $args ) = @_;
@@ -669,7 +659,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.18
+This document describes Net::Twitter version 1.19
 
 =head1 SYNOPSIS
 
@@ -796,6 +786,8 @@ Returns the HTTP response message of the most recent request.
 
 =back
 
+=back
+
 =head2 STATUS METHODS
 
 =over
@@ -890,8 +882,6 @@ users. Returns undef if an error occurs.
 WARNING: Twitter has removed the optional argument of a status ID limiting responses 
 to only statuses greater than that ID. As of Net::Twitter 1.18 this parameter has been removed.
 
-=item C<following_timeline(...)> DEPRECATED
-
 =item C<friends_timeline(...)>
 
 Returns the 20 most recent statuses posted in the last 24 hours from the
@@ -928,8 +918,6 @@ friends, eg "page=3".
 
 =back
 
-C<following_timeline()> is DEPRECATED, see note below.
-
 =item C<replies(...)>
 
 Returns the 20 most recent replies (status updates prefixed with @username 
@@ -959,6 +947,8 @@ OPTIONAL: Gets the 20 next most recent replies.
 
 =back
 
+=back
+
 =head2 USER METHODS
 
 =over
@@ -985,8 +975,6 @@ in order to retrieve that user's friends.
 Gets the 100 next most recent friends, eg "page=3". 
 
 =back
-
-C<following()> is DEPRECATED, see note below.
 
 =item C<followers()>
 
@@ -1136,16 +1124,11 @@ OPTIONAL. Enable notifications for the target user in addition to becoming frien
 
 =back
 
-
-=item C<stop_following($id)> DEPRECATED
-
 =item C<destroy_friend($id)>
 
 Discontinues friendship with the user specified in the ID parameter as the 
 authenticating user.  Returns the un-friended user in the requested format 
 when successful.
-
-C<stop_following> is DEPRECATED, see note below.
 
 =item C<relationship_exists($user_a, $user_b)>
 
@@ -1464,8 +1447,7 @@ As of July 19th, 2007, the Twitter team has implemented a change in the
 terminology used for friends and followers to alleviate confusion. 
 
 Beginning in Net::Twitter 1.12 the methods were renamed, with the old ones listed as DEPRECATED.
-Version 1.18 will be the last version to offer the old terminology, and is written to throw warnings
-when they are called. Beginning with 1.19 these methods will go away.
+Beginning with 1.19 these methods have been removed.
 
 =head1 BUGS AND LIMITATIONS
 

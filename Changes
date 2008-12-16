@@ -1,5 +1,10 @@
 Revision history for Net-Twitter
 
+1.19 - Mon Dec 15, 2008
+	o Fixed bad POD coverage.
+	o Removed deprecated methods.
+	o Why are even numbered releases always broken for me?
+	
 1.18 - Mon Dec 15, 2008
     o Brought up to date with twitter API specification.
 	o Removed "since_id" from public_timeline
