@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v1.20
+# v1.21
 # Copyright (c) 2008 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "1.20";
+$VERSION = "1.21";
 use warnings;
 use strict;
 
@@ -35,7 +35,11 @@ sub new {
 
     $conf{twittervision} = '0' unless defined $conf{twittervision};
 
-    $conf{ua} = LWP::UserAgent->new();
+    $conf{useragent_class} ||= 'LWP::UserAgent';
+    eval "use $conf{useragent_class}";
+    die $@ if $@;
+
+    $conf{ua} = $conf{useragent_class}->new();
 
     $conf{username} = $conf{user} if defined $conf{user};
     $conf{password} = $conf{pass} if defined $conf{pass};
@@ -52,7 +56,7 @@ sub new {
     $conf{ua}->env_proxy();
 
     if ( $conf{twittervision} ) {
-        $conf{tvua} = LWP::UserAgent->new();
+        $conf{tvua} = $conf{useragent_class}->new();
         $conf{tvua}
           ->credentials( $conf{tvhost}, $conf{tvrealm}, $conf{username},
             $conf{password} );
@@ -352,7 +356,6 @@ sub new_direct_message {
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
     return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
-
 }
 
 sub destroy_direct_message {
@@ -418,8 +421,8 @@ sub relationship_exists {
     my $req = $self->{ua}->get( $url );
     $self->{response_code}    = $req->code;
     $self->{response_message} = $req->message;
-    return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
-
+    return unless $req->is_success;
+    return $req->content =~ /true/ ? 1 : 0;
 }
 
 ########################################################################
@@ -649,7 +652,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 1.20
+This document describes Net::Twitter version 1.21
 
 =head1 SYNOPSIS
 
@@ -699,6 +702,11 @@ REQUIRED.
 
 OPTIONAL: Sets the User Agent header in the HTTP request. If omitted, this will default to
 "Net::Twitter/$Net::Twitter::Version (Perl)"
+
+=item C<useragent_class>
+
+OPTIONAL: A L<LWP::UserAgent> compatible class, e.g., L<LWP::UserAgent::POE>.
+If omitted, this will default to L<LWP::UserAgent>.
 
 =item C<source>
 
