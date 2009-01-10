@@ -1,5 +1,6 @@
 Changes
 examples/setstatus.pl
+lib/Net/Identica.pm
 lib/Net/Twitter.pm
 Makefile.PL
 MANIFEST

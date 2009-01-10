@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.00_02
+# v2.00_03
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.00_02";
+$VERSION = "2.00_03";
 use warnings;
 use strict;
 
@@ -30,6 +30,10 @@ sub new {
     $conf{apiurl}   = 'http://twitter.com' unless defined $conf{apiurl};
     $conf{apihost}  = 'twitter.com:80'     unless defined $conf{apihost};
     $conf{apirealm} = 'Twitter API'        unless defined $conf{apirealm};
+
+    ### Set default Twitter search API URL
+
+    $conf{searchapiurl} = 'http://search.twitter.com/search.json' unless defined $conf{searchapiurl};
 
     ### Set useragents, HTTP Headers, source codes.
     $conf{useragent} = "Net::Twitter/$Net::Twitter::VERSION (PERL)"
@@ -123,6 +127,84 @@ sub http_message {
     return $self->{response_message};
 }
 
+sub search {
+    my $self      = shift;
+    my $args      = shift;
+    my $finalargs = "";
+    my $url       = $self->{searchapiurl} . "?";
+    my $retval;
+
+    ### Return if no args specified.
+    if ( !defined($args) ) {
+        warn "No query string specified";
+        return undef;
+    }
+
+    ### If the first argument passed is a string, convert it into a hashref
+    ### with the arg assigned to the key "q"
+
+    if ( !ref($args) ) {
+        $args = { "q" => $args };
+    }
+
+    ### Allow use of "query", but use the argument "q"
+    ### This has the side effect of overwriting q with query
+
+    if ( $args->{query} ) {
+        if ( $args->{q} ) {
+            warn "Both 'q' and 'query' specified, using value of 'query'.";
+        }
+        $args->{q} = delete( $args->{query} );
+    }
+
+    ### For backcompat with Br3nda's N::T::Search, allow a hashref as a second
+    ### argument. Here we just combine with the previous arg, so there's only
+    ### one hashref to deal with
+
+    my $otherargs = shift;
+    if ( ref($otherargs) eq "HASH" ) {
+        if ( ( defined $otherargs->{q} ) || ( defined $otherargs->{query} ) ) {
+            warn "Specifed a query both as a plain text first arg and in the hashref second arg.";
+            warn "Using query from first arg";
+        }
+        $otherargs->{"q"} = $args->{"q"};
+        $args = $otherargs;
+    }
+
+    ### Make a string out of the args to append to the URL.
+
+    foreach my $argname ( sort keys %{$args} ) {
+
+        # drop arguments with undefined values
+        next unless defined $args->{$argname};
+        $url .= "&" unless substr( $url, -1 ) eq "?";
+        $url .= $argname . "=" . uri_escape( $args->{$argname} );
+    }
+
+    my $req = $self->{ua}->get($url);
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    $self->{response_error}   = $req->content;
+
+    undef $retval;
+
+    if ( $req->is_success ) {
+        $retval = eval { JSON::Any->jsonToObj( $req->content ) };
+
+        ### Trap a case where twitter could return a 200 success but give up badly formed JSON
+        ### which would cause it to die. This way it simply assigns undef to $retval
+        ### If this happens, response_code, response_message and response_error aren't going to
+        ### have any indication what's wrong, so we prepend a statement to request_error.
+
+        if ( !defined $retval ) {
+            $self->{response_error} =
+              "TWITTER RETURNED SUCCESS BUT PARSING OF THE RESPONSE FAILED - " . $req->content;
+        }
+    }
+    return $retval;
+}
+
 ### Load method data into %apicalls at runtime.
 
 BEGIN {
@@ -203,7 +285,7 @@ BEGIN {
             "uri"  => "/users/show/ID",
             "args" => {
                 "id"    => 1,
-                "email" => 0,
+                "email" => 1,
             },
         },
         "direct_messages" => {
@@ -404,11 +486,7 @@ BEGIN {
 
                     ### show_user requires either id or email, this workaround checks that email is
                     ### passed if id is not.
-
-                    if ( defined $args->{email} ) {
-                        $url .= $method_def->{uri} . "/" . delete( $args->{email} ) . ".json";
-                        $seen_id++;
-                    } else {
+                    if ( !defined $args->{email} ) {
                         warn "Either id or email is required by show_user, discarding request.";
                         $self->{response_error} = {
                             "request" => $method_def->{uri},
@@ -439,6 +517,10 @@ BEGIN {
             ### Validate args
 
             foreach my $argname ( sort keys %{ $method_def->{args} } ) {
+                if ( $whoami eq "show_user" ) {
+                    ### We already validated the wonky args to show_user above.
+                    next;
+                }
                 if ( ( $argname eq "id" ) and ($seen_id) ) {
                     next;
                 }
@@ -468,11 +550,13 @@ BEGIN {
                 if ( ( !defined $method_def->{args}->{$argname} ) and ( !$self->{skip_arg_validation} ) ) {
                     warn "The field $argname is unknown and will not be passed";
                 } else {
+
                     # drop arguments with undefined values (backcompat with v1.xx)
                     next unless defined $args->{$argname};
                     if ( $method_def->{post} ) {
                         $finalargs->{$argname} = $args->{$argname};
                     } else {
+                        $finalargs = "";
                         if ( !$finalargs ) {
                             $finalargs .= "?";
                         }
@@ -482,11 +566,15 @@ BEGIN {
                 }
             }
             ### Send the LWP request
+
             my $req;
             if ( $method_def->{post} ) {
                 $req = $self->{ua}->post( $url, $finalargs );
             } else {
-                $req = $self->{ua}->get( $url . $finalargs );
+                if ($finalargs) {
+                    $url .= $finalargs;
+                }
+                $req = $self->{ua}->get($url);
             }
 
             $self->{response_code}    = $req->code;
@@ -501,8 +589,8 @@ BEGIN {
                 return unless $req->is_success;
                 return $req->content =~ /true/ ? 1 : 0;
             } else {
-                $self->{response_error}   = $req->content;
-                return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;                
+                $self->{response_error} = $req->content;
+                return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
             }
           }
     }
@@ -517,7 +605,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.00_02
+This document describes Net::Twitter version 2.00_03
 
 =head1 SYNOPSIS
 
@@ -620,8 +708,15 @@ C<apirealm> defaults to C<Twitter API>.
 =item C<identica>
 
 OPTIONAL: Passing a true value for identica to new() will preset values for C<apiurl>, C<apirealm> and
-C<apihost> which will point at the http://identi.ca twitter compatible API. This API does not implement
-100% of the twitter API.
+C<apihost> which will point at the http://identi.ca twitter compatible API. 
+
+All methods in Net::Twitter work as documented, except where listed in the 
+identica/laconica documentation at:
+
+L<http://laconi.ca/trac/wiki/TwitterCompatibleAPI>
+
+For simplicity, you can also use L<Net::Identica> in your script instead of Net::Twitter, which
+will default to identica being set to true.
 
 =item C<twittervision>
 
@@ -1230,6 +1325,84 @@ L<http://help.twitter.com/index.php?pg=kb.page&id=69>.
 Un-blocks the user specified in the ID parameter as the authenticating
 user. Returns the un-blocked user in the requested format when successful.
  
+=back
+ 
+=head2 SEARCH
+
+As of version 2.00, Net::Twitter now implements the search functionality of Twitter.
+
+=over
+
+=item C<search()>
+
+Performs a search on http://search.twitter.com for your query string, returning a hashref
+full of posts, in the same manner as the *_timeline methods, but does not include the
+"user" item with the posting user's information.
+
+This method takes a hashref as an argument:
+
+=over
+
+=item C<q>
+
+=item C<query>
+
+REQUIRED: Specifies the string to search for. This can include any of the Twitter search operators listed
+at L<http://search.twitter.com/operators>. Please see below for information about backwards compatibility
+with Net::Twitter::Search. 
+
+Both q and query are aliases to the same argument. Specifying both will use
+the value specified for "query". 
+
+Please note that you cannot use the "near" search operator to specify arbitrary Lat/Long locations. For this
+use the C<geocode> argument below.
+
+=item C<lang>
+
+OPTIONAL: Restricts results to a specific language, given by an ISO 639-1 code. For example {'lang' => 'en'}
+
+=item C<rpp>
+
+OPTIONAL: Sets the number of posts to return per page, up to a max of 100.
+
+=item C<page>
+
+OPTIONAL: Sets the page number (starting at 1) to return, up to a max of roughly 
+1500 results (based on rpp * page)
+
+=item C<since_id>
+
+OPTIONAL: Restricts returned posts to those status ids greater than the given id.
+
+=item C<geocode>
+
+Returns posts by users located within the radius of the given latitude/longitude, where the user's 
+location is taken from their Twitter profile. The format of the parameter value is "latitide,longitude,radius", 
+with radius units specified as either "mi" (miles) or "km" (kilometers).
+
+=item C<show_user>
+
+OPTIONAL: When set to a true boolean value C<show_user> will prepend "<username>:" to the beginning of the text of
+each post returned.
+
+=back 
+
+
+=item BACKWARDS COMPATIBILITY WITH Net::Twitter::Search
+
+In order to maintain backwards compatibility with Net::Twitter::Search, the query/q arguments can be specified
+as plain text:
+
+    $res = $twit->search("Farkle McFancypants")
+
+In addition, you can, in this case, specify all of the above arguments in a hashref as the second argument
+to the search method.
+
+    $res = $twit->search("Farkle McFancypants", {lang => "en"})
+    
+Any query/q arguments in the hashref passed in this manner will be ignored, and the module will
+proceed using the string passed in the first argument as the query.
+
 =back
  
 =head2 HELP METHODS
