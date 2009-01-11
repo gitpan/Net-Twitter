@@ -1,18 +1,17 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.00_03
+# v2.00_04
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.00_03";
+$VERSION = "2.00_04";
 use warnings;
 use strict;
 
 use URI::Escape;
 use JSON::Any;
 use LWP::UserAgent;
-use URI::Escape;
 
 sub new {
     my $class = shift;
@@ -210,14 +209,16 @@ sub search {
 BEGIN {
     my %apicalls = (
         "public_timeline" => {
-            "post" => 0,
-            "uri"  => "/statuses/public_timeline",
-            "args" => {},
+            "blankargs" => 0,
+            "post"      => 0,
+            "uri"       => "/statuses/public_timeline",
+            "args"      => {},
         },
         "friends_timeline" => {
-            "post" => 0,
-            "uri"  => "/statuses/friends_timeline",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/statuses/friends_timeline",
+            "args"      => {
                 "since"    => 0,
                 "since_id" => 0,
                 "count"    => 0,
@@ -225,9 +226,10 @@ BEGIN {
             },
         },
         "user_timeline" => {
-            "post" => 0,
-            "uri"  => "/statuses/user_timeline/ID",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/statuses/user_timeline/ID",
+            "args"      => {
                 "id"       => 0,
                 "since"    => 0,
                 "since_id" => 0,
@@ -236,198 +238,228 @@ BEGIN {
             },
         },
         "show_status" => {
-            "post" => 0,
-            "uri"  => "/statuses/show/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 0,
+            "uri"       => "/statuses/show/ID",
+            "args"      => { "id" => 1, },
         },
         "update" => {
-            "post" => 1,
-            "uri"  => "/statuses/update",
-            "args" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/statuses/update",
+            "args"      => {
                 "status"                => 1,
                 "in_reply_to_status_id" => 0,
                 "source"                => 0,
             },
         },
         "replies" => {
-            "post" => 0,
-            "uri"  => "/statuses/replies",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/statuses/replies",
+            "args"      => {
                 "page"     => 0,
                 "since"    => 0,
                 "since_id" => 0,
             },
         },
         "destroy_status" => {
-            "post" => 1,
-            "uri"  => "/statuses/destroy/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/statuses/destroy/ID",
+            "args"      => { "id" => 1, },
         },
         "friends" => {
-            "post" => 0,
-            "uri"  => "/statuses/friends/ID",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/statuses/friends/ID",
+            "args"      => {
                 "id"    => 0,
                 "page"  => 0,
                 "since" => 0,
             },
         },
         "followers" => {
-            "post" => 0,
-            "uri"  => "/statuses/followers",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/statuses/followers",
+            "args"      => {
                 "id"   => 0,
                 "page" => 0,
             },
         },
         "show_user" => {
-            "post" => 0,
-            "uri"  => "/users/show/ID",
-            "args" => {
+            "blankargs" => 0,
+            "post"      => 0,
+            "uri"       => "/users/show/ID",
+            "args"      => {
                 "id"    => 1,
                 "email" => 1,
             },
         },
         "direct_messages" => {
-            "post" => 0,
-            "uri"  => "/direct_messages",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/direct_messages",
+            "args"      => {
                 "since"    => 0,
                 "since_id" => 0,
                 "page"     => 0,
             },
         },
         "sent_direct_messages" => {
-            "post" => 0,
-            "uri"  => "/direct_messages/sent",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/direct_messages/sent",
+            "args"      => {
                 "since"    => 0,
                 "since_id" => 0,
                 "page"     => 0,
             },
         },
         "new_direct_message" => {
-            "post" => 1,
-            "uri"  => "/direct_messages/new",
-            "args" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/direct_messages/new",
+            "args"      => {
                 "user" => 1,
                 "text" => 1,
             },
         },
         "destroy_direct_message" => {
-            "post" => 1,
-            "uri"  => "/direct_messages/destroy/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/direct_messages/destroy/ID",
+            "args"      => { "id" => 1, },
         },
         "create_friend" => {
-            "post" => 1,
-            "uri"  => "/friendships/create/ID",
-            "args" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/friendships/create/ID",
+            "args"      => {
                 "id"     => 1,
                 "follow" => 0,
             },
         },
         "destroy_friend" => {
-            "post" => 1,
-            "uri"  => "/friendships/destroy/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/friendships/destroy/ID",
+            "args"      => { "id" => 1, },
         },
         "relationship_exists" => {
-            "post" => 0,
-            "uri"  => "/friendships/exists",
-            "args" => {
+            "blankargs" => 0,
+            "post"      => 0,
+            "uri"       => "/friendships/exists",
+            "args"      => {
                 "user_a" => 1,
                 "user_b" => 1,
             },
         },
         "verify_credentials" => {
-            "post" => 0,
-            "uri"  => "/account/verify_credentials",
-            "args" => {},
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/account/verify_credentials",
+            "args"      => {},
         },
         "end_session" => {
-            "post" => 1,
-            "uri"  => "/account/end_session",
-            "args" => {},
+            "blankargs" => 1,
+            "post"      => 1,
+            "uri"       => "/account/end_session",
+            "args"      => {},
         },
         "update_profile_colors" => {
-            "post" => 1,
-            "uri"  => "/account/update_profile_colors",
-            "args" => {
-                "profile_background_color"     => 1,
-                "profile_text_color"           => 1,
-                "profile_link_color"           => 1,
-                "profile_sidebar_fill_color"   => 1,
-                "profile_sidebar_border_color" => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/account/update_profile_colors",
+            "args"      => {
+                "profile_background_color"     => 0,
+                "profile_text_color"           => 0,
+                "profile_link_color"           => 0,
+                "profile_sidebar_fill_color"   => 0,
+                "profile_sidebar_border_color" => 0,
             },
         },
         "update_profile_image" => {
-            "post" => 1,
-            "uri"  => "/account/update_profile_image",
-            "args" => { "image" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/account/update_profile_image",
+            "args"      => { "image" => 1, },
         },
         "update_profile_background_image" => {
-            "post" => 1,
-            "uri"  => "/account/update_profile_background_image",
-            "args" => { "image" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/account/update_profile_background_image",
+            "args"      => { "image" => 1, },
         },
         "update_delivery_device" => {
-            "post" => 1,
-            "uri"  => "/account/update_delivery_device",
-            "args" => { "device" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/account/update_delivery_device",
+            "args"      => { "device" => 1, },
         },
         "rate_limit_status" => {
-            "post" => 0,
-            "uri"  => "/account/rate_limit_status",
-            "args" => {},
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/account/rate_limit_status",
+            "args"      => {},
         },
         "favorites" => {
-            "post" => 0,
-            "uri"  => "/favorites",
-            "args" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/favorites",
+            "args"      => {
                 "id"   => 0,
                 "page" => 0,
             },
         },
         "create_favorite" => {
-            "post" => 1,
-            "uri"  => "/favorites/create/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/favorites/create/ID",
+            "args"      => { "id" => 1, },
         },
         "destroy_favorite" => {
-            "post" => 1,
-            "uri"  => "/favorites/destroy/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/favorites/destroy/ID",
+            "args"      => { "id" => 1, },
         },
         "enable_notifications" => {
-            "post" => 1,
-            "uri"  => "/notifications/follow/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/notifications/follow/ID",
+            "args"      => { "id" => 1, },
         },
         "disable_notifications" => {
-            "post" => 1,
-            "uri"  => "/notifications/leave/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/notifications/leave/ID",
+            "args"      => { "id" => 1, },
         },
         "create_block" => {
-            "post" => 1,
-            "uri"  => "/blocks/create/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/blocks/create/ID",
+            "args"      => { "id" => 1, },
         },
         "destroy_block" => {
-            "post" => 1,
-            "uri"  => "/blocks/destroy/ID",
-            "args" => { "id" => 1, },
+            "blankargs" => 0,
+            "post"      => 1,
+            "uri"       => "/blocks/destroy/ID",
+            "args"      => { "id" => 1, },
         },
         "test" => {
-            "post" => 0,
-            "uri"  => "/help/test",
-            "args" => {},
+            "blankargs" => 1,
+            "post"      => 0,
+            "uri"       => "/help/test",
+            "args"      => {},
         },
         "downtime_schedule" => {
-            "post" => 0,
-            "uri"  => "/help/downtime_schedule",
-            "args" => {},
+            "blankargs" => 100,
+            "post"      => 0,
+            "uri"       => "/help/downtime_schedule",
+            "args"      => {},
         },
     );
 
@@ -443,26 +475,57 @@ BEGIN {
             my $args = shift;
 
             my $whoami;
-            my $url = $self->{apiurl};
-            my $finalargs;
-            my $seen_id = 0;
+            my $url       = $self->{apiurl};
+            my $finalargs = "";
+            my $seen_id   = 0;
+            my $retval;
 
             ### Store the method name, since a sub doesn't know it's name without
             ### a bit of work and more dependancies than are really prudent.
             eval { $whoami = $methodname };
 
+            ### Get this method's definition from the table
+            my $method_def = $apicalls{$whoami};
+
+            ### Check if no args sent and args are required.
+            if ( ( !defined $args ) && ( !$method_def->{blankargs} ) ) {
+                if ( $self->{die_on_validation} ) {
+                    die "The method $whoami requires arguments and none specified. Terminating.";
+                } else {
+                    warn "The method $whoami requires arguments and none specified. Discarding request";
+                    $self->{response_error} = {
+                        "request" => $url,
+                        "error"   => "The method $whoami requires arguments and none specified."
+                    };
+                }
+                return undef;
+            }
+
             ### For backwards compatibility we need to handle the user handing a single, scalar
             ### arg in, instead of a hashref. Since the methods that allowed this in 1.xx have
             ### different defaults, use a bit of logic to stick the value in the right place.
 
-            if ( !ref($args) ) {
+            if ( ( !ref($args) ) && ( defined $args ) ) {
                 my $single_arg;
                 if ( $whoami eq "update" ) {
                     $single_arg = "status";
                 } elsif ( $whoami eq "replies" ) {
                     $single_arg = "page";
-                } elsif ( $whoami =~ m/friends|show_user|create_friend/ ) {
+                } elsif ( $whoami =~ m/friends\b|show_user|create_friend/ ) {
                     $single_arg = "id";
+                } else {
+                    ### $args is not a hashref and $whoami is not one of the legacy
+                    ### subs, so we punt.
+                    if ( $self->{die_on_validation} ) {
+                        die "Argument is not a HASHREF. Terminating.";
+                    } else {
+                        warn "Argument is not a HASHREF. Discarding request";
+                        $self->{response_error} = {
+                            "request" => $url,
+                            "error"   => "Argument is not a HASHREF."
+                        };
+                    }
+                    return undef;
                 }
                 $args = { $single_arg => $args };
             }
@@ -472,9 +535,6 @@ BEGIN {
             if ( $whoami eq "update" ) {
                 $args->{source} = $self->{source};
             }
-
-            ### Get this method's definition from the table
-            my $method_def = $apicalls{$whoami};
 
             ### Create the URL. If it ends in /ID it needs the id param substituted
             ### into the URL and not as an arg.
@@ -514,57 +574,62 @@ BEGIN {
                 $url .= $method_def->{uri} . ".json";
             }
 
-            ### Validate args
+            ### Validate args. Don't validate if $args is undef, we've already checked that
+            ### undef is OK to pass up above
+            if ( defined $args ) {
+                foreach my $argname ( sort keys %{ $method_def->{args} } ) {
+                    if ( $whoami eq "show_user" ) {
+                        ### We already validated the wonky args to show_user above.
+                        next;
+                    }
+                    if ( ( $argname eq "id" ) and ($seen_id) ) {
+                        next;
+                    }
+                    if ( !$self->{skip_arg_validation} ) {
 
-            foreach my $argname ( sort keys %{ $method_def->{args} } ) {
-                if ( $whoami eq "show_user" ) {
-                    ### We already validated the wonky args to show_user above.
-                    next;
+                        if (    ( $method_def->{args}->{$argname} )
+                            and ( !defined $args->{$argname} ) )
+                        {
+                            if ( $self->{die_on_validation} ) {
+                                die "The field $argname is required and not specified. Terminating.";
+                            } else {
+                                warn "The field $argname is required and not specified, discarding request.";
+                                $self->{response_error} = {
+                                    "request" => $url,
+                                    "error"   => "The field $argname is required and not specified"
+                                };
+                            }
+                            return undef;
+                        }
+
+                    }
+
                 }
-                if ( ( $argname eq "id" ) and ($seen_id) ) {
-                    next;
-                }
-                if ( !$self->{skip_arg_validation} ) {
-                    if (    ( $method_def->{args}->{$argname} )
-                        and ( !defined $args->{$argname} ) )
+
+                ### Create safe arg hashref
+
+                foreach my $argname ( sort keys %{$args} ) {
+                    if ( ( !defined $method_def->{args}->{$argname} ) and ( !$self->{skip_arg_validation} ) )
                     {
-                        if ( $self->{die_on_validation} ) {
-                            die "The field $argname is required and not specified. Terminating.";
-                        } else {
-                            warn "The field $argname is required and not specified, discarding request.";
-                            $self->{response_error} = {
-                                "request" => $url,
-                                "error"   => "The field $argname is required and not specified"
-                            };
-                        }
-                        return undef;
-                    }
-
-                }
-
-            }
-
-            ### Create safe arg hashref
-
-            foreach my $argname ( sort keys %{$args} ) {
-                if ( ( !defined $method_def->{args}->{$argname} ) and ( !$self->{skip_arg_validation} ) ) {
-                    warn "The field $argname is unknown and will not be passed";
-                } else {
-
-                    # drop arguments with undefined values (backcompat with v1.xx)
-                    next unless defined $args->{$argname};
-                    if ( $method_def->{post} ) {
-                        $finalargs->{$argname} = $args->{$argname};
+                        warn "The field $argname is unknown and will not be passed";
                     } else {
-                        $finalargs = "";
-                        if ( !$finalargs ) {
-                            $finalargs .= "?";
+
+                        # drop arguments with undefined values (backcompat with v1.xx)
+                        next unless defined $args->{$argname};
+                        if ( $method_def->{post} ) {
+                            $finalargs->{$argname} = $args->{$argname};
+                        } else {
+                            $finalargs = "";
+                            if ( !$finalargs ) {
+                                $finalargs .= "?";
+                            }
+                            $finalargs .= "&" unless $finalargs eq "?";
+                            $finalargs .= $argname . "=" . uri_escape( $args->{$argname} );
                         }
-                        $finalargs .= "&" unless $finalargs eq "?";
-                        $finalargs .= $argname . "=" . uri_escape( $args->{$argname} );
                     }
                 }
             }
+
             ### Send the LWP request
 
             my $req;
@@ -579,19 +644,26 @@ BEGIN {
 
             $self->{response_code}    = $req->code;
             $self->{response_message} = $req->message;
+            $self->{response_error}   = $req->content;
 
-            if ( $whoami eq "relationship_exists" ) {
-                ### This is a hack for relationship_exists which currently suffers from twitter breakage
-                ### because what they return breaks some JSON decoders. Have to manually parse the
-                ### results and return a boolean. Twitter says they are going to fix their end and this
-                ### will go away.
+            undef $retval;
 
-                return unless $req->is_success;
-                return $req->content =~ /true/ ? 1 : 0;
-            } else {
-                $self->{response_error} = $req->content;
-                return ( $req->is_success ) ? JSON::Any->jsonToObj( $req->content ) : undef;
+            if ( $req->is_success ) {
+                $retval = eval { JSON::Any->jsonToObj( $req->content ) };
+
+                ### Trap a case where twitter could return a 200 success but give up badly formed JSON
+                ### which would cause it to die. This way it simply assigns undef to $retval
+                ### If this happens, response_code, response_message and response_error aren't going to
+                ### have any indication what's wrong, so we prepend a statement to request_error.
+
+                if ( !defined $retval ) {
+                    $self->{response_error} =
+                      "TWITTER RETURNED SUCCESS BUT PARSING OF THE RESPONSE FAILED - " . $req->content;
+                }
             }
+
+            return $retval;
+
           }
     }
 }
@@ -605,7 +677,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.00_03
+This document describes Net::Twitter version 2.00_04
 
 =head1 SYNOPSIS
 
@@ -775,11 +847,7 @@ addition to the http code and message above.
 Set your current status. This returns a hashref containing your most
 recent status. Returns undef if an error occurs.
  
-This method's args changed slightly starting with Net::Twitter 1.18. In 1.17
-and back this method took a single argument of a string to set as update. For backwards
-compatibility, this manner of calling update is still valid.
- 
-As of 1.18 Net::Twitter will also accept a hashref containing one or two arguments.
+The method accepts a hashref containing one or two arguments.
  
 =over
  
@@ -817,36 +885,37 @@ Destroys the status specified by the required ID parameter. The
 authenticating user must be the author of the specified status.
  
 =item C<user_timeline(...)>
- 
-Returns the 20 most recent statuses posted in the last 24 hours from the
-authenticating user. It's also possible to request another user's timeline
-via the id parameter below.
- 
+
+This returns an arrayref to an array of hashrefs, containing the 20 (or more) posts from
+either the authenticating user (if no argument is passed), or from a specific user if
+the id field is passed in a hashref.
+
 Accepts an optional argument of a hashref:
  
 =over
  
 =item C<id>
  
-ID or email address of a user other than the authenticated user, in order to retrieve that user's user_timeline.
+OPTIONAL: ID or email address of a user other than the authenticated user, in 
+order to retrieve that user's user_timeline.
  
 =item C<since>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified HTTP-formatted date.
  
 =item C<since_id>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified ID.
  
 =item C<count>
  
-Narrows the returned results to a certain number of statuses. This is limited to 200.
+OPTIONAL: Narrows the returned results to a certain number of statuses. This is limited to 200.
  
 =item C<page>
  
-Gets the 20 next most recent statuses from the authenticating user and that user's
+OPTIONAL: Gets the 20 next most recent statuses from the authenticating user and that user's
 friends, eg "page=3".
  
 =back
@@ -854,35 +923,33 @@ friends, eg "page=3".
  
 =item C<public_timeline()>
  
-This returns a hashref containing the public timeline of all twitter
-users. Returns undef if an error occurs.
- 
-WARNING: Twitter has removed the optional argument of a status ID limiting responses
-to only statuses greater than that ID. As of Net::Twitter 1.18 this parameter has been removed.
- 
+This returns an arrayref to an array of hashrefs, containing the information and status of
+each of the last 20 posts by all non-private twitter users.
+   
 =item C<friends_timeline(...)>
  
-Returns the 20 most recent statuses posted in the last 24 hours from the
-authenticating user and that user's friends. It's also possible to request
-another user's friends_timeline via the id parameter below.
+Returns the 20 most recent statuses posted from the authenticating user and that user's 
+friends. It's also possible to request another user's friends_timeline via the id parameter below.
  
-Accepts an optional argument hashref:
+If called with no arguments, returns the friends' timeline for the authenticating user.
+
+Accepts an optional hashref as an argument:
  
 =over
  
 =item C<id>
  
-User id or email address of a user other than the authenticated user,
+OPTIONAL: User id or email address of a user other than the authenticated user,
 in order to retrieve that user's friends_timeline.
  
 =item C<since>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified HTTP-formatted date.
  
 =item C<since_id>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified ID.
  
 =item C<count>
@@ -897,16 +964,11 @@ friends, eg "page=3".
 =back
  
 =item C<replies(...)>
- 
-Returns the 20 most recent replies (status updates prefixed with @username
+
+This returns an arrayref to an array of hashrefs, containing the information and status of
+each of the last 20 replies (status updates prefixed with @username
 posted by users who are friends with the user being replied to) to the
 authenticating user.
- 
-This method's args changed slightly starting with Net::Twitter 1.18. In 1.17
-and back this method took a single argument of a page to retrieve, to retrieve the next
-20 most recent statuses. For backwards compatibility, this manner of calling replies is still valid.
- 
-As of 1.18 Net::Twitter will also accept a hashref containing up to three arguments.
  
 =over
  
@@ -933,8 +995,10 @@ OPTIONAL: Gets the 20 next most recent replies.
  
 =item C<friends()>
  
-This returns a hashref containing the most recent status of those you
+This returns an arrayref to an array of hashrefs. Each hashref contains the information and status of those you
 have marked as friends in twitter. Returns undef if an error occurs.
+
+Takes a hashref as an arg:
  
 =over
  
@@ -950,14 +1014,17 @@ in order to retrieve that user's friends.
  
 =item C<page>
  
-Gets the 100 next most recent friends, eg "page=3".
+OPTIONAL: Gets the 100 next most recent friends, eg "page=3".
  
 =back
  
 =item C<followers()>
  
-This returns a hashref containing the timeline of those who follow your
-status in twitter. Returns undef if an error occurs.
+his returns an arrayref to an array of hashrefs. Each hashref contains the information 
+and status of those who follow your status in twitter. Returns undef if an error occurs.
+
+If called without an argument returns the followers for the authenticating user, but can
+pull followers for a specific ID.
  
 Accepts an optional hashref for arguments:
  
@@ -969,15 +1036,16 @@ OPTIONAL: The ID or screen name of the user for whom to request a list of follow
  
 =item C<page>
  
-Retrieves the next 100 followers.
+OPTIONAL: Retrieves the next 100 followers.
  
 =back
  
 =item C<show_user()>
  
-Returns extended information of a single user.
+Returns a hashref containing extended information of a single user.
  
-The argument is a hashref containing either the user's ID or email address:
+The argument is a hashref containing either the user's ID or email address. It is required
+to pass either one or the other:
  
 =over
  
@@ -1012,16 +1080,16 @@ Accepts an optional hashref for arguments:
  
 =item C<page>
  
-Retrieves the 20 next most recent direct messages.
+OPTIONAL: Retrieves the 20 next most recent direct messages.
  
 =item C<since>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified HTTP-formatted date.
  
 =item C<since_id>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified ID.
  
 =back
@@ -1036,16 +1104,16 @@ Accepts an optional hashref for arguments:
  
 =item C<page>
  
-Retrieves the 20 next most recent direct messages.
+OPTIONAL: Retrieves the 20 next most recent direct messages.
  
 =item C<since>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified HTTP-formatted date.
  
 =item C<since_id>
  
-Narrows the returned results to just those statuses created after the
+OPTIONAL: Narrows the returned results to just those statuses created after the
 specified ID.
  
 =back
@@ -1060,11 +1128,11 @@ REQUIRES an argument of a hashref:
  
 =item C<user>
  
-ID or email address of user to send direct message to.
+REQUIRED: ID or email address of user to send direct message to.
  
 =item C<text>
  
-Text of direct message.
+REQUIRED: Text of direct message.
  
 =back
  
@@ -1082,14 +1150,8 @@ authenticating user must be the recipient of the specified direct message.
 =item C<create_friend(...)>
  
 Befriends the user specified in the id parameter as the authenticating user.
-Returns the befriended user in the requested format when successful.
- 
-This method's args changed slightly starting with Net::Twitter 1.18. In 1.17
-and back this method took a single argument of id to befriend. For backwards
-compatibility, this manner of calling update is still valid.
- 
-As of 1.18 Net::Twitter will also accept a hashref containing one or two arguments.
- 
+Returns a hashref containing the befriended user's information when successful.
+  
 =over
  
 =item C<id>
@@ -1105,12 +1167,14 @@ OPTIONAL. Enable notifications for the target user in addition to becoming frien
 =item C<destroy_friend($id)>
  
 Discontinues friendship with the user specified in the ID parameter as the
-authenticating user. Returns the un-friended user in the requested format
+authenticating user. Returns a hashref containing the unfriended user's information 
 when successful.
+
  
 =item C<relationship_exists($user_a, $user_b)>
  
-Tests if friendship exists between the two users specified as arguments.
+Tests if friendship exists between the two users specified as arguments. Both arguments
+are REQUIRED.
  
 =back
  
@@ -1120,9 +1184,8 @@ Tests if friendship exists between the two users specified as arguments.
  
 =item C<verify_credentials()>
  
-Returns an HTTP 200 OK response code and a format-specific response if
-authentication was successful. Use this method to test if supplied user
-credentials are valid with minimal overhead.
+Returns a hashref containing the authenticating user's extended information if the login
+credentials are correct.
  
 =item C<end_session()>
  
@@ -1131,8 +1194,8 @@ this method to sign users out of client-facing applications like widgets.
  
 =item C<update_location($location)>
  
-WARNING: This method has been deprecated in favor of the update_profile method below. It still functions today
-but will be removed in future versions.
+WARNING: This method has been deprecated in favor of the update_profile method below. 
+It still functions today but will be removed in future versions.
  
 Updates the location attribute of the authenticating user, as displayed on
 the side of their profile and returned in various API methods.
@@ -1140,7 +1203,7 @@ the side of their profile and returned in various API methods.
 =item C<update_delivery_device($device)>
  
 Sets which device Twitter delivers updates to for the authenticating user.
-$device must be one of: "sms", "im", or "none". Sending none as the device
+$device is required and must be one of: "sms", "im", or "none". Sending none as the device
 parameter will disable IM or SMS updates.
  
 =item C<update_profile_colors(...)>
@@ -1148,7 +1211,8 @@ parameter will disable IM or SMS updates.
 Sets one or more hex values that control the color scheme of the authenticating user's profile
 page on twitter.com. These values are also returned in the show_user method.
  
-This method takes a hashref as an argument, with the following optional fields containing a hex color string.
+This method takes a hashref as an argument, with the following optional fields 
+containing a hex color string.
  
 =over
  
@@ -1168,17 +1232,16 @@ This method takes a hashref as an argument, with the following optional fields c
  
 Updates the authenticating user's profile image.
  
-This takes as an argument a GIF, JPG or PNG image, no larger than 700k in size. Expects raw image data,
-not a pathname or URL to the image.
+This takes as a required argument a GIF, JPG or PNG image, no larger than 700k in size. 
+Expects raw image data, not a pathname or URL to the image.
  
 =item C<update_profile_background_image(...)>)
  
 Updates the authenticating user's profile background image.
  
-This takes as an argument a GIF, JPG or PNG image, no larger than 800k in size. Expects raw image data,
-not a pathname or URL to the image.
- 
- 
+This takes as a required argument a GIF, JPG or PNG image, no larger than 800k in size. 
+Expects raw image data, not a pathname or URL to the image.
+
 =item C<rate_limit_status>
  
 Returns the remaining number of API requests available to the authenticating
@@ -1191,30 +1254,31 @@ the rate limit.
 Sets values that users are able to set under the "Account" tab of their settings page.
  
 Takes as an argument a hashref containing fields to be updated. Only the parameters specified
-will be updated. For example, to only update the "name" attribute, for example,
-only include that parameter in the hashref.
+will be updated. For example, to only update the "name" attribute include only that parameter 
+in the hashref.
  
 =over
  
 =item C<name>
  
-Twitter user's name. Maximum of 40 characters.
+OPTIONAL: Twitter user's name. Maximum of 40 characters.
  
 =item C<email>
  
-Email address. Maximum of 40 characters. Must be a valid email address.
+OPTIONAL: Email address. Maximum of 40 characters. Must be a valid email address.
  
 =item C<url>
  
-Homepage URL. Maximum of 100 characters. Will be prepended with "http://" if not present.
+OPTIONAL: Homepage URL. Maximum of 100 characters. Will be prepended with "http://" if not present.
  
 =item C<location>
  
-Geographic location. Maximum of 30 characters. The contents are not normalized or geocoded in any way.
+OPTIONAL: Geographic location. Maximum of 30 characters. The contents are not normalized or 
+geocoded in any way.
  
 =item C<description>
  
-Personal description. Maximum of 160 characters.
+OPTIONAL: Personal description. Maximum of 160 characters.
  
 =back
  
@@ -1235,7 +1299,7 @@ This takes a hashref as an argument:
     
 =item C<id>
  
-Optional. The ID or screen name of the user for whom to request a list of favorite
+OPTIONAL. The ID or screen name of the user for whom to request a list of favorite
 statuses.
  
 =item C<page>
@@ -1253,7 +1317,7 @@ This takes a hashref as an argument:
 =over
     
 =item C<id>
-Required. The ID of the status to favorite.
+REQUIRED: The ID of the status to favorite.
  
 =back
  
@@ -1267,7 +1331,7 @@ This takes a hashref as an argument:
 =over
     
 =item C<id>
-Required. The ID of the status to un-favorite.
+REQUIRED. The ID of the status to un-favorite.
  
 =back
  
@@ -1287,7 +1351,7 @@ This takes a hashref as an argument:
 =over
     
 =item C<id>
-Required. The ID or screen name of the user to receive notices from.
+REQUIRED: The ID or screen name of the user to receive notices from.
  
 =back
  
@@ -1302,7 +1366,7 @@ This takes a hashref as an argument:
     
 =item C<id>
  
-Required. The ID or screen name of the user to stop receiving notices from.
+REQUIRED: The ID or screen name of the user to stop receiving notices from.
  
 =back
  
@@ -1314,32 +1378,35 @@ Required. The ID or screen name of the user to stop receiving notices from.
  
 =item C<create_block($id)>
  
-Blocks the user specified in the ID parameter as the authenticating user.
-Returns the blocked user in the requested format when successful.
+Blocks the user id passed as an argument from the authenticating user.
+Returns a hashref containing the user information for the blocked user when successful.
  
 You can find more information about blocking at
 L<http://help.twitter.com/index.php?pg=kb.page&id=69>.
  
 =item C<destroy_block($id)>
- 
-Un-blocks the user specified in the ID parameter as the authenticating
-user. Returns the un-blocked user in the requested format when successful.
- 
+
+Un-blocks the user id passed as an argument from the authenticating user.
+Returns a hashref containing the user information for the blocked user when successful.
+
 =back
  
 =head2 SEARCH
 
-As of version 2.00, Net::Twitter now implements the search functionality of Twitter.
+As of version 2.00, Net::Twitter implements the search functionality of Twitter.
 
 =over
 
 =item C<search()>
 
-Performs a search on http://search.twitter.com for your query string, returning a hashref
-full of posts, in the same manner as the *_timeline methods, but does not include the
-"user" item with the posting user's information.
+Performs a search on http://search.twitter.com for your query string. 
 
-This method takes a hashref as an argument:
+This returns a hashref which is slightly different than the other methods such as public_timeline.
+The hashref contains a key named C<results> which contains an arrayref to an array of hashrefs, each
+hashref containing a single post. These hashrefs do not include the "user" item with the 
+posting user's information such as the *_timeline methods do.
+
+This method takes a required hashref as an argument:
 
 =over
 
@@ -1354,8 +1421,8 @@ with Net::Twitter::Search.
 Both q and query are aliases to the same argument. Specifying both will use
 the value specified for "query". 
 
-Please note that you cannot use the "near" search operator to specify arbitrary Lat/Long locations. For this
-use the C<geocode> argument below.
+Please note that you cannot use the "near" search operator to specify arbitrary Lat/Long locations. 
+For this use the C<geocode> argument below.
 
 =item C<lang>
 
@@ -1376,7 +1443,7 @@ OPTIONAL: Restricts returned posts to those status ids greater than the given id
 
 =item C<geocode>
 
-Returns posts by users located within the radius of the given latitude/longitude, where the user's 
+OPTIONAL: Returns posts by users located within the radius of the given latitude/longitude, where the user's 
 location is taken from their Twitter profile. The format of the parameter value is "latitide,longitude,radius", 
 with radius units specified as either "mi" (miles) or "km" (kilometers).
 
@@ -1386,7 +1453,6 @@ OPTIONAL: When set to a true boolean value C<show_user> will prepend "<username>
 each post returned.
 
 =back 
-
 
 =item BACKWARDS COMPATIBILITY WITH Net::Twitter::Search
 
@@ -1417,14 +1483,9 @@ code.
 =item C<downtime_schedule()>
  
 Returns the same text displayed on L<http://twitter.com/home> when a
-maintenance window is scheduled, in the requested format.
- 
-=back
+maintenance window is scheduled.
 
-=head1 CONFIGURATION AND ENVIRONMENT
-  
-Net::Twitter uses LWP internally. Any environment variables that LWP
-supports should be supported by Net::Twitter. I hope.
+=back
 
 =head1 DEPENDENCIES
 
