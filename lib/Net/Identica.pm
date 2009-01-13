@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Identica - Perl OO interface to www.identi.ca
-# v2.00_04
+# v2.00_05
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Identica;
-$VERSION = "2.00_04";
+$VERSION = "2.00_05";
 use warnings;
 
 use Net::Twitter;
@@ -33,7 +33,7 @@ Net::Identica - Perl interface to identi.ca
 
 =head1 VERSION
 
-This document describes Net::Identica version 2.00_04
+This document describes Net::Identica version 2.00_05
 
 =head1 SYNOPSIS
 
@@ -57,7 +57,7 @@ twitter compatible API.
 This module wraps L<Net::Twitter>, defaulting to the connection information 
 for identica instead of twitter.
 
-All other methods in LNet::Twitter> work as documented, except where listed 
+All other methods in L<Net::Twitter> work as documented, except where listed 
 in the identica / laconica documentation at:
 
 L<http://laconi.ca/trac/wiki/TwitterCompatibleAPI>
@@ -66,8 +66,8 @@ L<http://laconi.ca/trac/wiki/TwitterCompatibleAPI>
 
 Chris Thompson <cpan@cthompson.com>
 
-The framework of this module is shamelessly stolen from L<Net::AIML>. Big
-ups to Chris "perigrin" Prather for that.
+This replaces the original Net::Identica written by Alan Haggai Alavi and uses
+the identi.ca/laconi.ca twitter API instead of direct HTML parsing.
        
 =head1 LICENCE AND COPYRIGHT
 
