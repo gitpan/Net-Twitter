@@ -1,17 +1,17 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.00_05
+# v2.00
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.00_05";
-use warnings;
+$VERSION = "2.00";
 use strict;
 
 use URI::Escape;
-use JSON::Any;
+use JSON::Any 1.19;
 use LWP::UserAgent;
+use Carp;
 
 sub new {
     my $class = shift;
@@ -53,10 +53,10 @@ sub new {
     if ($@) {
 
         if ( ( defined $conf{no_fallback} ) and ( $conf{no_fallback} ) ) {
-            die $conf{useragent_class} . " failed to load, and no_fallback enabled. Terminating.";
+            croak $conf{useragent_class} . " failed to load, and no_fallback enabled. Terminating.";
         }
 
-        warn $conf{useragent_class} . " failed to load, reverting to LWP::UserAgent";
+        carp $conf{useragent_class} . " failed to load, reverting to LWP::UserAgent";
         $conf{useragent_class} = "LWP::UserAgent";
     }
 
@@ -105,6 +105,14 @@ sub new {
     return bless {%conf}, $class;
 }
 
+### Return a shallow copy of the object to allow error handling when used in
+### Parallel/Async setups like POE. Set response_error to undef to prevent
+### spillover, just in case.
+
+sub clone { bless { %{ $_[0] }, response_error => undef } }
+
+### Change the credentials
+
 sub credentials {
     my ( $self, $username, $password, $apihost, $apirealm ) = @_;
 
@@ -130,15 +138,14 @@ sub http_message {
 }
 
 sub search {
-    my $self      = shift;
-    my $args      = shift;
-    my $finalargs = "";
-    my $url       = $self->{searchapiurl} . "?";
+    my $self = shift;
+    my $args = shift;
+    my $url  = $self->{searchapiurl} . "?";
     my $retval;
 
     ### Return if no args specified.
     if ( !defined($args) ) {
-        warn "No query string specified";
+        carp "No query string specified";
         return undef;
     }
 
@@ -154,7 +161,7 @@ sub search {
 
     if ( defined $args->{query} ) {
         if ( defined $args->{q} ) {
-            warn "Both 'q' and 'query' specified, using value of 'query'.";
+            carp "Both 'q' and 'query' specified, using value of 'query'.";
         }
         $args->{q} = delete( $args->{query} );
     }
@@ -166,8 +173,8 @@ sub search {
     my $otherargs = shift;
     if ( ref($otherargs) eq "HASH" ) {
         if ( ( defined $otherargs->{q} ) || ( defined $otherargs->{query} ) ) {
-            warn "Specifed a query both as a plain text first arg and in the hashref second arg.";
-            warn "Using query from first arg";
+            carp "Specifed a query both as a plain text first arg and in the hashref second arg.";
+            carp "Using query from first arg";
         }
         $otherargs->{"q"} = $args->{"q"};
         $args = $otherargs;
@@ -181,6 +188,7 @@ sub search {
         next unless defined $args->{$argname};
         $url .= "&" unless substr( $url, -1 ) eq "?";
         $url .= $argname . "=" . uri_escape( $args->{$argname} );
+
     }
     ### Make the request, store the results.
 
@@ -479,8 +487,7 @@ BEGIN {
             my $args = shift;
 
             my $whoami;
-            my $url = $self->{apiurl};
-            my $finalargs;
+            my $url     = $self->{apiurl};
             my $seen_id = 0;
             my $retval;
 
@@ -497,9 +504,9 @@ BEGIN {
             ### Check if no args sent and args are required.
             if ( ( !defined $args ) && ( !$method_def->{blankargs} ) ) {
                 if ( $self->{die_on_validation} ) {
-                    die "The method $whoami requires arguments and none specified. Terminating.";
+                    croak "The method $whoami requires arguments and none specified. Terminating.";
                 } else {
-                    warn "The method $whoami requires arguments and none specified. Discarding request";
+                    carp "The method $whoami requires arguments and none specified. Discarding request";
                     $self->{response_error} = {
                         "request" => $url,
                         "error"   => "The method $whoami requires arguments and none specified."
@@ -524,9 +531,9 @@ BEGIN {
                     ### $args is not a hashref and $whoami is not one of the legacy
                     ### subs, so we punt.
                     if ( $self->{die_on_validation} ) {
-                        die "Argument is not a HASHREF. Terminating.";
+                        croak "Argument is not a HASHREF. Terminating.";
                     } else {
-                        warn "Argument is not a HASHREF. Discarding request";
+                        carp "Argument is not a HASHREF. Discarding request";
                         $self->{response_error} = {
                             "request" => $url,
                             "error"   => "Argument is not a HASHREF."
@@ -554,7 +561,7 @@ BEGIN {
                     ### show_user requires either id or email, this workaround checks that email is
                     ### passed if id is not.
                     if ( !defined $args->{email} ) {
-                        warn "Either id or email is required by show_user, discarding request.";
+                        carp "Either id or email is required by show_user, discarding request.";
                         $self->{response_error} = {
                             "request" => $method_def->{uri},
                             "error"   => "Either id or email is required by show_user, discarding request.",
@@ -567,7 +574,7 @@ BEGIN {
                     ### tack on .json, otherwise warn and return undef
 
                     if ( $method_def->{args}->{id} ) {
-                        warn "The field id is required and not specified";
+                        carp "The field id is required and not specified";
                         $self->{response_error} = {
                             "request" => $method_def->{uri},
                             "error"   => "The field id is required and not specified",
@@ -590,6 +597,8 @@ BEGIN {
                         next;
                     }
                     if ( ( $argname eq "id" ) and ($seen_id) ) {
+                        ### We've already handled id by putting it in the url, it doesn't
+                        ### go in the args.
                         next;
                     }
                     if ( !$self->{skip_arg_validation} ) {
@@ -598,9 +607,9 @@ BEGIN {
                             and ( !defined $args->{$argname} ) )
                         {
                             if ( $self->{die_on_validation} ) {
-                                die "The field $argname is required and not specified. Terminating.";
+                                croak "The field $argname is required and not specified. Terminating.";
                             } else {
-                                warn "The field $argname is required and not specified, discarding request.";
+                                carp "The field $argname is required and not specified, discarding request.";
                                 $self->{response_error} = {
                                     "request" => $url,
                                     "error"   => "The field $argname is required and not specified"
@@ -618,7 +627,7 @@ BEGIN {
             ### Send the LWP request
             my $uri = URI->new($url);
             $uri->query_form($args);
-            
+
             my $req = $self->{ua}->request( HTTP::Request->new( $reqtype, $uri ) );
 
             $self->{response_code}    = $req->code;
@@ -656,7 +665,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.00_05
+This document describes Net::Twitter version 2.00
 
 =head1 SYNOPSIS
 
@@ -666,11 +675,23 @@ This document describes Net::Twitter version 2.00_05
 
    my $twit = Net::Twitter->new(username=>"myuser", password=>"mypass" );
 
-   $result = $twit->update(status => "My current Status");
+   my $result = $twit->update(status => "My current Status");
 
-   $twit->credentials("otheruser", "otherpass");
+   my $twit->credentials("otheruser", "otherpass");
 
-   $result = $twit->update(status => "Status for otheruser");
+   my $result = $twit->update(status => "Status for otheruser");
+
+   my $result = $twitter->search('Albi the racist dragon');
+
+   foreach my $tweet (@{ $results }) {
+     my $speaker =  $tweet->{from_user};
+     my $text = $tweet->{text};
+     my $time = $tweet->{created_at};
+     print "$time <$speaker> $text\n";
+   }
+
+    my $steve = $twitter->search('Steve');
+    $twitter->update($steve .'? Who is steve?');
 
 =head1 DESCRIPTION
 
@@ -710,6 +731,12 @@ OPTIONAL: Sets the User Agent header in the HTTP request. If omitted, this will 
 
 OPTIONAL: An L<LWP::UserAgent> compatible class, e.g., L<LWP::UserAgent::POE>.
 If omitted, this will default to L<LWP::UserAgent>.
+
+=item C<no_fallback>
+
+OPTIONAL: If a C<useragent_class> is specified but fails to load, the default behavior is
+to warn and fall back to using regular L<LWP::UserAgent>. If C<no_fallback> is set to a boolean true
+value, the C<new> method will cause the code to C<die>
 
 =item C<source>
 
@@ -793,6 +820,13 @@ new() will change this behavior to simply executing a die() with the appropriate
 defaults to false.
 
 =back
+
+=item C<clone()>
+
+Returns a shallow copy of the Net::Twitter object. This can be used when Net::Twitter is used in 
+a Parallel or Asynchronous framework to enable easier access to returned error values. All clones share
+the same LWP::UserAgent object, so calling C<credentials()> will change the login credentials of all
+clones.
 
 =item C<credentials($username, $password, $apihost, $apiurl)>
  
@@ -1372,7 +1406,8 @@ Returns a hashref containing the user information for the blocked user when succ
  
 =head2 SEARCH
 
-As of version 2.00, Net::Twitter implements the search functionality of Twitter.
+As of version 2.00, Net::Twitter implements the search functionality of Twitter,
+using code derived from Net::Twitter::Search by Brenda Wallace.
 
 =over
 
