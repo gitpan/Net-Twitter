@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.00
+# v2.01
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.00";
+$VERSION = "2.01";
 use strict;
 
 use URI::Escape;
@@ -135,6 +135,33 @@ sub http_code {
 sub http_message {
     my $self = shift;
     return $self->{response_message};
+}
+
+sub update_twittervision {
+    my ( $self, $location ) = @_;
+    my $response;
+ 
+    if ( $self->{twittervision} ) {
+        my $tvreq = $self->{tvua}->post(
+            $self->{tvurl} . "/user/update_location.json",
+            [ location => uri_escape($location) ]
+        );
+        if ( $tvreq->content ne "User not found" ) {
+            $self->{response_code}    = $tvreq->code;
+            $self->{response_message} = $tvreq->message;
+            $self->{response_error}   = $tvreq->content;
+            
+            if ( $tvreq->is_success ) {
+                $response = eval { JSON::Any->jsonToObj( $tvreq->content ) };
+
+                if ( !defined $response ) {
+                    $self->{response_error} =
+                      "TWITTERVISION RETURNED SUCCESS BUT PARSING OF THE RESPONSE FAILED - " . $tvreq->content;
+                }
+            }
+        }
+    }
+    return $response;
 }
 
 sub search {
@@ -525,8 +552,15 @@ BEGIN {
                     $single_arg = "status";
                 } elsif ( $whoami eq "replies" ) {
                     $single_arg = "page";
-                } elsif ( $whoami =~ m/friends\b|show_user|create_friend/ ) {
+                } elsif ( $whoami =~ m/create_block|destroy_block|friends\b|show_user|create_friend|destroy_friend|destroy_direct_message/) {
                     $single_arg = "id";
+                } elsif ( $whoami =~ m/update_profile_image|update_profile_background_image/ ) {
+                    $single_arg = "image";
+                } elsif ( $whoami eq "update_delivery_device" ) {
+                    $single_arg = "device";
+                } elsif ( $whoami eq "update_location" ) {
+                    $single_arg = "location";
+
                 } else {
                     ### $args is not a hashref and $whoami is not one of the legacy
                     ### subs, so we punt.
@@ -625,10 +659,14 @@ BEGIN {
             }
 
             ### Send the LWP request
-            my $uri = URI->new($url);
-            $uri->query_form($args);
-
-            my $req = $self->{ua}->request( HTTP::Request->new( $reqtype, $uri ) );
+            my $req;
+            if ( $reqtype eq 'POST' ) {
+                $req = $self->{ua}->post( $url, $args );
+            } else {
+                my $uri = URI->new($url);
+                $uri->query_form($args);
+                $req = $self->{ua}->get($uri);
+            }
 
             $self->{response_code}    = $req->code;
             $self->{response_message} = $req->message;
@@ -665,7 +703,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.00
+This document describes Net::Twitter version 2.01
 
 =head1 SYNOPSIS
 
