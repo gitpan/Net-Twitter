@@ -1,11 +1,12 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.03
+# v2.04
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.03";
+$VERSION = "2.04";
+use 5.005;
 use strict;
 
 use URI::Escape;
@@ -562,7 +563,7 @@ BEGIN {
                 } elsif ( $whoami eq "replies" ) {
                     $args = { "page" => $args };
                 } elsif ( $whoami =~
-m/create_block|destroy_block|friends\b|show_user|create_friend|destroy_friend|destroy_direct_message/
+m/create_block|destroy_block|friends\b|show_user|create_friend|destroy_friend|destroy_direct_message|show_status/
                   )
                 {
                     $args = { "id" => $args };
@@ -596,9 +597,9 @@ m/create_block|destroy_block|friends\b|show_user|create_friend|destroy_friend|de
 
             ### Create the URL. If it ends in /ID it needs the id param substituted
             ### into the URL and not as an arg.
-            if ( $method_def->{uri} =~ s|/ID|| ) {
+            if ( (my $uri = $method_def->{uri}) =~ s|/ID|| ) {
                 if ( defined $args->{id} ) {
-                    $url .= $method_def->{uri} . "/" . delete( $args->{id} ) . ".json";
+                    $url .= $uri . "/" . delete( $args->{id} ) . ".json";
                     $seen_id++;
                 } elsif ( $whoami eq "show_user" ) {
 
@@ -612,6 +613,7 @@ m/create_block|destroy_block|friends\b|show_user|create_friend|destroy_friend|de
                         };
                         return $self->{error_return_val};
                     }
+                    $url .= "$uri.json";
                 } else {
 
                     ### No id field is found but may be optional. If so, skip id in the URL and just
@@ -737,7 +739,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.03
+This document describes Net::Twitter version 2.04
 
 =head1 SYNOPSIS
 
