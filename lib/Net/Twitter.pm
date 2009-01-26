@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.05
+# v2.06
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.05";
+$VERSION = "2.06";
 use 5.005;
 use strict;
 
@@ -575,7 +575,7 @@ BEGIN {
                 followers
                 user_timeline
                 );
-            
+
             if ( ( !ref($args) ) && ( defined $args ) ) {
                 if ( $whoami eq "relationship_exists" ) {
                     my $user_b = shift;
@@ -646,11 +646,11 @@ BEGIN {
                         };
                         return $self->{error_return_val};
                     } else {
-                        $url .= $method_def->{uri} . ".json";
+                        $url .= $uri . ".json";
                     }
                 }
             } else {
-                $url .= $method_def->{uri} . ".json";
+                $url .= $uri . ".json";
             }
 
             ### Validate args. Don't validate if $args is undef, we've already checked that
@@ -758,7 +758,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.05
+This document describes Net::Twitter version 2.06
 
 =head1 SYNOPSIS
 
@@ -1671,6 +1671,8 @@ You can track Net::Twitter development at http://github.com/ct/net-twitter/tree/
 =head1 AUTHOR
 
 Chris Thompson <cpan@cthompson.com>
+
+The test framework for Net::Twitter was written by Marc "semifor" Mims.
 
 The framework of this module is shamelessly stolen from L<Net::AIML>. Big
 ups to Chris "perigrin" Prather for that.
