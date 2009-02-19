@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.07
+# v2.08
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.07";
+$VERSION = "2.08";
 use 5.005;
 use strict;
 
@@ -131,13 +131,18 @@ sub credentials {
 
 sub get_error {
     my $self = shift;
-    return $self->{response_error};
     my $response = eval { JSON::Any->jsonToObj( $self->{response_error} ) };
 
     if ( !defined $response ) {
-        $self->{response_error} = "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF THE JSON RESPONSE FAILED - "
-          . $self->{response_error};
+        $response = {
+            request => undef,
+            error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF THE JSON RESPONSE FAILED - "
+              . $self->{response_error}
+        };
     }
+
+    return $response;
+
 }
 
 sub http_code {
@@ -778,7 +783,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.07
+This document describes Net::Twitter version 2.08
 
 =head1 SYNOPSIS
 
@@ -786,13 +791,13 @@ This document describes Net::Twitter version 2.07
 
    use Net::Twitter;
 
-   my $twit = Net::Twitter->new(username=>"myuser", password=>"mypass" );
+   my $twit = Net::Twitter->new({username=>"myuser", password=>"mypass" });
 
-   my $result = $twit->update(status => "My current Status");
+   my $result = $twit->update({status => "My current Status"});
 
    my $twit->credentials("otheruser", "otherpass");
 
-   my $result = $twit->update(status => "Status for otheruser");
+   my $result = $twit->update({status => "Status for otheruser"});
 
    my $result = $twitter->search('Albi the racist dragon');
 
@@ -815,8 +820,6 @@ your friends.
 You can view the latest status of Net::Twitter on it's own twitter timeline
 at http://twitter.com/net_twitter
 
-=over
-
 =head1 METHODS AND ARGUMENTS
 
 Listed below are the methods available through the object.
@@ -833,6 +836,8 @@ in the form:
 If the curly brackets around the arguments are missing, the code which implements the
 convenience methods allowing you to specify a single argument as a string will interpret
 "arg" as your argument.
+
+=over
 
 =item C<new(...)>
 
@@ -1394,6 +1399,8 @@ This method can take the "id" argument passed to it either as a single string, o
 hashref with a key called "id". If passed as a string, no other args can be specified.
 If no args are passed, returns the list for the authenticating user.
  
+=back
+
 =head2 ACCOUNT METHODS
  
 =over
