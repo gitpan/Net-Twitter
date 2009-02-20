@@ -27,4 +27,4 @@ resources:
   homepage: http://www.net-twitter.info
   license: http://dev.perl.org/licenses/
   repository: git://github.com/ct/net-twitter.git
-version: 2.08
+version: 2.09

@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.08
+# v2.09
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.08";
+$VERSION = "2.09";
 use 5.005;
 use strict;
 
@@ -443,6 +443,18 @@ BEGIN {
                 "uri"       => "/account/end_session",
                 "args"      => {},
             },
+            "update_profile" => {
+                "blankargs" => 0,
+                "post"      => 1,
+                "uri"       => "/account/update_profile",
+                "args"      => {
+                    "name"        => 0,
+                    "email"       => 0,
+                    "url"         => 0,
+                    "location"    => 0,
+                    "description" => 0,
+                },
+              },
             "update_profile_colors" => {
                 "blankargs" => 0,
                 "post"      => 1,
@@ -783,7 +795,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.08
+This document describes Net::Twitter version 2.09
 
 =head1 SYNOPSIS
 
