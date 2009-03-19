@@ -17,6 +17,7 @@ META.yml
 README
 t/00.load.t
 t/01_api.t
+t/02_ua_args.t
 t/99_check_arg_combos.t
 t/lib/TestUA.pm
 t/pod-coverage.t

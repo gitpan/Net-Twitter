@@ -1,11 +1,11 @@
 ##############################################################################
 # Net::Twitter - Perl OO interface to www.twitter.com
-# v2.10
+# v2.11
 # Copyright (c) 2009 Chris Thompson
 ##############################################################################
 
 package Net::Twitter;
-$VERSION = "2.10";
+$VERSION = "2.11";
 use 5.005;
 use strict;
 
@@ -74,7 +74,11 @@ sub new {
 
     ### Create an LWP Object to work with
 
-    $conf{ua} = $conf{useragent_class}->new();
+    if ( ( $conf{useragent_args} ) and ( ref $conf{useragent_args} ) ) {
+        $conf{ua} = $conf{useragent_class}->new( %{$conf{useragent_args}} );
+    } else {
+        $conf{ua} = $conf{useragent_class}->new();
+    }
 
     $conf{username} = $conf{user} if defined $conf{user};
     $conf{password} = $conf{pass} if defined $conf{pass};
@@ -806,7 +810,7 @@ Net::Twitter - Perl interface to twitter.com
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.10
+This document describes Net::Twitter version 2.11
 
 =head1 SYNOPSIS
 
@@ -889,6 +893,15 @@ OPTIONAL: Sets the User Agent header in the HTTP request. If omitted, this will 
 
 OPTIONAL: An L<LWP::UserAgent> compatible class, e.g., L<LWP::UserAgent::POE>.
 If omitted, this will default to L<LWP::UserAgent>.
+
+=item C<useragent_args>
+
+OPTIONAL: A hashref passed to this option will be passed along to the UserAgent C<new()> 
+call to specify its configuration. This will pass to whatever class is passed in 
+C<useragent_class>, if any. See the POD for L<LWP::UserAgent> for details.
+
+NOTE: Any value passed in this hashref for "agent" will be overwritten. If setting the
+useragent is necessary, use the C<useragent> option to C<new()>
 
 =item C<no_fallback>
 
@@ -1753,18 +1766,6 @@ code.
  
 Returns the same text displayed on L<http://twitter.com/home> when a
 maintenance window is scheduled.
-
-=back
-
-=head1 DEPENDENCIES
-
-=over
-
-=item L<LWP::UserAgent>
-
-=item L<URI::Escape>
-
-=item L<JSON::Any>
 
 =back
 
