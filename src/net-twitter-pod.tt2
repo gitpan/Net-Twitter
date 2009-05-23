@@ -1,6 +1,6 @@
 =head1 NAME
 
-Net::Twitter - A interface to the Twitter API
+Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 

@@ -1,5 +1,5 @@
 ---
-abstract: 'A interface to the Twitter API'
+abstract: 'A perl interface to the Twitter API'
 author:
   - 'Marc Mims <marc@questright.com>'
 build_requires:
@@ -31,4 +31,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 2.99000_02
+version: 2.99000_03
