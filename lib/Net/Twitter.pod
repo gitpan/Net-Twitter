@@ -4,7 +4,7 @@ Net::Twitter - A interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.99000_01
+This document describes Net::Twitter version 2.99000_02
 
 =head1 SYNOPSIS
 

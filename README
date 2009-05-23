@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 2.99000_01
+    This document describes Net::Twitter version 2.99000_02
 
 SYNOPSIS
       use Net::Twitter;

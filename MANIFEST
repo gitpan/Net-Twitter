@@ -11,7 +11,6 @@ lib/Net/Twitter.pm
 lib/Net/Twitter.pod
 lib/Net/Twitter/API.pm
 lib/Net/Twitter/API/REST.pm
-lib/Net/Twitter/API/Search.pm
 lib/Net/Twitter/API/TwitterVision.pm
 lib/Net/Twitter/Error.pm
 lib/Net/Twitter/Identica.pm
