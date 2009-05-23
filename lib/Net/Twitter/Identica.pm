@@ -1,7 +1,7 @@
-package Net::Twitter::Search;
+package Net::Twitter::Identica;
 use Net::Twitter;
 
-sub new { shift; Net::Twitter->new(traits => [qw/Legacy/], @_) }
+sub new { shift; Net::Twitter->new(identica => 1, @_) }
 
 1;
 
@@ -9,39 +9,23 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Search - A perl interface to the Twitter Search API
+Net::Identica - A perl interface to the Identi.ca Twitter Compatible API
 
 =head1 SYNOPSIS
 
-  use Net::Twitter;
+  use Net::Identica;
 
-  $nt = Net::Twitter::Search->new;
+  $nt = Net::Identica->new(username => $user, password => $passwd);
 
-  $tweets = $nt->search('net_twitter');
+  $nt->update('Hello, Identica friends!');
 
 =head1 DESCRIPTION
 
-This module simply creates an instance of C<Net::Twitter> with the C<Legacy> trait
-set.
+The micro-blogging service L<http://identi.ca> provides a Twitter compatible API.
+This module simply creates an instance of C<Net::Twitter> with the C<identica>
+option set.
 
 See L<Net::Twitter> for full documentation.
-
-=head1 DEPRECATION NOTICE
-
-This module is deprecated.  Use L<Net::Twitter> instead.
-
-    use Net::Twitter;
-
-    # Just the Search API; exceptions thrown on error
-    $nt = Net::Twitter->new(traits => [qw/Search/]);
-
-    # Just the Search API; errors wrapped - use $nt->get_error
-    $nt = Net::Twitter->new(traits => [qw/Search WrapError/]);
-
-    # Or, for code that uses legacy Net::Twitter idioms
-    $nt = Net::Twitter->new(traits => [qw/Legacy/]);
-
-    $tweets = $nt->search('pot of gold');
 
 =head1 METHODS
 
@@ -49,8 +33,8 @@ This module is deprecated.  Use L<Net::Twitter> instead.
 
 =item new
 
-Creates a C<Net::Twitter> object with the C<Legacy> trait.  See
-L<Net::Twitter/new> for C<new> options.
+Creates a C<Net::Twitter> object by call L<Net::Twitter/new> with the
+C<identica> option preset.
 
 =back
 
