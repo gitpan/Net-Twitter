@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.99000_04
+This document describes Net::Twitter version 2.99000_05
 
 =head1 SYNOPSIS
 
@@ -78,6 +78,12 @@ included, C<Net::Twitter> returns undef when a method fails and makes the
 error available through method C<get_error>.  This is the way all errors were
 handled in Net::Twitter versions prior to version 3.00.
 
+=item OAuth
+
+The C<OAuth> trait provides OAuth authentication rather than the default Basic
+Authentication for Twitter API method calls.  See the L</Authentication>
+section and L<Net::Twitter::Role::OAuth> for full documentation.
+
 =item Legacy
 
 This trait provides backwards compatibility to C<Net::Twitter> versions prior
@@ -115,7 +121,7 @@ implementing the REST API and throws exceptions on API method errors.
 
     Net::Twitter->new(legacy => 0);
 
-Is a shortcut for:
+is a shortcut for:
 
     Net::Twitter->new(traits => ['API::REST']);
 
@@ -158,8 +164,8 @@ defaults to "LWP::UserAgent".  For L<POE> based applications, consider using
 
 =item useragent_args
 
-An ARRAY ref of arguments to pass to constructor of the class specified with
-C<useragent_class>, above.  It defaults to [] (an empty ARRAY ref).
+An HASH ref of arguments to pass to constructor of the class specified with
+C<useragent_class>, above.  It defaults to {} (an empty HASH ref).
 
 =item useragent
 
@@ -200,12 +206,22 @@ and C<apirealm> to "http://identi.ca/api", "identi.ca:80", and "Laconica API"
 respectively.  It defaults to 0.  This option is available when the
 C<API::REST> trait is included.
 
+=item consumer_key
+
+A string containing the OAuth consumer key provided by Twitter when an application
+is registered.  This option is available when the C<OAuth> trait is included.
+
+=item consumer_secret
+
+A string containing the OAuth consumer secret.  This option is available when
+the C<OAuth> trait is included.
+
 =back
 
 =item credentials($username, $password)
 
-Set the credentials for authentication.  This is helpful for managing multiple
-accounts.
+Set the credentials for Basic Authentication.  This is helpful for managing
+multiple accounts.
 
 =item ua
 
@@ -213,6 +229,20 @@ Provides access to the constructed user agent object used internally by
 C<Net::Twitter>.  Use it with caution.
 
 =back
+
+=head1 AUTHENTICATION
+
+Twitter currently provides authentication strategies: Basic Authentication and
+OAuth.  OAuth is officially in beta, however, Twitter has expressed a desire to
+deprecate Basic Authentication in the future, so consider using OAuth in your
+applications.
+
+To set up Basic Authentication in C<Net::Twitter>, provide the C<username> and
+C<password> options to L</new> or call the L</credentials> method.
+
+To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
+C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
+more information on using OAuth, including examples.
 
 =head1 API METHODS AND ARGUMENTS
 
@@ -324,8 +354,6 @@ Returns an array of user objects that the authenticating user is blocking.
 Returns: ArrayRef[BasicUser]
 
 =item B<blocking_ids>
-
-=item B<blocking_ids(page)>
 
 
 
@@ -511,8 +539,6 @@ Returns: Status
 
 =item B<direct_messages>
 
-=item B<direct_messages(id)>
-
 
 
 =over 4
@@ -571,8 +597,6 @@ Returns: BasicUser
 
 =item B<end_session>
 
-=item B<end_session(id)>
-
 
 
 =over 4
@@ -592,8 +616,6 @@ Returns: Error
 
 =item B<favorites>
 
-=item B<favorites(id)>
-
 
 
 =over 4
@@ -611,8 +633,6 @@ user or user specified by the ID parameter.
 Returns: ArrayRef[Status]
 
 =item B<followers>
-
-=item B<followers(id)>
 
 
 
@@ -651,8 +671,6 @@ Returns an array of numeric IDs for every user is followed by.
 Returns: ArrayRef[Int]
 
 =item B<friends>
-
-=item B<friends(id)>
 
 
 =item alias: following
@@ -697,8 +715,6 @@ Returns: ArrayRef[Int]
 
 =item B<friends_timeline>
 
-=item B<friends_timeline(id)>
-
 
 =item alias: following_timeline
 
@@ -742,8 +758,6 @@ Returns: Bool
 
 =item B<mentions>
 
-=item B<mentions(user_a, user_b)>
-
 
 =item alias: replies
 
@@ -785,8 +799,6 @@ Returns: DirectMessage
 
 =item B<public_timeline>
 
-=item B<public_timeline(user, text)>
-
 
 
 =over 4
@@ -806,8 +818,6 @@ often than that is a waste of resources.
 Returns: ArrayRef[Status]
 
 =item B<rate_limit_status>
-
-=item B<rate_limit_status(user, text)>
 
 
 
@@ -830,8 +840,6 @@ the requester's IP address is returned.
 Returns: RateLimitStatus
 
 =item B<sent_direct_messages>
-
-=item B<sent_direct_messages(user, text)>
 
 
 
@@ -894,8 +902,6 @@ Returns: ExtendedUser
 
 =item B<test>
 
-=item B<test(id)>
-
 
 
 =over 4
@@ -955,8 +961,6 @@ Returns: BasicUser
 
 =item B<update_profile>
 
-=item B<update_profile(device)>
-
 
 
 =over 4
@@ -997,8 +1001,6 @@ Returns: ExtendedUser
 
 =item B<update_profile_colors>
 
-=item B<update_profile_colors(image)>
-
 
 
 =over 4
@@ -1038,8 +1040,6 @@ Returns: ExtendedUser
 
 =item B<user_timeline>
 
-=item B<user_timeline(image)>
-
 
 
 =over 4
@@ -1059,8 +1059,6 @@ your own user, or the profile page for a third party.
 Returns: ArrayRef[Status]
 
 =item B<verify_credentials>
-
-=item B<verify_credentials(image)>
 
 
 
@@ -1115,8 +1113,6 @@ Returns: ArrayRef[Status]
 
 =item B<trends>
 
-=item B<trends(q)>
-
 
 
 =over 4
@@ -1157,8 +1153,6 @@ Returns: HashRef
 
 =item B<trends_daily>
 
-=item B<trends_daily(exclude)>
-
 
 
 =over 4
@@ -1175,8 +1169,6 @@ Returns the top 20 trending topics for each hour in a given day.
 Returns: HashRef
 
 =item B<trends_weekly>
-
-=item B<trends_weekly(exclude)>
 
 
 
@@ -1281,7 +1273,7 @@ wrapping errors.  Exception handling is the newer, recommended strategy.
 When trait C<WrapError> is specified (or C<Legacy>, which includes trait
 C<WrapError>), C<Net::Twitter> returns undef on error.  To retrieve information
 about the error, use methods C<http_code>, C<http_message>, and C<get_error>.
-These methods are described in the L<Net::Twitter::WrapError>.
+These methods are described in the L<Net::Twitter::Role::WrapError>.
 
     if ( my $followers = $nt->followers ) {
         for my $follower ( @$followers ) {

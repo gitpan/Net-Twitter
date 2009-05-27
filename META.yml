@@ -22,8 +22,10 @@ recommends:
   JSON::XS: 0
 requires:
   JSON::Any: 0
+  LWP::UserAgent: 0
   Moose: 0.78
   MooseX::Traits: 0
+  Net::OAuth::Simple: 0
   URI::Escape: 0
   namespace::autoclean: 0
   perl: 5.8.1
@@ -31,4 +33,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 2.99000_04
+version: 2.99000_05

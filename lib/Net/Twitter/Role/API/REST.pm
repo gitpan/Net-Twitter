@@ -1,4 +1,4 @@
-package Net::Twitter::API::REST;
+package Net::Twitter::Role::API::REST;
 
 use Moose::Role;
 use Net::Twitter::API;
@@ -75,6 +75,9 @@ your own user, or the profile page for a third party.
     returns => 'ArrayRef[Status]',
 );
 
+# TODO: URL should be 'mentions', not 'replies', but the Laconica API doesn't
+# recognize 'mentions' yet, so we'll cheat, as long as Twitter plays along and
+# keeps 'replies' active or until Laconica/Identica is fixed.
 twitter_api_method mentions => (
     description => <<'',
 Returns the 20 most recent mentions (statuses containing @username) for the
@@ -563,7 +566,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::API::REST - A definition of the Twitter REST API as a Moose role
+Net::Twitter::Role::API::REST - A definition of the Twitter REST API as a Moose role
 
 =head1 SYNOPSIS
 
@@ -573,7 +576,7 @@ Net::Twitter::API::REST - A definition of the Twitter REST API as a Moose role
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::API::REST> provides definitions for all the Twitter REST API
+B<Net::Twitter::Role::API::REST> provides definitions for all the Twitter REST API
 methods.  Applying this role to any class provides methods for all of the
 Twitter REST API methods.
 

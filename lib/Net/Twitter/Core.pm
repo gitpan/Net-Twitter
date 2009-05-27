@@ -11,14 +11,15 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '2.99000_04';
+our $VERSION = '2.99000_05';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
 # For transparent legacy support, we need ->isa('Net::Twitter') to succeed.
 # TODO: MOP is not picking up UNIVERSAL methods. When it does, this code needs
 # to be removed and the around isa => sub {...} uncommented in Legacy.
-sub isa { my ($class, $isa) = @_;
+sub isa {
+    my ($class, $isa) = @_;
 
     return 1 if $isa && !ref $isa && $isa eq 'Net::Twitter';
 
@@ -26,7 +27,7 @@ sub isa { my ($class, $isa) = @_;
 }
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
-has useragent_args  => ( isa => 'ArrayRef', is => 'ro', default => sub { [] } );
+has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
 has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' );
 has password        => ( isa => 'Str', is => 'rw' );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
@@ -35,7 +36,7 @@ has ua              => ( isa => 'Object', is => 'rw' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
-has '+_trait_namespace' => ( default => 'Net::Twitter' );
+has '+_trait_namespace' => ( default => 'Net::Twitter::Role' );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 
 sub BUILD {
@@ -44,7 +45,7 @@ sub BUILD {
     eval "use " . $self->useragent_class;
     croak $@ if $@;
 
-    $self->ua($self->useragent_class->new(@{$self->useragent_args}));
+    $self->ua($self->useragent_class->new(%{$self->useragent_args}));
     $self->ua->agent($self->useragent);
     $self->ua->default_header('X-Twitter-Client'         => $self->clientname);
     $self->ua->default_header('X-Twitter-Client-Version' => $self->clientver);
@@ -71,7 +72,11 @@ sub _from_json {
 sub _parse_result {
     my ($self, $res) = @_;
 
-    my $obj = $self->_from_json($res->content);
+    # workaround for Laconica API returning bools as strings
+    my $content = $res->content;
+    $content =~ s/^"(true|false)"$/$1/;
+
+    my $obj = $self->_from_json($content);
 
     # Twitter sometimes returns an error with status code 200
     if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
