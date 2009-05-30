@@ -84,7 +84,7 @@ Returns the 20 most recent mentions (statuses containing @username) for the
 authenticating user.
 
     aliases => [qw/replies/],
-    path    => 'statuses/mentions',
+    path    => 'statuses/replies',
     method  => 'GET',
     params  => [qw/since_id max_id count page/],
     required => [],
@@ -254,7 +254,8 @@ Returns a string describing the failure condition when unsuccessful.
 twitter_api_method friendship_exists => (
     aliases     => [qw/relationship_exists follows/], # Net::Twitter
     description => <<'',
-Tests if a friendship exists between two users.
+Tests for the existence of friendship between two users. Will return true if
+user_a follows user_b, otherwise will return false.
 
     path     => 'friendships/exists',
     method   => 'GET',

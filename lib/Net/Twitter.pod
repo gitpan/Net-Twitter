@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 2.99000_05
+This document describes Net::Twitter version 3.00000
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ Some examples of using the C<traits> parameter in C<new>:
     $nt = Net::Twitter->new(traits => ['Legacy']);
 
     # currently, these 2 calls to new are equivalent:
-    $nt = Net::Twitter-new();
+    $nt = Net::Twitter->new();
     $nt = Net::Twitter->new(traits => ['Legacy']);
 
 =item legacy
@@ -751,7 +751,8 @@ Returns: ArrayRef[Status]
 
 =back
 
-Tests if a friendship exists between two users.
+Tests for the existence of friendship between two users. Will return true if
+user_a follows user_b, otherwise will return false.
 
 
 Returns: Bool

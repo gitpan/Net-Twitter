@@ -61,6 +61,10 @@ sub twitter_api_method {
         my $local_path = $modify_path->($path, $args);
         
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
+
+        # upgrade params to UTF-8 so latin-1 literals can be handled as UTF-8 too
+        utf8::upgrade $_ for values %$args;
+
         return $self->_parse_result($request->($self->ua, $uri, $args));
     };
 
