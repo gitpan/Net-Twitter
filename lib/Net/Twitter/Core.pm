@@ -11,7 +11,7 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.00001';
+our $VERSION = '3.00002';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -73,6 +73,7 @@ sub _parse_result {
     my ($self, $res) = @_;
 
     # workaround for Laconica API returning bools as strings
+    # (Fixed in Laconi.ca 0.7.4)
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
