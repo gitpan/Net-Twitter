@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.00002
+This document describes Net::Twitter version 3.00003
 
 =head1 SYNOPSIS
 
@@ -283,6 +283,10 @@ aliases, as you prefer.  For example, these calls are all equivalent:
 Aliases support both the HASH ref and convenient forms:
 
     $nt->follows({ user_a => $fred, user_b => $barney });
+
+Methods that support the C<page> parameter expect page numbers E<gt> 0.  Twitter silently
+ignores invalid C<page> values.  So C<< { page => 0 } >> produces the same result
+as C<< { page => 1 } >>.
 
 =head1 REST API Methods
 
@@ -648,6 +652,8 @@ Returns the authenticating user's followers, each with current status
 inline.  They are ordered by the order in which they joined Twitter
 (this is going to be changed).
 
+Returns 100 followers per page.
+
 
 Returns: ArrayRef[BasicUser]
 
@@ -689,6 +695,8 @@ inline. They are ordered by the order in which they were added as
 friends. It's also possible to request another user's recent friends
 list via the id parameter.
 
+Returns 100 friends per page.
+
 
 Returns: ArrayRef[BasicUser]
 
@@ -709,6 +717,9 @@ Returns: ArrayRef[BasicUser]
 =back
 
 Returns an array of numeric IDs for every user the specified user is following.
+
+Currently, Twitter returns IDs ordered from most recently followed to least
+recently followed.  This order may change at any time.
 
 
 Returns: ArrayRef[Int]
