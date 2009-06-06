@@ -11,7 +11,7 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.00003';
+our $VERSION = '3.00004';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -88,10 +88,10 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $obj if $res->is_success && $obj;
+    return $obj if $res->is_success && defined $obj;
 
     my $error = Net::Twitter::Error->new(http_response => $res);
-    $error->twitter_error($obj) if $obj;
+    $error->twitter_error($obj) if ref $obj;
 
     die $error;
 }

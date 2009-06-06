@@ -68,7 +68,7 @@ user. It's also possible to request another user's timeline via the id
 parameter. This is the equivalent of the Web /archive page for
 your own user, or the profile page for a third party.
 
-    path    => 'statuses/user_timeline',
+    path    => 'statuses/user_timeline/id',
     method  => 'GET',
     params  => [qw/id user_id screen_name since_id max_id count page/],
     required => [],
@@ -141,7 +141,7 @@ Returns 100 friends per page.
 EOT
 
     aliases  => [qw/following/],
-    path     => 'statuses/friends',
+    path     => 'statuses/friends/id',
     method   => 'GET',
     params   => [qw/id user_id screen_name page/],
     required => [qw//],
@@ -157,7 +157,7 @@ inline.  They are ordered by the order in which they joined Twitter
 Returns 100 followers per page.
 EOT
 
-    path     => 'statuses/followers',
+    path     => 'statuses/followers/id',
     method   => 'GET',
     params   => [qw/id user_id screen_name page/],
     required => [qw//],
@@ -206,8 +206,8 @@ user including detailed information about the sending and recipient users.
 twitter_api_method new_direct_message => (
     description => <<'',
 Sends a new direct message to the specified user from the authenticating user.
-Requires both the user and text parameters.  Returns the sent message in the
-requested format when successful.
+Requires both the user and text parameters.  Returns the sent message when
+successful.
 
     path     => 'direct_messages/new',
     method   => 'POST',
@@ -231,12 +231,11 @@ message.
 
 twitter_api_method create_friend => (
     description => <<'',
-Befriends the user specified in the ID parameter as the authenticating
-user.  Returns the befriended user in the requested format when
-successful.  Returns a string describing the failure condition when
-unsuccessful.
+Befriends the user specified in the ID parameter as the authenticating user.
+Returns the befriended user when successful.  Returns a string describing the
+failure condition when unsuccessful.
 
-    alias    => [qw/follow_new/],
+    aliases  => [qw/follow_new/],
     path     => 'friendships/create/id',
     method   => 'POST',
     params   => [qw/id user_id screen_name follow/],
@@ -430,7 +429,7 @@ twitter_api_method favorites => (
 Returns the 20 most recent favorite statuses for the authenticating
 user or user specified by the ID parameter.
 
-    path     => 'favorites',
+    path     => 'favorites/id',
     method   => 'GET',
     params   => [qw/id page/],
     required => [qw//],
@@ -541,7 +540,7 @@ twitter_api_method blocking_ids => (
     description => <<'',
 Returns an array of numeric user ids the authenticating user is blocking.
 
-    path     => 'blocks/ids',
+    path     => 'blocks/blocking/ids',
     method   => 'GET',
     params   => [qw//],
     required => [qw//],

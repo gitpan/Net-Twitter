@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.00003
+This document describes Net::Twitter version 3.00004
 
 =head1 SYNOPSIS
 
@@ -420,6 +420,8 @@ Returns: Status
 =item B<create_friend(id)>
 
 
+=item alias: follow_new
+
 
 =over 4
 
@@ -429,10 +431,9 @@ Returns: Status
 
 =back
 
-Befriends the user specified in the ID parameter as the authenticating
-user.  Returns the befriended user in the requested format when
-successful.  Returns a string describing the failure condition when
-unsuccessful.
+Befriends the user specified in the ID parameter as the authenticating user.
+Returns the befriended user when successful.  Returns a string describing the
+failure condition when unsuccessful.
 
 
 Returns: BasicUser
@@ -803,8 +804,8 @@ Returns: ArrayRef[Status]
 =back
 
 Sends a new direct message to the specified user from the authenticating user.
-Requires both the user and text parameters.  Returns the sent message in the
-requested format when successful.
+Requires both the user and text parameters.  Returns the sent message when
+successful.
 
 
 Returns: DirectMessage
@@ -1317,7 +1318,7 @@ exceptions by using C<eval> blocks and testing $@:
     if ( $@ ) {
         # friends_timeline encountered an error
 
-        if ( blessed $@ && $@->isa('Net::Twitter::Error' ) {
+        if ( blessed $@ && $@->isa('Net::Twitter::Error') ) {
             #... use the thrown error obj
             warn $@->error;
         }
