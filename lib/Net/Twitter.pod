@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.00004
+This document describes Net::Twitter version 3.01000
 
 =head1 SYNOPSIS
 
@@ -438,6 +438,25 @@ failure condition when unsuccessful.
 
 Returns: BasicUser
 
+=item B<create_saved_search>
+
+=item B<create_saved_search(query)>
+
+
+
+=over 4
+
+=item Parameters: query
+
+=item Required: query
+
+=back
+
+Creates a saved search for the authenticated user.
+
+
+Returns: SavedSearch
+
 =item B<destroy_block>
 
 =item B<destroy_block(id)>
@@ -521,6 +540,26 @@ Returns a string describing the failure condition when unsuccessful.
 
 
 Returns: BasicUser
+
+=item B<destroy_saved_search>
+
+=item B<destroy_saved_search(id)>
+
+
+
+=over 4
+
+=item Parameters: id
+
+=item Required: id
+
+=back
+
+Destroys a saved search. The search, specified by C<id>, must be owned
+by the authenticating user.
+
+
+Returns: SavedSearch
 
 =item B<destroy_status>
 
@@ -852,6 +891,23 @@ the requester's IP address is returned.
 
 Returns: RateLimitStatus
 
+=item B<saved_searches>
+
+
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
+
+Returns the authenticated user's saved search queries.
+
+
+Returns: ArrayRef[SavedSearch]
+
 =item B<sent_direct_messages>
 
 
@@ -869,6 +925,25 @@ user including detailed information about the sending and recipient users.
 
 
 Returns: ArrayRef[DirectMessage]
+
+=item B<show_saved_search>
+
+=item B<show_saved_search(id)>
+
+
+
+=over 4
+
+=item Parameters: id
+
+=item Required: id
+
+=back
+
+Retrieve the data for a saved search, by ID, owned by the authenticating user.
+
+
+Returns: SavedSearch
 
 =item B<show_status>
 
