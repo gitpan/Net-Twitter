@@ -23,6 +23,7 @@ BasicUser
 CPAN
 DirectMessage
 ExtendedUser
+Grennan
 Identi
 IM
 IP
@@ -33,6 +34,7 @@ Marc
 Mims
 Miyagawa
 OAuth
+OMG
 oauth
 Prather
 RateLimitStatus
