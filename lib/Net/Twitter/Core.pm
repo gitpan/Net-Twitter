@@ -1,9 +1,11 @@
 package Net::Twitter::Core;
 use 5.008001;
 use Moose;
+use MooseX::MultiInitArg;
 use Carp;
 use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
+use HTTP::Request::Common;
 use Net::Twitter::Error;
 
 use namespace::autoclean;
@@ -11,7 +13,7 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.01000_01';
+our $VERSION = '3.02000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -28,8 +30,12 @@ sub isa {
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
-has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' );
-has password        => ( isa => 'Str', is => 'rw' );
+has username        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
+                         isa => 'Str', is => 'rw', predicate => 'has_username',
+                         init_args => [qw/user/] );
+has password        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
+                         isa => 'Str', is => 'rw', predicate => 'has_password',
+                         init_args => [qw/pass/] );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has ua              => ( isa => 'Object', is => 'rw' );
@@ -61,6 +67,27 @@ sub credentials {
     $self->password($password);
 
     return $self; # make it chainable
+}
+
+# Basic Auth, overrided by Role::OAuth, if included
+sub _authenticated_request {
+    my ($self, $http_method, $uri, $args) = @_;
+
+    my $msg;
+
+    if ( $http_method eq 'GET' ) {
+        $uri->query_form($args);
+        $msg = GET($uri);
+    }
+    elsif ( $http_method eq 'POST' ) {
+        $msg = POST($uri, $args);
+    }
+
+    if ( $self->has_username && $self->has_password ) {
+        $msg->headers->authorization_basic($self->username, $self->password);
+    }
+
+    return $self->ua->request($msg);
 }
 
 sub _from_json {
