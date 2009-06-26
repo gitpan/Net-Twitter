@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.02000
+This document describes Net::Twitter version 3.03000
 
 =head1 SYNOPSIS
 
@@ -256,6 +256,17 @@ C<password> options to L</new> or call the L</credentials> method.
 To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
 C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
 more information on using OAuth, including examples.
+
+In addition to the arguments specified for each API method described below, an
+additional C<authenticate> parameter can be passed.  To request an
+C<Authorization> header, pass C<< authenticated => 1 >>; to suppress an
+authentication header, pass C<< authentication => 0 >>.  Even if requested, an
+Authorization header will not be added if there are no user credentials
+(username and password for Basic Authentication; access tokens for OAuth).
+
+This is probably only useful for the L</rate_limit_status> method in the REST
+API, since it returns different values for an authenticated and a
+non-authenticated call.
 
 =head1 API METHODS AND ARGUMENTS
 
@@ -849,7 +860,7 @@ Returns: ArrayRef[Status]
 
 =over 4
 
-=item Parameters: user, text
+=item Parameters: user, text, screen_name, user_id
 
 =item Required: user, text
 
@@ -857,7 +868,8 @@ Returns: ArrayRef[Status]
 
 Sends a new direct message to the specified user from the authenticating user.
 Requires both the user and text parameters.  Returns the sent message when
-successful.
+successful.  In order to support numeric screen names, the C<screen_name> or
+C<user_id> parameters may be used instead of C<user>.
 
 
 Returns: DirectMessage
@@ -879,6 +891,11 @@ set a custom user icon.  Does not require authentication.  Note that
 the public timeline is cached for 60 seconds so requesting it more
 often than that is a waste of resources.
 
+If user credentials are provided, C<public_timeline> calls are authenticated,
+so they count against the authenticated user's rate limit.  Use C<<
+->public_timeline({ authenticate => 0 }) >> to make an unauthenticated call
+which will count against the calling IP address' rate limit, instead.
+
 
 Returns: ArrayRef[Status]
 
@@ -895,11 +912,12 @@ Returns: ArrayRef[Status]
 =back
 
 Returns the remaining number of API requests available to the
-requesting user before the API limit is reached for the current hour.
-Calls to rate_limit_status do not count against the rate limit.  If
-authentication credentials are provided, the rate limit status for the
-authenticating user is returned.  Otherwise, the rate limit status for
-the requester's IP address is returned.
+authenticated user before the API limit is reached for the current hour.
+
+Use C<< ->rate_limit_status({ authenticate => 0 }) >> to force an
+unauthenticated call, which will return the status for the IP address rather
+than the authenticated user. (Note: for a web application, this is the server's
+IP address.)
 
 
 Returns: RateLimitStatus
@@ -938,6 +956,27 @@ user including detailed information about the sending and recipient users.
 
 
 Returns: ArrayRef[DirectMessage]
+
+=item B<show_friendship>
+
+=item B<show_friendship(id)>
+
+
+=item alias: show_relationship
+
+
+=over 4
+
+=item Parameters: source_id, source_screen_name, target_id, target_id_name
+
+=item Required: id
+
+=back
+
+Returns detailed information about the relationship between two users.
+
+
+Returns: Relationship
 
 =item B<show_saved_search>
 
@@ -1423,6 +1462,26 @@ detailed error information, you can simply treat $@ as a string:
     if ( $@ ) {
         warn "update failed because: $@\n";
     }
+
+=head1 FAQ
+
+=over 4
+
+=item Why does C<< ->followers({ screen_name => $friend }) >> return I<my> followers instead of C<$friends>'s?
+
+First, check carefully to make sure you've spelled "screen_name" correctly.
+Twitter sometimes discards parameters it doesn't recognize.  In this case,
+the result is a list of your own followers---the same thing that would happen
+if you called C<followers> without the C<screen_name> parameter.
+
+=item How do I use the C<geocode> parameter in the Search API?
+
+The C<geocode> parameter value includes a latitude, longitude, and radius
+separated with commas.
+
+    $r = $nt->search({ geocode => "45.511795,-122.675629,25mi" });
+
+=back
 
 =head1 SEE ALSO
 

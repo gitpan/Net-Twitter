@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.02000
+    This document describes Net::Twitter version 3.03000
 
 SYNOPSIS
       use Net::Twitter;
@@ -224,6 +224,18 @@ AUTHENTICATION
     "consumer_key" and "consumer_secret" options to "new". See
     Net::Twitter::Role::OAuth for more information on using OAuth, including
     examples.
+
+    In addition to the arguments specified for each API method described
+    below, an additional "authenticate" parameter can be passed. To request
+    an "Authorization" header, pass "authenticated => 1"; to suppress an
+    authentication header, pass "authentication => 0". Even if requested, an
+    Authorization header will not be added if there are no user credentials
+    (username and password for Basic Authentication; access tokens for
+    OAuth).
+
+    This is probably only useful for the "rate_limit_status" method in the
+    REST API, since it returns different values for an authenticated and a
+    non-authenticated call.
 
 API METHODS AND ARGUMENTS
     Most Twitter API methods take parameters. All Net::Twitter API methods
@@ -589,12 +601,14 @@ REST API Methods
     new_direct_message
     new_direct_message(user, text)
 
-        Parameters: user, text
+        Parameters: user, text, screen_name, user_id
         Required: user, text
 
         Sends a new direct message to the specified user from the
         authenticating user. Requires both the user and text parameters.
-        Returns the sent message when successful.
+        Returns the sent message when successful. In order to support
+        numeric screen names, the "screen_name" or "user_id" parameters may
+        be used instead of "user".
 
         Returns: DirectMessage
 
@@ -608,6 +622,12 @@ REST API Methods
         that the public timeline is cached for 60 seconds so requesting it
         more often than that is a waste of resources.
 
+        If user credentials are provided, "public_timeline" calls are
+        authenticated, so they count against the authenticated user's rate
+        limit. Use "->public_timeline({ authenticate => 0 })" to make an
+        unauthenticated call which will count against the calling IP
+        address' rate limit, instead.
+
         Returns: ArrayRef[Status]
 
     rate_limit_status
@@ -616,11 +636,13 @@ REST API Methods
         Required: *none*
 
         Returns the remaining number of API requests available to the
-        requesting user before the API limit is reached for the current
-        hour. Calls to rate_limit_status do not count against the rate
-        limit. If authentication credentials are provided, the rate limit
-        status for the authenticating user is returned. Otherwise, the rate
-        limit status for the requester's IP address is returned.
+        authenticated user before the API limit is reached for the current
+        hour.
+
+        Use "->rate_limit_status({ authenticate => 0 })" to force an
+        unauthenticated call, which will return the status for the IP
+        address rather than the authenticated user. (Note: for a web
+        application, this is the server's IP address.)
 
         Returns: RateLimitStatus
 
@@ -643,6 +665,18 @@ REST API Methods
         and recipient users.
 
         Returns: ArrayRef[DirectMessage]
+
+    show_friendship
+    show_friendship(id)
+    alias: show_relationship
+
+        Parameters: source_id, source_screen_name, target_id, target_id_name
+        Required: id
+
+        Returns detailed information about the relationship between two
+        users.
+
+        Returns: Relationship
 
     show_saved_search
     show_saved_search(id)
@@ -947,6 +981,21 @@ ERROR HANDLING
         if ( $@ ) {
             warn "update failed because: $@\n";
         }
+
+FAQ
+    Why does "->followers({ screen_name => $friend })" return *my* followers
+    instead of $friends's?
+        First, check carefully to make sure you've spelled "screen_name"
+        correctly. Twitter sometimes discards parameters it doesn't
+        recognize. In this case, the result is a list of your own
+        followers---the same thing that would happen if you called
+        "followers" without the "screen_name" parameter.
+
+    How do I use the "geocode" parameter in the Search API?
+        The "geocode" parameter value includes a latitude, longitude, and
+        radius separated with commas.
+
+            $r = $nt->search({ geocode => "45.511795,-122.675629,25mi" });
 
 SEE ALSO
     Net::Twitter::Error

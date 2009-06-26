@@ -34,14 +34,21 @@ after credentials => sub {
     $self->ua->credentials($self->apihost, $self->apirealm, $self->username, $self->password);
 };
 
-base_url 'apiurl';
+base_url     'apiurl';
+authenticate 1;
 
 twitter_api_method public_timeline => (
-    description => <<'',
+    description => <<'EOT',
 Returns the 20 most recent statuses from non-protected users who have
 set a custom user icon.  Does not require authentication.  Note that
 the public timeline is cached for 60 seconds so requesting it more
 often than that is a waste of resources.
+
+If user credentials are provided, C<public_timeline> calls are authenticated,
+so they count against the authenticated user's rate limit.  Use C<<
+->public_timeline({ authenticate => 0 }) >> to make an unauthenticated call
+which will count against the calling IP address' rate limit, instead.
+EOT
 
     path     => 'statuses/public_timeline',
     method   => 'GET',
@@ -209,11 +216,12 @@ twitter_api_method new_direct_message => (
     description => <<'',
 Sends a new direct message to the specified user from the authenticating user.
 Requires both the user and text parameters.  Returns the sent message when
-successful.
+successful.  In order to support numeric screen names, the C<screen_name> or
+C<user_id> parameters may be used instead of C<user>.
 
     path     => 'direct_messages/new',
     method   => 'POST',
-    params   => [qw/user text/],
+    params   => [qw/user text screen_name user_id/],
     required => [qw/user text/],
     returns  => 'DirectMessage',
 );
@@ -229,6 +237,18 @@ message.
     params   => [qw/id/],
     required => [qw/id/],
     returns  => 'DirectMessage',
+);
+
+twitter_api_method show_friendship => (
+    description => <<'',
+Returns detailed information about the relationship between two users.
+
+    aliases  => [qw/show_relationship/],
+    path     => 'friendships/show',
+    method   => 'GET',
+    params   => [qw/source_id source_screen_name target_id target_id_name/],
+    required => [qw/id/],
+    returns  => 'Relationship',
 );
 
 twitter_api_method create_friend => (
@@ -397,13 +417,15 @@ raw multipart data, not a URL to an image.
 );
 
 twitter_api_method rate_limit_status => (
-    description => <<'',
+    description => <<'EOT',
 Returns the remaining number of API requests available to the
-requesting user before the API limit is reached for the current hour.
-Calls to rate_limit_status do not count against the rate limit.  If
-authentication credentials are provided, the rate limit status for the
-authenticating user is returned.  Otherwise, the rate limit status for
-the requester's IP address is returned.
+authenticated user before the API limit is reached for the current hour.
+
+Use C<< ->rate_limit_status({ authenticate => 0 }) >> to force an
+unauthenticated call, which will return the status for the IP address rather
+than the authenticated user. (Note: for a web application, this is the server's
+IP address.)
+EOT
 
     path     => 'account/rate_limit_status',
     method   => 'GET',

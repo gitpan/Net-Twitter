@@ -26,7 +26,6 @@ requires:
   LWP::UserAgent: 2.032
   Moose: 0.78
   MooseX::MultiInitArg: 0
-  MooseX::Traits: 0
   Net::OAuth: 0.16
   URI::Escape: 0
   namespace::autoclean: 0
@@ -36,4 +35,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.02000
+version: 3.03000

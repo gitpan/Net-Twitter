@@ -257,6 +257,17 @@ To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
 C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
 more information on using OAuth, including examples.
 
+In addition to the arguments specified for each API method described below, an
+additional C<authenticate> parameter can be passed.  To request an
+C<Authorization> header, pass C<< authenticated => 1 >>; to suppress an
+authentication header, pass C<< authentication => 0 >>.  Even if requested, an
+Authorization header will not be added if there are no user credentials
+(username and password for Basic Authentication; access tokens for OAuth).
+
+This is probably only useful for the L</rate_limit_status> method in the REST
+API, since it returns different values for an authenticated and a
+non-authenticated call.
+
 =head1 API METHODS AND ARGUMENTS
 
 Most Twitter API methods take parameters.  All Net::Twitter API
@@ -423,6 +434,26 @@ detailed error information, you can simply treat $@ as a string:
     if ( $@ ) {
         warn "update failed because: $@\n";
     }
+
+=head1 FAQ
+
+=over 4
+
+=item Why does C<< ->followers({ screen_name => $friend }) >> return I<my> followers instead of C<$friends>'s?
+
+First, check carefully to make sure you've spelled "screen_name" correctly.
+Twitter sometimes discards parameters it doesn't recognize.  In this case,
+the result is a list of your own followers---the same thing that would happen
+if you called C<followers> without the C<screen_name> parameter.
+
+=item How do I use the C<geocode> parameter in the Search API?
+
+The C<geocode> parameter value includes a latitude, longitude, and radius
+separated with commas.
+
+    $r = $nt->search({ geocode => "45.511795,-122.675629,25mi" });
+
+=back
 
 =head1 SEE ALSO
 
