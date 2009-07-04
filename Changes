@@ -1,0 +1,73 @@
+3.03002 2009-07-04
+    - Updated documentation to include callback parameter to get_authorization_url
+    - Different OAuth nonce algorithm avoids duplicates in forked processes
+    - Bumped JSON version dependencies for better JSON boolean handling
+
+3.03001 2009-06-29
+    - Updated to Moose 0.85
+    - Properly subclassed top level Net::Twitter modules
+
+3.03000 2009-06-25
+    - Twitter API update:
+        - Added screen_name and user_id parameters to new_direct_message
+        - Added show_friendship method (friendships/show.json)
+
+    - Made Net::Twitter safe for subclassing
+
+    - Added "authenticate" parameter handling. By default REST API methods
+      inclued an Authorization header; Search API methods do not. Can be
+      overridden with "authenticate => 0|1".  This finally allows getting
+      rate_limit_status by user (the default), or by IP address, with
+      ->rate_limit_status({ authenticate => 0 }).
+
+    - Added FAQ section to pod
+
+3.02000 2009-06-21
+    - Added OAuth 1.0a support
+    - Added init_args user/pass for compat with NT 2.12
+
+3.01000_01 2009-06-12
+    - Updated OAuth support for desktop app PIN numbers (oauth_verifier)
+
+3.01000 2009-06-07
+    - Added support for the saved_search API methods.
+
+3.00004 2009-06-06
+    - Fixed: accept extra args as a hashref (search behaved this way in 2.12)
+
+3.00003 2009-06-03
+    - Added a workaround for JSON backends that don't handle booleans properly
+
+3.00002 2009-06-01
+    - Updated version requirements in Makefile.PL
+
+3.00001 2009-05-30
+    - Provided version numbers for modules that already existed on CPAN
+
+3.00000 2009-05-30
+    - upgrade get/put parms so Latin-1 can be handled as UTF-8
+
+2.99000_05 2009-05-27
+    - Restructured module hierarchy: all roles/traits moved to Net/Twitter/Role/
+    - Itegrated Tatsuhiko Miyagawa's OAuth support as a trait
+    - Identica fixes: strings '"true"' and '"false"' to bools; mentions => replies
+    - Fixed useragent_args type. (Christopher Biggs)
+    - Store HTTP::Response even on success in WrapError for legacy support (Christopher Biggs)
+
+2.99000_04 2009-05-25
+    - Moved Net::Twitter to Net::Twitter::Core; Net::Twitter provides new -> new_with_traits
+    - Added legacy => [0|1] shortcut option
+
+2.99000_03 2009-05-22
+    - Broke MANIFEST on the prior dist (fixed)
+
+2.99000_02 2009-05-22
+    - Corrected POD NAME sections and module naming
+    - Temporarily removed lib/Net/Twitter/Search.pm from MANIFEST
+
+2.99000_01 2009-05-22
+    - Initial dev release of 3.00 candidate
+    - Moose based replacement for Net::Twitter
+
+This is a complete rewrite of Net::Twitter. For earlier versions, see:
+http://cpansearch.perl.org/src/CTHOM/Net-Twitter-2.12/Changes
