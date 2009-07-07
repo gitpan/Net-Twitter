@@ -1,4 +1,3 @@
-.swp
 Changes
 examples/oauth_desktop.pl
 examples/oauth_webapp.pl
@@ -25,6 +24,7 @@ lib/Net/Twitter/OAuth.pm
 lib/Net/Twitter/Role/API/REST.pm
 lib/Net/Twitter/Role/API/Search.pm
 lib/Net/Twitter/Role/API/TwitterVision.pm
+lib/Net/Twitter/Role/InflateObjects.pm
 lib/Net/Twitter/Role/Legacy.pm
 lib/Net/Twitter/Role/OAuth.pm
 lib/Net/Twitter/Role/WrapError.pm
@@ -49,6 +49,7 @@ t/21_wraperror.t
 t/22_twitter_insanity.t
 t/30_legacy.t
 t/40_nt_subclasses.t
+t/50_inflate_objects.t
 t/99-pod_coverage.t
 t/99-pod_spelling.t
 t/99-pod_syntax.t

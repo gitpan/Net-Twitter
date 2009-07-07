@@ -21,6 +21,9 @@ no_index:
     - t
 requires:
   Carp: 0
+  Data::Visitor::Callback: 0
+  DateTime: 0
+  DateTime::Format::Strptime: 0
   Digest::SHA: 0
   HTTP::Request::Common: 0
   JSON::Any: 1.21
@@ -28,8 +31,10 @@ requires:
   Moose: 0.85
   Moose::Exporter: 0
   Moose::Role: 0
+  MooseX::AttributeHelpers: 0
   MooseX::MultiInitArg: 0
   Net::OAuth: 0.16
+  Scalar::Util: 0
   URI: 0
   URI::Escape: 0
   namespace::autoclean: 0
@@ -39,4 +44,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.03003
+version: 3.04000
