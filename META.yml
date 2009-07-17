@@ -33,6 +33,7 @@ requires:
   Moose::Role: 0
   MooseX::AttributeHelpers: 0
   MooseX::MultiInitArg: 0
+  Net::Netrc: 0
   Net::OAuth: 0.16
   Scalar::Util: 0
   URI: 0
@@ -44,4 +45,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.04000
+version: 3.04001
