@@ -3,7 +3,7 @@ use 5.008001;
 use Moose;
 use MooseX::MultiInitArg;
 use Carp;
-use JSON::Any qw/XS DWIW JSON/;
+use JSON::Any qw/XS JSON/;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
@@ -14,7 +14,7 @@ use Encode;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.04006';
+our $VERSION = '3.05000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

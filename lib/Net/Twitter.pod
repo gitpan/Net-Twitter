@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.04006
+This document describes Net::Twitter version 3.05000
 
 =head1 SYNOPSIS
 
@@ -879,6 +879,25 @@ user_a follows user_b, otherwise will return false.
 
 Returns: Bool
 
+=item B<home_timeline>
+
+
+
+=over 4
+
+=item Parameters: since_id, max_id, count, page
+
+=item Required: I<none>
+
+=back
+
+Returns the 20 most recent statuses, including retweets, posted by the
+authenticating user and that user's friends. This is the equivalent of
+/timeline/home on the Web.
+
+
+Returns: ArrayRef[Status]
+
 =item B<mentions>
 
 
@@ -968,6 +987,78 @@ IP address.)
 
 
 Returns: RateLimitStatus
+
+=item B<retweet>
+
+=item B<retweet(id)>
+
+
+
+=over 4
+
+=item Parameters: id
+
+=item Required: id
+
+=back
+
+Retweets a tweet. Requires the id parameter of the tweet you are retweeting.
+Returns the original tweet with retweet details embedded.
+
+
+Returns: Status
+
+=item B<retweeted_by_me>
+
+
+
+=over 4
+
+=item Parameters: since_id, max_id, count, page
+
+=item Required: I<none>
+
+=back
+
+Returns the 20 most recent retweets posted by the authenticating user.
+
+
+Returns: ArrayRef[Status]
+
+=item B<retweeted_of_me>
+
+
+
+=over 4
+
+=item Parameters: since_id, max_id, count, page
+
+=item Required: I<none>
+
+=back
+
+Returns the 20 most recent tweets of the authenticated user that have been
+retweeted by others.
+
+
+Returns: ArrayRef[Status]
+
+=item B<retweeted_to_me>
+
+
+
+=over 4
+
+=item Parameters: since_id, max_id, count, page
+
+=item Required: I<none>
+
+=back
+
+Returns the 20 most recent retweets posted by the authenticating user's friends.
+
+
+Returns: ArrayRef[Status]
 
 =item B<saved_searches>
 
