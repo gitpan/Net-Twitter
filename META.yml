@@ -39,11 +39,11 @@ requires:
   Scalar::Util: 0
   URI: 1.4
   URI::Escape: 0
-  namespace::autoclean: 0
+  namespace::autoclean: 0.09
   perl: 5.8.1
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.05003
+version: 3.06000
