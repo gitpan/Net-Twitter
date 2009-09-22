@@ -3,11 +3,12 @@ use Moose ();
 use Carp;
 use Moose::Exporter;
 use URI::Escape;
+use DateTime::Format::Strptime;
 
 use namespace::autoclean;
 
 Moose::Exporter->setup_import_methods(
-    with_caller => [ qw/base_url authenticate twitter_api_method/ ],
+    with_caller => [ qw/base_url authenticate datetime_parser twitter_api_method/ ],
 );
 
 sub base_url {
@@ -18,7 +19,11 @@ sub base_url {
 
 # kludge: This is very transient!
 my $do_auth;
-sub authenticate { (undef, $do_auth) = @_ }
+sub authenticate { $do_auth = $_[1] }
+
+# provide a default: we'll use the format of the REST API
+my $datetime_parser = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
+sub datetime_parser { $datetime_parser = $_[1] }
 
 my $with_url_arg = sub {
     my ($path, $args) = @_;
@@ -57,7 +62,14 @@ sub twitter_api_method {
         }
         $args->{source} ||= $self->source if $options{add_source};
 
-        my $authenticate = exists $args->{authenticate}  ? delete $args->{authenticate}
+        # save synthetic arguments; don't pass them to Twitter
+        my $synthetic_args = {};
+        for my $k ( $self->_synthetic_args ) {
+            $synthetic_args->{$k} = delete $args->{$k} if exists $args->{$k};
+        }
+
+        my $authenticate = exists $synthetic_args->{authenticate}
+                         ? $synthetic_args->{authenticate}
                          : $options{authenticate}
                          ;
 
@@ -66,7 +78,9 @@ sub twitter_api_method {
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
 
         return $self->_parse_result(
-            $self->_authenticated_request($options{method}, $uri, $args, $authenticate)
+            $self->_authenticated_request($options{method}, $uri, $args, $authenticate),
+            $synthetic_args,
+            $datetime_parser,
         );
     };
 
@@ -173,6 +187,11 @@ Defines a Twitter API method.  Valid arguments are:
 =item authenticate
 
 Specifies whether, by default, API methods calls should authenticate.
+
+=item datetime_parser
+
+Specifies the Date::Time::Format derived parser to use for parsing and
+formatting date strings for the API being defined.
 
 =over 4
 

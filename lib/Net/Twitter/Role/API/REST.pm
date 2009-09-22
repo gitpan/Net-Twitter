@@ -1,9 +1,7 @@
 package Net::Twitter::Role::API::REST;
 use Moose::Role;
-
-requires qw/credentials/;
-
 use Net::Twitter::API;
+use DateTime::Format::Strptime;
 
 requires qw/ua username password credentials/;
 
@@ -40,6 +38,9 @@ after credentials => sub {
 
 base_url     'apiurl';
 authenticate 1;
+
+our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
+datetime_parser $DATETIME_PARSER;
 
 twitter_api_method public_timeline => (
     description => <<'EOT',
@@ -84,6 +85,17 @@ Returns the original tweet with retweet details embedded.
     params    => [qw/id/],
     required  => [qw/id/],
     returns   => 'Status',
+);
+
+twitter_api_method retweets => (
+    description => <<'',
+Returns up to 100 of the first retweets of a given tweet.
+
+    path    => 'statuses/retweets/id',
+    method  => 'GET',
+    params  => [qw/id count/],
+    required => [qw/id/],
+    returns  => 'Arrayref[Status]',
 );
 
 twitter_api_method retweeted_by_me => (

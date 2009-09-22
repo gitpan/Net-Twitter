@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.06000
+    This document describes Net::Twitter version 3.07000
 
 SYNOPSIS
       use Net::Twitter;
@@ -332,6 +332,28 @@ API METHODS AND ARGUMENTS
     Methods that support the "page" parameter expect page numbers > 0.
     Twitter silently ignores invalid "page" values. So "{ page => 0 }"
     produces the same result as "{ page => 1 }".
+
+  Synthetic Arguments
+    In addition to the arguments described in the Twitter API Documentation
+    for each API method, Net::Twitter supports additional *synthetic*
+    arguments.
+
+    authenticate
+        When set to 1, Net::Twitter will provide an Authorization header for
+        the API call; when set to 0, it will suppress the Authentication
+        header. This argument overrides the defined authentication behavior
+        for the API method. It is probably only useful for the
+        "rate_limit_satus" method which returns different values for
+        authenticated and unauthenticated calls. See "AUTHENTICATION" for
+        more details.
+
+    since
+        API methods that accept the "since_id" argument will also accept the
+        synthetic "since" argument, instead. "since" may be a "Date::Time"
+        object, an epoch time (the number of seconds since the system
+        epoch), or a string in the same format returned by Twitter for the
+        "created_at" attribute. Only status with a "created_at" time greater
+        than "since" will be returned by the API call.
 
 REST API Methods
     These methods are provided when trait "API::REST" is included in the
@@ -750,6 +772,16 @@ REST API Methods
         user's friends.
 
         Returns: ArrayRef[Status]
+
+    retweets
+    retweets(id)
+
+        Parameters: id, count
+        Required: id
+
+        Returns up to 100 of the first retweets of a given tweet.
+
+        Returns: Arrayref[Status]
 
     saved_searches
 
