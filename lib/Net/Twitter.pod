@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.07002
+This document describes Net::Twitter version 3.07003
 
 =head1 SYNOPSIS
 
@@ -1053,6 +1053,25 @@ IP address.)
 
 
 Returns: RateLimitStatus
+
+=item B<report_spam>
+
+=item B<report_spam(id)>
+
+
+
+=over 4
+
+=item Parameters: id, user_id, screen_name
+
+=item Required: id
+
+=back
+
+The user specified in the id is blocked by the authenticated user and reported as a spammer.
+
+
+Returns: User
 
 =item B<retweet>
 
