@@ -1,7 +1,7 @@
 ---
 abstract: 'A perl interface to the Twitter API'
 author:
-  - 'Marc Mims <marc@questright.com>'
+  - 'Marc Mims <marc@questright.com> (@semifor on Twitter)'
 build_requires:
   ExtUtils::MakeMaker: 6.42
   Test::More: 0.88
@@ -23,7 +23,7 @@ no_index:
 requires:
   Carp: 0
   Data::Visitor::Callback: 0
-  DateTime: 0.5
+  DateTime: 0.51
   DateTime::Format::Strptime: 1.09
   Digest::SHA: 0
   Encode: 0
@@ -50,4 +50,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.07999_01
+version: 3.08000

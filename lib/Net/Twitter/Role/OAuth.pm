@@ -145,6 +145,8 @@ sub request_access_token {
     return (
         $self->access_token($res_param{oauth_token}),
         $self->access_token_secret($res_param{oauth_token_secret}),
+        $res_param{user_id},
+        $res_param{screen_name},
     );
 }
 
@@ -168,7 +170,7 @@ override _authenticated_request => sub {
             extra_params   => $is_multipart ? {} : $args,
         );
 
-        if ( $http_method =~ /^GET|DELETE$/ ) {
+        if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
             $msg = HTTP::Request->new($http_method, $request->to_url);
         }
         elsif ( $http_method eq 'POST' ) {
@@ -185,7 +187,7 @@ override _authenticated_request => sub {
             croak "unexpected http_method: $http_method";
         }
     }
-    elsif ( $http_method =~ /^GET|DELETE$/ ) {
+    elsif ( $http_method =~ /^(?:GET|DELETE)$/ ) {
         $self->_encode_args($args);
         $uri->query_form($args);
         $args = {};
@@ -299,7 +301,7 @@ Here's how to authorize users as a desktop app mode:
       my $pin = <STDIN>; # wait for input
       chomp $pin;
 
-      my($access_token, $access_token_secret) = $nt->request_access_token(verifier => $pin);
+      my($access_token, $access_token_secret, $user_id, $screen_name) = $nt->request_access_token(verifier => $pin);
       save_tokens($access_token, $access_token_secret); # if necessary
   }
 
@@ -338,7 +340,7 @@ secret to upgrade the request token to access token.
       $nt->request_token($cookie{token});
       $nt->request_token_secret($cookie{token_secret});
 
-      my($access_token, $access_token_secret)
+      my($access_token, $access_token_secret, $user_id, $screen_name)
           = $nt->request_access_token(verifier => $verifier);
 
       # Save $access_token and $access_token_secret in the database associated with $c->user
@@ -373,9 +375,10 @@ Note that the credentials may be wrong and so the request may fail.
 
 =item request_access_token(verifier => $verifier)
 
-Request the access token and access token secret for this user. You must pass
-the PIN# (for desktop applications) or the C<ouath_verifier> value, provided as
-a parameter to the oauth callback (for web applications) as C<$verifier>.
+Request the access token, access token secret, user id and screen name for
+this user. You must pass the PIN# (for desktop applications) or the
+C<ouath_verifier> value, provided as a parameter to the oauth callback
+(for web applications) as C<$verifier>.
 
 The user must have authorized this app at the url given by C<get_authorization_url> first.
 

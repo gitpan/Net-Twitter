@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.07999_01
+This document describes Net::Twitter version 3.08000
 
 =head1 SYNOPSIS
 
@@ -1783,7 +1783,11 @@ implementation questions, especially with regards to Moose.
 
 =head1 AUTHOR
 
-Marc Mims <marc@questright.com>
+Marc Mims <marc@questright.com> (@semifor on Twitter)
+
+=head1 CONTRIBUTORS
+
+Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
 
 =head1 LICENSE
 
