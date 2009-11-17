@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.08000';
+our $VERSION = '3.09000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -30,7 +30,7 @@ has password        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
                          isa => 'Str', is => 'rw', predicate => 'has_password',
                          init_args => [qw/pass/] );
 has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
-has netrc           => ( isa => 'Bool', is => 'ro', default => 0 );
+has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
 has decode_html_entities => ( isa => 'Bool', is => 'rw', default => 0 );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
@@ -53,12 +53,11 @@ sub BUILD {
     eval "use " . $self->useragent_class;
     croak $@ if $@;
 
-    $self->{apiurl} =~ s/http/https/ if $self->ssl;
-
-    if ( $self->netrc ) {
+    if ( $self->has_netrc ) {
         require Net::Netrc;
 
-        my $host = URI->new($self->apiurl)->host;
+        # accepts '1' for backwards compatibility
+        my $host = $self->netrc eq '1' ? URI->new($self->apiurl)->host : $self->netrc;
         my $nrc  = Net::Netrc->lookup($host)
             || croak "No .netrc entry for $host";
 
