@@ -41,6 +41,7 @@ requires:
   Net::Netrc: 0
   Net::OAuth: 0.2
   Scalar::Util: 0
+  Try::Tiny: 0
   URI: 1.4
   URI::Escape: 0
   namespace::autoclean: 0.09
@@ -50,4 +51,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.09000
+version: 3.10000

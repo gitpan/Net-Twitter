@@ -25,6 +25,7 @@ DateTime
 DirectMessage
 Etcheverry
 ExtendedUser
+geo
 Grennan
 IM
 IP
@@ -68,8 +69,10 @@ multipart
 netrc
 oauth
 ok
+online
 params
 perigrin
+RateLimit
 refactored
 requester's
 return's
@@ -94,3 +97,5 @@ Unsubscribes
 url
 useragent
 username
+WOEID
+woeid

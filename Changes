@@ -1,3 +1,9 @@
+3.10000 2009-11-24
+    - Fixed: ssl not applied when both Lists and REST api used
+    - Added Role::RateLimit
+    - Added trends_available and trends_location methods to the REST API
+    - Documented the lat and long parameters to update
+
 3.09000 2009-11-17
     - Bumped Net::OAuth requirement to 0.20 (hopefully resolves CPAN Testers failures)
     - Added users_search/find_people API method

@@ -14,11 +14,11 @@ has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitte
 has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, default => $build_api_host  );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
 
-sub BUILD {
+after BUILD => sub {
     my $self = shift;
 
     $self->{apiurl} =~ s/^http:/https:/ if $self->ssl;
-}
+};
 
 around BUILDARGS => sub {
     my $next    = shift;
@@ -195,14 +195,20 @@ status's author will be returned inline.
 );
 
 twitter_api_method update => (
-    description => <<'',
+    description => <<EOT,
 Updates the authenticating user's status.  Requires the status parameter
 specified.  A status update with text identical to the authenticating
 user's current status will be ignored.
 
+The optional C<lat> and C<long> parameters add location data to the status for
+a geo enabled account. They expect values in the ranges -90.0 to +90.0 and
+-180.0 to +180.0 respectively.  They are ignored unless the user's
+C<geo_enabled> field is true.
+EOT
+
     path       => 'statuses/update',
     method     => 'POST',
-    params     => [qw/status in_reply_to_status_id/],
+    params     => [qw/status lat long in_reply_to_status_id/],
     required   => [qw/status/],
     add_source => 1,
     returns    => 'Status',
@@ -809,6 +815,43 @@ Run a search for users similar to Find People button on Twitter.com; the same
 results returned by people search on Twitter.com will be returned by using this
 API (about being listed in the People Search).  It is only possible to retrieve
 the first 1000 matches from this API.
+
+);
+
+twitter_api_method trends_available => (
+    path        => 'trends/available',
+    method      => 'GET',
+    params      => [qw/lat long/],
+    required    => [],
+    returns     => 'ArrayRef[Location]',
+    description => <<EOT,
+Returns the locations with trending topic information. The response is an
+array of "locations" that encode the location's WOEID (a Yahoo!  Where On Earth
+ID L<http://developer.yahoo.com/geo/geoplanet/>) and some other human-readable
+information such as a the location's canonical name and country.
+
+When the optional C<lat> and C<long> parameters are passed, the available trend
+locations are sorted by distance from that location, nearest to farthest.
+
+Use the WOEID returned in the location object to query trends for a specific
+location.
+EOT
+);
+
+twitter_api_method trends_location => (
+    path        => 'trends/location',
+    method      => 'GET',
+    params      => [qw/woeid/],
+    required    => [qw/woeid/],
+    returns     => 'ArrayRef[Trend]',
+    description => <<'',
+Returns the top 10 trending topics for a specific location. The response is an
+array of "trend" objects that encode the name of the trending topic, the query
+parameter that can be used to search for the topic on Search, and the direct
+URL that can be issued against Search.  This information is cached for five
+minutes, and therefore users are discouraged from querying these endpoints
+faster than once every five minutes.  Global trends information is also
+available from this API by using a WOEID of 1.
 
 );
 
