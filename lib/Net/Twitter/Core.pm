@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.10001';
+our $VERSION = '3.10002';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -31,6 +31,7 @@ has password        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
                          init_args => [qw/pass/] );
 has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
+has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' );
 has decode_html_entities => ( isa => 'Bool', is => 'rw', default => 0 );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
@@ -57,7 +58,7 @@ sub BUILD {
         require Net::Netrc;
 
         # accepts '1' for backwards compatibility
-        my $host = $self->netrc eq '1' ? URI->new($self->apiurl)->host : $self->netrc;
+        my $host = $self->netrc eq '1' ? $self->netrc_machine : $self->netrc;
         my $nrc  = Net::Netrc->lookup($host)
             || croak "No .netrc entry for $host";
 
@@ -236,7 +237,8 @@ sub _contains_statuses {
     my ($self, $arrayref) = @_;
 
     my $e = $arrayref->[0] || return;
-    return $e->{created_at} && $e->{text} && $e->{id};
+    return unless ref $e eq 'HASH';
+    return exists $e->{created_at} && exists $e->{text} && exists $e->{id};
 }
 
 1;
