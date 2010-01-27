@@ -55,6 +55,7 @@ t/40_nt_subclasses.t
 t/50_inflate_objects.t
 t/51_rate_limit.t
 t/51_since.t
+t/60-api_lists.t
 t/99-pod_coverage.t
 t/99-pod_spelling.t
 t/99-pod_syntax.t
