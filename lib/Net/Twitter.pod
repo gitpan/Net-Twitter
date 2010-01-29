@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.11002
+This document describes Net::Twitter version 3.11003
 
 =head1 SYNOPSIS
 
@@ -1199,24 +1199,6 @@ Returns the 20 most recent retweets posted by the authenticating user.
 
 Returns: ArrayRef[Status]
 
-=item B<retweeted_of_me>
-
-
-
-=over 4
-
-=item Parameters: since_id, max_id, count, page
-
-=item Required: I<none>
-
-=back
-
-Returns the 20 most recent tweets of the authenticated user that have been
-retweeted by others.
-
-
-Returns: ArrayRef[Status]
-
 =item B<retweeted_to_me>
 
 
@@ -1252,6 +1234,26 @@ Returns up to 100 of the first retweets of a given tweet.
 
 
 Returns: Arrayref[Status]
+
+=item B<retweets_of_me>
+
+
+=item alias: rewtweeted_of_me
+
+
+=over 4
+
+=item Parameters: since_id, max_id, count, page
+
+=item Required: I<none>
+
+=back
+
+Returns the 20 most recent tweets of the authenticated user that have been
+retweeted by others.
+
+
+Returns: ArrayRef[Status]
 
 =item B<saved_searches>
 
