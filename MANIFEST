@@ -60,3 +60,4 @@ t/99-pod_coverage.t
 t/99-pod_spelling.t
 t/99-pod_syntax.t
 t/lib/TestUA.pm
+t/unicode.t
