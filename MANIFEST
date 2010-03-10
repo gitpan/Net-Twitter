@@ -30,6 +30,8 @@ lib/Net/Twitter/Role/InflateObjects.pm
 lib/Net/Twitter/Role/Legacy.pm
 lib/Net/Twitter/Role/OAuth.pm
 lib/Net/Twitter/Role/RateLimit.pm
+lib/Net/Twitter/Role/RetryOnError.pm
+lib/Net/Twitter/Role/SimulateCursors.pm
 lib/Net/Twitter/Role/WrapError.pm
 lib/Net/Twitter/Search.pm
 Makefile.PL
@@ -62,4 +64,5 @@ t/99-pod_spelling.t
 t/99-pod_syntax.t
 t/geo.t
 t/lib/TestUA.pm
+t/retry.t
 t/unicode.t

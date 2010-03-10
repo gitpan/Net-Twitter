@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.11008';
+our $VERSION = '3.11009';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -113,6 +113,16 @@ sub _encode_args {
     return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
+sub _json_request { 
+    my ($self, $http_method, $uri, $args, $authenticate, $synthetic_args, $dt_parser) = @_;
+    
+    return $self->_parse_result(
+        $self->_authenticated_request($http_method, $uri, $args, $authenticate),
+        $synthetic_args,
+        $dt_parser,
+    );
+}
+
 # Basic Auth, overridden by Role::OAuth, if included
 sub _authenticated_request {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
@@ -142,8 +152,10 @@ sub _authenticated_request {
     $msg->headers->authorization_basic($self->username, $self->password)
         if $authenticate && $self->has_username && $self->has_password;
 
-    return $self->ua->request($msg);
+    return $self->_send_request($msg);
 }
+
+sub _send_request { shift->ua->request(shift) }
 
 # Twitter returns HTML encoded entities in the "text" field of status messages.
 # Decode them.
