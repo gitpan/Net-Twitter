@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.11012
+This document describes Net::Twitter version 3.12000
 
 =head1 SYNOPSIS
 
@@ -1238,6 +1238,44 @@ Returns the original tweet with retweet details embedded.
 
 
 Returns: Status
+
+=item B<retweeted_by>
+
+=item B<retweeted_by(id)>
+
+
+
+=over 4
+
+=item Parameters: id, count, page
+
+=item Required: id
+
+=back
+
+Returns up to 100 users who retweeted the status identified by C<id>.
+
+
+Returns: ArrayRef[User]
+
+=item B<retweeted_by_ids>
+
+=item B<retweeted_by_ids(id)>
+
+
+
+=over 4
+
+=item Parameters: id, count, page
+
+=item Required: id
+
+=back
+
+Returns the IDs of up to 100 users who retweeted the status identified by C<id>.
+
+
+Returns: ArrayRef[User]
 
 =item B<retweeted_by_me>
 
