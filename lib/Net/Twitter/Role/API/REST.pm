@@ -65,7 +65,8 @@ EOT
     path     => 'statuses/public_timeline',
     method   => 'GET',
     returns  => 'ArrayRef[Status]',
-    params   => [],
+    params   => [qw/skip_user/],
+    booleans => [qw/skip_user/],
     required => [],
 );
 
@@ -77,7 +78,8 @@ authenticating user and that user's friends. This is the equivalent of
 
     path      => 'statuses/home_timeline',
     method    => 'GET',
-    params    => [qw/since_id max_id count page/],
+    params    => [qw/since_id max_id count page skip_user/],
+    booleans  => [qw/skip_user/],
     required  => [],
     returns   => 'ArrayRef[Status]',
 );
@@ -148,7 +150,8 @@ and that user's friends. This is the equivalent of /home on the Web.
     aliases   => [qw/following_timeline/],
     path      => 'statuses/friends_timeline',
     method    => 'GET',
-    params    => [qw/since_id max_id count page/],
+    params    => [qw/since_id max_id count page skip_user/],
+    booleans  => [qw/skip_user/],
     required  => [],
     returns   => 'ArrayRef[Status]',
 );
@@ -160,11 +163,12 @@ user. It's also possible to request another user's timeline via the id
 parameter. This is the equivalent of the Web /archive page for
 your own user, or the profile page for a third party.
 
-    path    => 'statuses/user_timeline/:id',
-    method  => 'GET',
-    params  => [qw/id user_id screen_name since_id max_id count page/],
+    path     => 'statuses/user_timeline/:id',
+    method   => 'GET',
+    params   => [qw/id user_id screen_name since_id max_id count page skip_user/],
+    booleans => [qw/skip_user/],
     required => [],
-    returns => 'ArrayRef[Status]',
+    returns  => 'ArrayRef[Status]',
 );
 
 # TODO: URL should be 'mentions', not 'replies', but the Laconica API doesn't
@@ -1019,6 +1023,32 @@ twitter_api_method retweeted_by_ids => (
 Returns the IDs of up to 100 users who retweeted the status identified by C<id>.
 
 );
+
+twitter_api_method friendships_incoming => (
+    path => 'friendships/incoming',
+    method => 'GET',
+    params => [qw/cursor/],
+    required => [qw/cursor/],
+    returns  => 'HashRef',
+    description => <<'',
+Returns an HASH ref with an array of numeric IDs in the C<ids> element for
+every user who has a pending request to follow the authenticating user.
+
+);
+
+twitter_api_method friendships_outgoing => (
+    path => 'friendships/outgoing',
+    method => 'GET',
+    params => [qw/cursor/],
+    required => [qw/cursor/],
+    returns  => 'HashRef',
+    description => <<'',
+Returns an HASH ref with an array of numeric IDs in the C<ids> element for
+every protected user for whom the authenticating user has a pending follow
+request.
+
+);
+
 
 around lookup_users => sub {
     my $orig = shift;

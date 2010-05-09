@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.12000
+This document describes Net::Twitter version 3.13000
 
 =head1 SYNOPSIS
 
@@ -452,7 +452,6 @@ using the C<cursor> parameter:
         push @ids, @{ $r->{ids} };
     }
 
-
 =head2 Synthetic Arguments
 
 In addition to the arguments described in the Twitter API Documentation for
@@ -484,6 +483,12 @@ C<created_at> time greater than C<since> will be returned by the API call.
 These methods are provided when trait C<API::REST> is included in the C<traits>
 option to C<new>.
 
+=head2 Common Parameters
+
+=over 4
+
+=item id
+
 Several of these methods accept a user ID as the C<id> parameter.  The user ID
 can be either a screen name, or the users numeric ID.  To disambiguate, use
 the C<screen_name> or C<user_id> parameters, instead.
@@ -504,6 +509,17 @@ calls are NOT equivalent:
 
 Whenever the C<id> parameter is required and C<user_id> and C<screen_name> are
 also parameters, using any one of them satisfies the requirement.
+
+=item skip_user
+
+The timeline methods all accept an optional C<skip_user> parameter.  When set
+to a true value, the statuses returned in a timeline will not contain an entire
+embedded user HASH. Instead, the user node will contain only an C<id> element
+to indicate the numerical ID of the Twitter user that sent the status.
+
+=back
+
+=head2 Methods
 
 
 
@@ -999,7 +1015,7 @@ Returns: HashRef|ArrayRef[Int]
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page
+=item Parameters: since_id, max_id, count, page, skip_user
 
 =item Required: I<none>
 
@@ -1035,6 +1051,47 @@ user_a follows user_b, otherwise will return false.
 
 Returns: Bool
 
+=item B<friendships_incoming>
+
+=item B<friendships_incoming(cursor)>
+
+
+
+=over 4
+
+=item Parameters: cursor
+
+=item Required: cursor
+
+=back
+
+Returns an HASH ref with an array of numeric IDs in the C<ids> element for
+every user who has a pending request to follow the authenticating user.
+
+
+Returns: HashRef
+
+=item B<friendships_outgoing>
+
+=item B<friendships_outgoing(cursor)>
+
+
+
+=over 4
+
+=item Parameters: cursor
+
+=item Required: cursor
+
+=back
+
+Returns an HASH ref with an array of numeric IDs in the C<ids> element for
+every protected user for whom the authenticating user has a pending follow
+request.
+
+
+Returns: HashRef
+
 =item B<geo_id>
 
 =item B<geo_id(id)>
@@ -1060,7 +1117,7 @@ Returns: HashRef
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page
+=item Parameters: since_id, max_id, count, page, skip_user
 
 =item Required: I<none>
 
@@ -1154,11 +1211,13 @@ Returns: DirectMessage
 
 =item B<public_timeline>
 
+=item B<public_timeline(skip_user)>
+
 
 
 =over 4
 
-=item Parameters: I<none>
+=item Parameters: skip_user
 
 =item Required: I<none>
 
@@ -1790,7 +1849,7 @@ Returns: ExtendedUser
 
 =over 4
 
-=item Parameters: id, user_id, screen_name, since_id, max_id, count, page
+=item Parameters: id, user_id, screen_name, since_id, max_id, count, page, skip_user
 
 =item Required: I<none>
 
