@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.13002_01
+This document describes Net::Twitter version 3.13002_02
 
 =head1 SYNOPSIS
 
@@ -2225,8 +2225,6 @@ Returns: ArrayRef[User]
 =item B<list_members(user, list_id)>
 
 
-=item alias: is_list_member
-
 
 =over 4
 
@@ -2293,10 +2291,6 @@ Returns: ArrayRef[Status]
 
 =item B<list_subscribers(user, list_id)>
 
-
-=item alias: is_subscribed_list
-
-=item alias: is_list_subscriber
 
 
 =over 4
