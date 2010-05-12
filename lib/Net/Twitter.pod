@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.13001
+This document describes Net::Twitter version 3.13002_01
 
 =head1 SYNOPSIS
 
@@ -361,19 +361,25 @@ non-authenticated call.
 
 =head1 API METHODS AND ARGUMENTS
 
-Most Twitter API methods take parameters.  All Net::Twitter API
-methods will accept a HASH ref of named parameters as specified in the Twitter
-API documentation.  For convenience, many Net::Twitter methods accept
-simple positional arguments as documented, below.  The positional parameter
-passing style is optional; you can always use the named parameters in a hash
-ref if you prefer.
+Most Twitter API methods take parameters.  All Net::Twitter API methods will
+accept a HASH ref of named parameters as specified in the Twitter API
+documentation.  For convenience, many Net::Twitter methods accept simple
+positional arguments.  The positional parameter passing style is optional; you
+can always use the named parameters in a HASH reference if you prefer.
+
+You may pass any number of required parameters as positional parameters.  You
+must pass them in the order specified in the documentation for each method.
+Optional parameters must be passed as named parameters in a HASH reference.  The
+HASH reference containing the named parameters must be the final parameter to
+the method call.  Any required parameters not passed as positional parameters,
+must be included in the named parameter HASH reference.
 
 For example, the REST API method C<update> has one required parameter,
 C<status>.  You can call C<update> with a HASH ref argument:
 
     $nt->update({ status => 'Hello world!' });
 
-Or, you can use the convenient form:
+Or, you can use the convenient, positional parameter form:
 
     $nt->update('Hello world!');
 
@@ -381,6 +387,11 @@ The C<update> method also has an optional parameter, C<in_reply_to_status_id>.
 To use it, you B<must> use the HASH ref form:
 
     $nt->update({ status => 'Hello world!', in_reply_to_status_id => $reply_to });
+
+You may use the convenient positional form for the required C<status> parameter
+with the optional parameters specified in the named parameter HASH reference:
+
+    $nt->update('Hello world!', { in_reply_to_status_id => $reply_to });
 
 Convenience form is provided for the required parameters of all API methods.
 So, these two calls are equivalent:
@@ -2028,6 +2039,366 @@ Returns: HashRef
 
 
 
+=head1 Lists API Methods
+
+These methods are provided when trait C<API::Lists> is included in the C<traits>
+option to C<new>. All Lists API methods require a C<user> parameter.  It is the
+screen_name of the list owner.
+
+
+
+=over 4
+
+=item B<add_list_member>
+
+=item B<add_list_member(user, list_id, id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id, id
+
+=item Required: user, list_id, id
+
+=back
+
+Adds the user identified by C<id> to the list.
+
+Returns a reference the added user as a hash reference.
+
+
+Returns: User
+
+=item B<create_list>
+
+=item B<create_list(user, name)>
+
+
+
+=over 4
+
+=item Parameters: user, name, mode, description
+
+=item Required: user, name
+
+=back
+
+Creates a new list for the authenticated user. The C<mode> parameter may be
+either C<public> or C<private>.  If not specified, it defaults to C<public>.
+
+
+Returns: HashRef
+
+=item B<delete_list>
+
+=item B<delete_list(user, list_id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id
+
+=item Required: user, list_id
+
+=back
+
+Deletes a list owned by the authenticating user. Returns the list as a hash
+reference.
+
+
+Returns: 
+
+=item B<delete_list_member>
+
+=item B<delete_list_member(user, list_id, id)>
+
+
+=item alias: remove_list_member
+
+
+=over 4
+
+=item Parameters: user, list_id, id
+
+=item Required: user, list_id, id
+
+=back
+
+Deletes the user identified by C<id> from the specified list.
+
+Returns the deleted user as a hash reference.
+
+
+Returns: 
+
+=item B<get_list>
+
+=item B<get_list(user, list_id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id
+
+=item Required: user, list_id
+
+=back
+
+Returns the specified list as a hash reference.
+
+
+Returns: HashRef
+
+=item B<get_lists>
+
+=item B<get_lists(user)>
+
+
+=item alias: list_lists
+
+
+=over 4
+
+=item Parameters: user, cursor
+
+=item Required: user
+
+=back
+
+Returns a reference to an array of lists owned by the specified user.  If the
+user is the authenticated user, it returns both public and private lists.
+Otherwise, it only returns public lists.
+
+When the C<cursor> parameter is used, a hash reference is returned; the lists
+are returned in the C<lists> element of the hash.
+
+
+Returns: ArrayRef[List]
+
+=item B<is_list_member>
+
+=item B<is_list_member(user, list_id, id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id, id
+
+=item Required: user, list_id, id
+
+=back
+
+Returns the list member as a HASH reference if C<id> is a member of the list.
+Otherwise, returns undef.
+
+
+Returns: ArrayRef[User]
+
+=item B<is_list_subscriber>
+
+=item B<is_list_subscriber(user, list_id, id)>
+
+
+=item alias: is_subscribed_list
+
+
+=over 4
+
+=item Parameters: user, list_id, id
+
+=item Required: user, list_id, id
+
+=back
+
+Returns the subscriber as a HASH reference if C<id> is a subscriber to the list.
+Otherwise, returns undef.
+
+
+Returns: ArrayRef[User]
+
+=item B<list_members>
+
+=item B<list_members(user, list_id)>
+
+
+=item alias: is_list_member
+
+
+=over 4
+
+=item Parameters: user, list_id, id, cursor
+
+=item Required: user, list_id
+
+=back
+
+Returns the list members as an array reference.
+
+The optional C<id> parameter can be used to determine if the user specified by
+C<id> is a member of the list.  If so, the user is returned as a hash
+reference; if not, C<undef> is returned.
+
+When the C<cursor> parameter is used, a hash reference is returned; the members
+are returned in the C<users> element of the hash.
+
+
+Returns: ArrayRef[User]
+
+=item B<list_memberships>
+
+=item B<list_memberships(user)>
+
+
+
+=over 4
+
+=item Parameters: user, cursor
+
+=item Required: user
+
+=back
+
+Returns the lists the specified user is a member of as an array reference.
+
+When the C<cursor> parameter is used, a hash reference is returned; the lists
+are returned in the C<lists> element of the hash.
+
+
+Returns: 
+
+=item B<list_statuses>
+
+=item B<list_statuses(user, list_id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id, since_id, max_id, per_page, page
+
+=item Required: user, list_id
+
+=back
+
+Returns a timeline of list member statuses as an array reference.
+
+
+Returns: ArrayRef[Status]
+
+=item B<list_subscribers>
+
+=item B<list_subscribers(user, list_id)>
+
+
+=item alias: is_subscribed_list
+
+=item alias: is_list_subscriber
+
+
+=over 4
+
+=item Parameters: user, list_id, id, cursor
+
+=item Required: user, list_id
+
+=back
+
+Returns the subscribers to a list as an array reference.
+
+When the C<cursor> parameter is used, a hash reference is returned; the subscribers
+are returned in the C<users> element of the hash.
+
+
+Returns: ArrayRef[User]
+
+=item B<list_subscriptions>
+
+=item B<list_subscriptions(user)>
+
+
+
+=over 4
+
+=item Parameters: user, cursor
+
+=item Required: user
+
+=back
+
+Returns a lists to which the specified user is subscribed as an array reference.
+
+When the C<cursor> parameter is used, a hash reference is returned; the lists
+are returned in the C<lists> element of the hash.
+
+
+Returns: 
+
+=item B<subscribe_list>
+
+=item B<subscribe_list(user, list_id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id
+
+=item Required: user, list_id
+
+=back
+
+Subscribes the authenticated user to the specified list.
+
+
+Returns: List
+
+=item B<unsubscribe_list>
+
+=item B<unsubscribe_list(user, list_id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id
+
+=item Required: user, list_id
+
+=back
+
+Unsubscribes the authenticated user from the specified list.
+
+
+Returns: List
+
+=item B<update_list>
+
+=item B<update_list(user, list_id)>
+
+
+
+=over 4
+
+=item Parameters: user, list_id, name, mode, description
+
+=item Required: user, list_id
+
+=back
+
+Updates a list to change the name, mode, description, or any combination thereof.
+
+
+Returns: HashRef
+
+
+=back
+
+
+
 =head1 TwitterVision API Methods
 
 These methods are provided when trait C<API::TwitterVision> is included in the
@@ -2080,49 +2451,6 @@ Returns: HashRef
 
 
 
-=head1 Lists API
-
-For Lists API support, add trait C<API::Lists> to the C<traits> option in
-C<new>.
-
-For full documentation of the Lists API, see L<Net::Twitter::Role::API::Lists>.
-
-  use Net::Twitter;
-
-  my $nt = Net::Twitter->new(traits => ['API::Lists'], ...);
-
-  $list = $nt->create_list($owner, { name => $name, description => $desc });
-  $list = $nt->update_list($owner, $list_id, { description => $desc });
-
-  $lists = $nt->get_lists($owner);
-  $lists = $nt->list_lists($owner);
-
-  $list = $nt->get_list($owner, $list_id);
-  $list = $nt->delete_list($owner, $list_id);
-
-  $statuses = $nt->list_statuses($owner, $list_id);
-
-  $lists = $nt->list_memberships($owner);
-  $lists = $nt->list_subscriptions($owner);
-
-  $users = $nt->list_members($owner, $list_id);
-
-  $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
-
-  $user = $nt->add_list_member($owner, $list_id, $user_id);
-
-  $user = $nt->delete_list_member($owner, $list_id, $user_id);
-  $user = $nt->remove_list_member($owner, $list_id, $user_id);
-
-  $user_or_undef = $nt->is_list_member($owner, $list_id, $user_id);
-
-  $users = $nt->list_subscribers($owner, $list_id);
-
-  $list = $nt->subscribe_list($owner, $list_id);
-  $list = $nt->unsubscribe_list($owner, $list_id);
-
-  $user_or_undef = $nt->is_subscribed_list($owner, $list_id, $user_id);
-  $user_or_undef = $nt->is_list_subscriber($owner, $list_id, $user_id);
 
 =head1 LEGACY COMPATIBILITY
 
