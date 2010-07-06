@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.13006
+This document describes Net::Twitter version 3.13007
 
 =head1 SYNOPSIS
 
@@ -2621,6 +2621,10 @@ Marc Mims <marc@questright.com> (@semifor on Twitter)
 Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
 
 KATOU Akira
+
+Francisco Pecorella
+
+Doug Bell <doug@plainblack.com>
 
 =head1 LICENSE
 

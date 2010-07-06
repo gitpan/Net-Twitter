@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.13006
+    This document describes Net::Twitter version 3.13007
 
 SYNOPSIS
       use Net::Twitter;
@@ -1811,6 +1811,10 @@ CONTRIBUTORS
     Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
 
     KATOU Akira
+
+    Francisco Pecorella
+
+    Doug Bell <doug@plainblack.com>
 
 LICENSE
     Copyright (c) 2009 Marc Mims

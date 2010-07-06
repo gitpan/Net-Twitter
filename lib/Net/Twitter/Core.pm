@@ -9,7 +9,7 @@ use HTTP::Request::Common;
 use Net::Twitter::Error;
 use Scalar::Util qw/blessed reftype/;
 use List::Util qw/first/;
-use HTML::Entities;
+use HTML::Entities ();
 use Encode qw/encode_utf8/;
 use DateTime;
 use Data::Visitor::Callback;
@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13006';
+our $VERSION = '3.13007';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -163,19 +163,21 @@ sub _add_authorization_header {
 
 sub _send_request { shift->ua->request(shift) }
 
-# Twitter returns HTML encoded entities in the "text" field of status messages.
-# Decode them.
-sub _decode_html_entities {
-    my ($self, $obj) = @_;
+has _decode_html_entities_visitor => (
+    is      => 'rw',
+    lazy    => 1,
+    default => sub {
+        Data::Visitor::Callback->new(
+            plain_value => sub {
+                return unless defined $_;
 
-    if ( ref $obj eq 'ARRAY' ) {
-        $self->_decode_html_entities($_) for @$obj;
-    }
-    elsif ( ref $obj eq 'HASH' ) {
-        $self->_decode_html_entities($_) for values %$obj;
-        decode_entities($obj->{text}) if exists $obj->{text};
-    }
-}
+                $_ = HTML::Entities::decode_entities($_);
+            }
+        )
+    },
+);
+
+sub _decode_html_entities { shift->_decode_html_entities_visitor->visit(@_) }
 
 # By default, Net::Twitter does not inflate objects, so just return the
 # hashref, untouched. This is really just a hook for Role::InflateObjects.
@@ -192,6 +194,11 @@ sub _parse_result {
     my $obj = eval { $self->_from_json($content) };
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
+    # filter before inflating objects
+    if ( (my $since = delete $synthetic_args->{since}) && defined $obj ) {
+        $self->_filter_since($datetime_parser, $obj, $since);
+    }
+
     # inflate the twitter object(s) if possible
     $self->_inflate_objects($datetime_parser, $obj);
 
@@ -200,12 +207,7 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    if  ( $res->is_success && defined $obj ) {
-        if ( my $since = delete $synthetic_args->{since} ) {
-            $self->_filter_since($datetime_parser, $obj, $since);
-        }
-        return $obj;
-    }
+    return $obj if $res->is_success && defined $obj;
 
     my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if ref $obj;
