@@ -66,4 +66,5 @@ t/geo.t
 t/lib/TestUA.pm
 t/lookup_users.t
 t/retry.t
+t/stack_trace.t
 t/unicode.t

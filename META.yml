@@ -25,6 +25,7 @@ requires:
   Data::Visitor::Callback: 0
   DateTime: 0.51
   DateTime::Format::Strptime: 1.09
+  Devel::StackTrace: 0
   Digest::SHA: 0
   Encode: 0
   HTML::Entities: 0
@@ -40,7 +41,7 @@ requires:
   Net::Netrc: 0
   Net::OAuth: 0.25
   Scalar::Util: 0
-  Try::Tiny: 0
+  Try::Tiny: 0.03
   URI: 1.4
   URI::Escape: 0
   namespace::autoclean: 0.09
@@ -50,4 +51,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.13008_01
+version: 3.13008_02
