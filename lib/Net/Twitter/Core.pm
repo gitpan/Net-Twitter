@@ -18,7 +18,7 @@ use Try::Tiny;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13009';
+our $VERSION = '3.14000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -62,6 +62,11 @@ sub _extract_synthetic_args {
 
 sub BUILD {
     my $self = shift;
+
+    if ( $self->ssl ) {
+        eval "require Crypt::SSLeay; Crypt::SSLeay->VERSION >= 0.50"
+            || croak "Crypt::SSLeay 0.50 or later required for SSL support";
+    }
 
     if ( $self->has_netrc ) {
         require Net::Netrc;
@@ -117,11 +122,10 @@ sub _encode_args {
 sub _json_request { 
     my ($self, $http_method, $uri, $args, $authenticate, $synthetic_args, $dt_parser) = @_;
     
-    return $self->_parse_result(
-        $self->_prepare_request($http_method, $uri, $args, $authenticate),
-        $synthetic_args,
-        $dt_parser,
-    );
+    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
+    my $res = $self->_send_request($msg);
+
+    return $self->_parse_result($res, $synthetic_args, $dt_parser);
 }
 
 sub _prepare_request {
@@ -151,7 +155,7 @@ sub _prepare_request {
 
     $self->_add_authorization_header($msg, $args) if $authenticate;
 
-    return $self->_send_request($msg);
+    return $msg;
 }
 
 # Basic Auth, overridden by Role::OAuth, if included

@@ -11,7 +11,7 @@ has '_trait_namespace' => (
 );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13009';
+our $VERSION = '3.14000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -86,6 +86,9 @@ sub new {
     }
 
     $traits ||= [ qw/Legacy/ ];
+
+    # ensure we have the OAuth trait if we have a consumer key
+    $traits = [ (grep $_ ne 'OAuth', @$traits), 'OAuth' ] if $args{consumer_key};
 
     my $package_suffix = 'with__' . join '__',
        map { (my $part = $_) =~ s/::/_/g; $part =~ s/\W//; $part } sort @$traits;

@@ -34,9 +34,14 @@ requires    'Moose::Role';
 requires    'MooseX::MultiInitArg';
 requires    'namespace::autoclean'      => 0.09;
 requires    'Net::OAuth'                => 0.25;
+requires    'Scalar::Util';
+requires    'Time::HiRes';
 requires    'URI'                       => 1.40;
 requires    'URI::Escape';
 requires    'Try::Tiny'                 => 0.03;
+
+# optional
+recommends  'Crypt::SSLeay'             => 0.50;
 
 test_requires 'Test::More' => 0.88; # for done_testing
 

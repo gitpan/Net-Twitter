@@ -63,6 +63,7 @@ t/99-pod_coverage.t
 t/99-pod_spelling.t
 t/99-pod_syntax.t
 t/geo.t
+t/leak.t
 t/lib/TestUA.pm
 t/lookup_users.t
 t/retry.t

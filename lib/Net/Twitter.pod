@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.13009
+This document describes Net::Twitter version 3.14000
 
 =head1 SYNOPSIS
 
@@ -544,6 +544,64 @@ to indicate the numerical ID of the Twitter user that sent the status.
 
 
 =over 4
+
+=item B<account_settings>
+
+
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
+
+Returns the current trend, geo and sleep time information for the
+authenticating user.
+
+
+Returns: HashRef
+
+=item B<account_totals>
+
+
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
+
+Returns the current count of friends, followers, updates (statuses)
+and favorites of the authenticating user.
+
+
+Returns: HashRef
+
+=item B<all_lists>
+
+=item B<all_lists(id)>
+
+
+
+=over 4
+
+=item Parameters: id, user_id, screen_name
+
+=item Required: id
+
+=back
+
+Returns all lists the authenticating or specified user subscribes to, including
+their own. The user is specified using the C<user_id> or C<screen_name
+parameters>. If no user is given, the authenticating user is used.  Requires
+authentication unless requesting for another user.
+
+
+Returns: ArrayRef[List]
 
 =item B<block_exists>
 
@@ -1137,7 +1195,7 @@ Returns: HashRef
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page, skip_user
+=item Parameters: since_id, max_id, count, page, skip_user, exclude_replies, contributor_details, include_rts, include_entities, trim_user, include_my_retweet
 
 =item Required: I<none>
 
@@ -1149,6 +1207,26 @@ authenticating user and that user's friends. This is the equivalent of
 
 
 Returns: ArrayRef[Status]
+
+=item B<lookup_friendships>
+
+
+
+=over 4
+
+=item Parameters: user_id, screen_name
+
+=item Required: I<none>
+
+=back
+
+Returns the relationship of the authenticating user to the comma separated list
+or ARRAY ref of up to 100 screen_names or user_ids provided. Values for
+connections can be: following, following_requested, followed_by, none.
+Requires authentication.
+
+
+Returns: ArrayRef
 
 =item B<lookup_users>
 
@@ -1279,6 +1357,28 @@ IP address.)
 
 Returns: RateLimitStatus
 
+=item B<related_results>
+
+=item B<related_results(id)>
+
+
+
+=over 4
+
+=item Parameters: id
+
+=item Required: id
+
+=back
+
+If available, returns an array of replies and mentions related to the specified
+status. There is no guarantee there will be any replies or mentions in the
+response. This method is only available to users who have access to
+#newtwitter.  Requires authentication.
+
+
+Returns: ArrayRef[Status]
+
 =item B<report_spam>
 
 =item B<report_spam(id)>
@@ -1373,6 +1473,28 @@ Returns the 20 most recent retweets posted by the authenticating user.
 
 Returns: ArrayRef[Status]
 
+=item B<retweeted_by_user>
+
+=item B<retweeted_by_user(id)>
+
+
+
+=over 4
+
+=item Parameters: id, user_id, screen_name
+
+=item Required: id
+
+=back
+
+Returns the 20 most recent retweets posted by the specified user. The user is
+specified using the user_id or screen_name parameters. This method is identical
+to C<retweeted_by_me> except you can choose the user to view.  Does not require
+authentication, unless the user is protected.
+
+
+Returns: ArrayRef
+
 =item B<retweeted_to_me>
 
 
@@ -1389,6 +1511,29 @@ Returns the 20 most recent retweets posted by the authenticating user's friends.
 
 
 Returns: ArrayRef[Status]
+
+=item B<retweeted_to_user>
+
+=item B<retweeted_to_user(id)>
+
+
+
+=over 4
+
+=item Parameters: id, user_id, screen_name
+
+=item Required: id
+
+=back
+
+Returns the 20 most recent retweets posted by users the specified user
+follows. The user is specified using the user_id or screen_name
+parameters. This method is identical to C<retweeted_to_me>
+except you can choose the user to view.
+Does not require authentication, unless the user is protected.
+
+
+Returns: ArrayRef
 
 =item B<retweets>
 
@@ -1453,7 +1598,7 @@ ID of this location up with a call to statuses/update.
 
 There are multiple granularities of places that can be returned --
 "neighborhoods", "cities", etc.  At this time, only United States data is
-available through this method. 
+available through this method.
 
 =over 4
 
@@ -1486,7 +1631,7 @@ in, then C<neighborhood> is assumed.  C<city> can also be passed.
 Optional.  A hint as to the number of results to return.  This does not
 guarantee that the number of results returned will equal max_results, but
 instead informs how many "nearby" results to return.  Ideally, only pass in the
-number of places you intend to display to the user here. 
+number of places you intend to display to the user here.
 
 =back
 
@@ -1528,6 +1673,27 @@ user including detailed information about the sending and recipient users.
 
 
 Returns: ArrayRef[DirectMessage]
+
+=item B<show_direct_message>
+
+=item B<show_direct_message(id)>
+
+
+
+=over 4
+
+=item Parameters: id
+
+=item Required: id
+
+=back
+
+Returns a single direct message, specified by an id parameter. Like
+the C<direct_messages> request, this method will include the
+user objects of the sender and recipient.  Requires authentication.
+
+
+Returns: HashRef
 
 =item B<show_friendship>
 
@@ -1611,6 +1777,25 @@ authenticated to request the page of a protected user.
 
 
 Returns: ExtendedUser
+
+=item B<suggestion_categories>
+
+
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
+
+Returns the list of suggested user categories. The category slug can be used in
+the C<user_suggestions> API method get the users in that category .  Does not
+require authentication.
+
+
+Returns: ArrayRef
 
 =item B<test>
 
@@ -1768,6 +1953,27 @@ updates.
 
 Returns: BasicUser
 
+=item B<update_friendship>
+
+=item B<update_friendship(id)>
+
+
+
+=over 4
+
+=item Parameters: id, user_id, screen_name, device, retweets
+
+=item Required: id
+
+=back
+
+Allows you enable or disable retweets and device notifications from the
+specified user. All other values are assumed to be false.  Requires
+authentication.
+
+
+Returns: HashRef
+
 =item B<update_profile>
 
 
@@ -1796,7 +2002,7 @@ Returns: ExtendedUser
 
 =over 4
 
-=item Parameters: image
+=item Parameters: image, use
 
 =item Required: image
 
@@ -1804,8 +2010,9 @@ Returns: ExtendedUser
 
 Updates the authenticating user's profile background image. The C<image>
 parameter must be an arrayref with the same interpretation as the C<image>
-parameter in the C<update_profile_image> method.  See that method's
-documentation for details.
+parameter in the C<update_profile_image> method.  The C<use> parameter allows
+you to specify whether to use the  uploaded profile background or not. See
+that method's documentation for details.
 
 
 Returns: ExtendedUser
@@ -1862,6 +2069,30 @@ C<undef> as the first array value.
 
 
 Returns: ExtendedUser
+
+=item B<user_suggestions>
+
+=item B<user_suggestions(category)>
+
+
+=item alias: follow_suggestions
+
+
+=over 4
+
+=item Parameters: category, lang
+
+=item Required: category
+
+=back
+
+Access the users in a given category of the Twitter suggested user list and
+return their most recent status if they are not a protected user. Currently
+supported values for optional parameter C<lang> are C<en>, C<fr>, C<de>, C<es>,
+C<it>.  Does not require authentication.
+
+
+Returns: ArrayRef
 
 =item B<user_timeline>
 
