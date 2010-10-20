@@ -20,10 +20,9 @@ no_index:
     - inc
     - src
     - t
-recommends:
-  Crypt::SSLeay: 0.5
 requires:
   Carp: 0
+  Crypt::SSLeay: 0.5
   Data::Visitor::Callback: 0
   DateTime: 0.51
   DateTime::Format::Strptime: 1.09
@@ -54,4 +53,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.14000
+version: 3.14001
