@@ -1,4 +1,5 @@
 Changes
+dist.ini
 examples/oauth_desktop.pl
 examples/oauth_webapp.pl
 inc/Module/AutoInstall.pm

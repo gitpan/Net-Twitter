@@ -29,6 +29,7 @@ requires:
   Devel::StackTrace: 0
   Digest::SHA: 0
   Encode: 0
+  File::Spec: 0
   HTML::Entities: 0
   HTTP::Request::Common: 0
   JSON::Any: 1.21
@@ -53,4 +54,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.14001
+version: 3.14002
