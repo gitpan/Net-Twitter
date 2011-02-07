@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.14002
+This document describes Net::Twitter version 3.14003
 
 =head1 SYNOPSIS
 
@@ -611,7 +611,7 @@ Returns: ArrayRef[List]
 
 =over 4
 
-=item Parameters: id, user_id, screen_name
+=item Parameters: id, user_id, screen_name, include_entities
 
 =item Required: id
 
@@ -625,13 +625,11 @@ Returns: BasicUser
 
 =item B<blocking>
 
-=item B<blocking(page)>
-
 
 
 =over 4
 
-=item Parameters: page
+=item Parameters: page, include_entities
 
 =item Required: I<none>
 
@@ -667,7 +665,7 @@ Returns: ArrayRef[Int]
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, user_id, screen_name, include_entities
 
 =item Required: id
 
@@ -688,7 +686,7 @@ Returns: BasicUser
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, include_entities
 
 =item Required: id
 
@@ -710,7 +708,7 @@ Returns: Status
 
 =over 4
 
-=item Parameters: id, user_id, screen_name, follow
+=item Parameters: id, user_id, screen_name, follow, include_entities
 
 =item Required: id
 
@@ -750,7 +748,7 @@ Returns: SavedSearch
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, user_idscreen_name
 
 =item Required: id
 
@@ -770,7 +768,7 @@ Returns: BasicUser
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, include_entities
 
 =item Required: id
 
@@ -791,7 +789,7 @@ Returns: DirectMessage
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, include_entities
 
 =item Required: id
 
@@ -813,7 +811,7 @@ Returns: Status
 
 =over 4
 
-=item Parameters: id, user_id, screen_name
+=item Parameters: id, user_id, screen_name, include_entities
 
 =item Required: id
 
@@ -854,7 +852,7 @@ Returns: SavedSearch
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, trim_user, include_entities
 
 =item Required: id
 
@@ -868,13 +866,15 @@ Returns: Status
 
 =item B<direct_messages>
 
+=item B<direct_messages(include_entities)>
+
 
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page
+=item Parameters: since_id, max_id, count, page, include_entities
 
-=item Required: I<none>
+=item Required: include_entities
 
 =back
 
@@ -892,7 +892,7 @@ Returns: ArrayRef[DirectMessage]
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, screen_name, include_entities
 
 =item Required: id
 
@@ -912,7 +912,7 @@ Returns: BasicUser
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, screen_name, include_entities
 
 =item Required: id
 
@@ -949,7 +949,7 @@ Returns: Error
 
 =over 4
 
-=item Parameters: id, page
+=item Parameters: id, page, include_entities
 
 =item Required: I<none>
 
@@ -967,7 +967,7 @@ Returns: ArrayRef[Status]
 
 =over 4
 
-=item Parameters: id, user_id, screen_name, cursor
+=item Parameters: id, user_id, screen_name, cursor, include_entities
 
 =item Required: I<none>
 
@@ -1029,7 +1029,7 @@ Returns: HashRef|ArrayRef[Int]
 
 =over 4
 
-=item Parameters: id, user_id, screen_name, cursor
+=item Parameters: id, user_id, screen_name, cursor, include_entities
 
 =item Required: I<none>
 
@@ -1093,7 +1093,7 @@ Returns: HashRef|ArrayRef[Int]
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page, skip_user
+=item Parameters: since_id, max_id, count, page, skip_user, trim_user, include_entities, include_rts
 
 =item Required: I<none>
 
@@ -1234,7 +1234,7 @@ Returns: ArrayRef
 
 =over 4
 
-=item Parameters: user_id, screen_name
+=item Parameters: user_id, screen_name, include_entities
 
 =item Required: I<none>
 
@@ -1273,7 +1273,7 @@ Returns: ArrayRef[User]
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page
+=item Parameters: since_id, max_id, count, page, trim_user, include_rts, include_entities
 
 =item Required: I<none>
 
@@ -1293,7 +1293,7 @@ Returns: ArrayRef[Status]
 
 =over 4
 
-=item Parameters: user, text, screen_name, user_id
+=item Parameters: user, text, screen_name, user_id, include_entities
 
 =item Required: user, text
 
@@ -1309,13 +1309,11 @@ Returns: DirectMessage
 
 =item B<public_timeline>
 
-=item B<public_timeline(skip_user)>
-
 
 
 =over 4
 
-=item Parameters: skip_user
+=item Parameters: skip_user, trim_user, include_entities
 
 =item Required: I<none>
 
@@ -1387,7 +1385,7 @@ Returns: ArrayRef[Status]
 
 =over 4
 
-=item Parameters: id, user_id, screen_name
+=item Parameters: id, user_id, screen_name, include_entities
 
 =item Required: id
 
@@ -1406,7 +1404,7 @@ Returns: User
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, include_entities, trim_user
 
 =item Required: id
 
@@ -1426,7 +1424,7 @@ Returns: Status
 
 =over 4
 
-=item Parameters: id, count, page
+=item Parameters: id, count, page, trim_user, include_entities
 
 =item Required: id
 
@@ -1445,7 +1443,7 @@ Returns: ArrayRef[User]
 
 =over 4
 
-=item Parameters: id, count, page
+=item Parameters: id, count, page, trim_user, include_entities
 
 =item Required: id
 
@@ -1462,7 +1460,7 @@ Returns: ArrayRef[User]
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page
+=item Parameters: since_id, max_id, count, page, trim_user, include_entities
 
 =item Required: I<none>
 
@@ -1543,7 +1541,7 @@ Returns: ArrayRef
 
 =over 4
 
-=item Parameters: id, count
+=item Parameters: id, count, trim_user, include_entities
 
 =item Required: id
 
@@ -1562,7 +1560,7 @@ Returns: Arrayref[Status]
 
 =over 4
 
-=item Parameters: since_id, max_id, count, page
+=item Parameters: since_id, max_id, count, page, trim_user, include_entities
 
 =item Required: I<none>
 
@@ -1662,7 +1660,7 @@ Returns: ArrayRef[SavedSearch]
 
 =over 4
 
-=item Parameters: since_id, max_id, page
+=item Parameters: since_id, max_id, page, count, include_entities
 
 =item Required: I<none>
 
@@ -1682,7 +1680,7 @@ Returns: ArrayRef[DirectMessage]
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, include_entities
 
 =item Required: id
 
@@ -1743,7 +1741,7 @@ Returns: SavedSearch
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, trim_user, include_entities
 
 =item Required: id
 
@@ -1763,7 +1761,7 @@ Returns: Status
 
 =over 4
 
-=item Parameters: id
+=item Parameters: id, screen_name, include_entities
 
 =item Required: id
 
@@ -1873,7 +1871,7 @@ Returns: ArrayRef[Trend]
 
 =over 4
 
-=item Parameters: status, lat, long, place_id, display_coordinates, in_reply_to_status_id
+=item Parameters: status, lat, long, place_id, display_coordinates, in_reply_to_status_id, trim_user, include_entities
 
 =item Required: status
 
@@ -1980,7 +1978,7 @@ Returns: HashRef
 
 =over 4
 
-=item Parameters: name, email, url, location, description
+=item Parameters: name, email, url, location, description, include_entities
 
 =item Required: I<none>
 
@@ -2100,7 +2098,7 @@ Returns: ArrayRef
 
 =over 4
 
-=item Parameters: id, user_id, screen_name, since_id, max_id, count, page, skip_user
+=item Parameters: id, user_id, screen_name, since_id, max_id, count, page, skip_user, trim_user, include_entities, include_rts
 
 =item Required: I<none>
 
@@ -2126,7 +2124,7 @@ Returns: ArrayRef[Status]
 
 =over 4
 
-=item Parameters: q, per_page, page
+=item Parameters: q, per_page, page, include_entities
 
 =item Required: q
 
@@ -2142,11 +2140,13 @@ Returns: ArrayRef[Users]
 
 =item B<verify_credentials>
 
+=item B<verify_credentials(include_entities)>
+
 
 
 =over 4
 
-=item Parameters: I<none>
+=item Parameters: include_entities
 
 =item Required: I<none>
 
