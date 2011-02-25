@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.14003
+This document describes Net::Twitter version 3.15000
 
 =head1 SYNOPSIS
 
@@ -2570,6 +2570,30 @@ are returned in the C<lists> element of the hash.
 
 
 Returns: 
+
+=item B<members_create_all>
+
+=item B<members_create_all(user, list_id)>
+
+
+=item alias: add_list_members
+
+
+=over 4
+
+=item Parameters: user, list_id, screen_name, user_id
+
+=item Required: user, list_id
+
+=back
+
+Adds multiple users C<id> to the list. Users are specified with the C<screen_name>
+or C<user_id> parameter with a reference to an ARRAY of values.
+
+Returns a reference the added user as a hash reference.
+
+
+Returns: ArrayRef[User]
 
 =item B<subscribe_list>
 

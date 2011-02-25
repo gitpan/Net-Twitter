@@ -2,17 +2,18 @@ package Net::Twitter::Role::API::REST;
 use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
+use URI;
 
 requires qw/ua username password credentials/;
 
-my $build_api_host = sub {
+has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1'  );
+has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, builder => '_build_apihost' );
+has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
+
+sub _build_apihost {
     my $uri = URI->new(shift->apiurl);
     join ':', $uri->host, $uri->port;
-};
-
-has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1'  );
-has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, default => $build_api_host  );
-has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
+}
 
 after BUILD => sub {
     my $self = shift;
@@ -1085,7 +1086,7 @@ request.
 
 );
 
-# new in 3.14003 2010-10-19
+# new in 3.15000 2010-10-19
 
 twitter_api_method account_totals => (
     path        => 'account/totals',
@@ -1237,22 +1238,6 @@ response. This method is only available to users who have access to
 #newtwitter.  Requires authentication.
 
 );
-
-for ( qw/lookup_users lookup_friendships/ ) {
-    around $_ => sub {
-        my $orig = shift;
-        my $self = shift;
-
-        my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
-        $args = { %$args, @_ };
-
-        for ( qw/screen_name user_id/ ) {
-            $args->{$_} = join(',' => @{ $args->{$_} }) if ref $args->{$_} eq 'ARRAY';
-        }
-
-        return $orig->($self, $args);
-    };
-}
 
 1;
 
