@@ -1,3 +1,10 @@
+3.16000 2011-03-26
+    - Moved trends methods to API::REST; added warning to API::Search::Trends
+    - Added no_retweet_ids method
+    - modify searchapiurl for identica option
+    - added deprecation notice to Net::Identica with Net::Twitter examples
+    - replaced Test::Exception with Test::Fatal in tests
+
 3.15000 2011-02-25
     - added Lists API method members_create_all (alias add_list_members)
     - added tests dependency: Test::Exception (closes RT #65786)

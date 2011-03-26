@@ -21,30 +21,6 @@ after BUILD => sub {
     $self->{apiurl} =~ s/^http:/https:/ if $self->ssl;
 };
 
-around BUILDARGS => sub {
-    my $next    = shift;
-    my $class   = shift;
-
-    my %options = @_ == 1 ? %{$_[0]} : @_;
-
-    if ( delete $options{identica} ) {
-        %options = (
-            apiurl => 'http://identi.ca/api',
-            apirealm => 'Laconica API',
-            oauth_urls => {
-                request_token_url  => "https://identi.ca/api/oauth/request_token",
-                authentication_url => "https://identi.ca/api/oauth/authenticate",
-                authorization_url  => "https://identi.ca/api/oauth/authorize",
-                access_token_url   => "https://identi.ca/api/oauth/access_token",
-                xauth_url          => "https://identi.ca/api/oauth/access_token",
-            },
-            %options,
-        );
-    }
-
-    return $next->($class, \%options);
-};
-
 base_url     'apiurl';
 authenticate 1;
 
@@ -463,6 +439,18 @@ user_a follows user_b, otherwise will return false.
     params   => [qw/user_a user_b/],
     required => [qw/user_a user_b/],
     returns  => 'Bool',
+);
+
+twitter_api_method no_retweet_ids => (
+    description => <<'',
+Returns an ARRAY ref of user IDs for which the authenticating user does not
+want to receive retweets.
+
+    path     => 'friendships/no_retweet_ids',
+    method   => 'GET',
+    params   => [],
+    required => [],
+    returns  => 'ArrayRef[UserIDs]',
 );
 
 twitter_api_method friends_ids => (
@@ -905,6 +893,7 @@ twitter_api_method trends_available => (
     method      => 'GET',
     params      => [qw/lat long/],
     required    => [],
+    authenticate => 0,
     returns     => 'ArrayRef[Location]',
     description => <<EOT,
 Returns the locations with trending topic information. The response is an
@@ -926,6 +915,7 @@ twitter_api_method trends_location => (
     params      => [qw/woeid/],
     required    => [qw/woeid/],
     returns     => 'ArrayRef[Trend]',
+    authenticate => 0,
     description => <<'',
 Returns the top 10 trending topics for a specific location. The response is an
 array of "trend" objects that encode the name of the trending topic, the query
@@ -935,6 +925,58 @@ minutes, and therefore users are discouraged from querying these endpoints
 faster than once every five minutes.  Global trends information is also
 available from this API by using a WOEID of 1.
 
+);
+
+twitter_api_method trends => (
+    description => <<'',
+Returns the top ten queries that are currently trending on Twitter.  The
+response includes the time of the request, the name of each trending topic, and
+the url to the Twitter Search results page for that topic.
+
+    path     => 'trends',
+    method   => 'GET',
+    params   => [qw//],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'ArrayRef[Query]',
+);
+
+twitter_api_method trends_current => (
+    description => <<'',
+Returns the current top ten trending topics on Twitter.  The response includes
+the time of the request, the name of each trending topic, and query used on
+Twitter Search results page for that topic.
+
+    path     => 'trends/current',
+    method   => 'GET',
+    params   => [qw/exclude/],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'HashRef',
+);
+
+twitter_api_method trends_daily => (
+    description => <<'',
+Returns the top 20 trending topics for each hour in a given day.
+
+    path     => 'trends/daily',
+    method   => 'GET',
+    params   => [qw/date exclude/],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'HashRef',
+);
+
+twitter_api_method trends_weekly => (
+    description => <<'',
+Returns the top 30 trending topics for each day in a given week.
+
+    path     => 'trends/weekly',
+    method   => 'GET',
+    params   => [qw/date exclude/],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'HashRef',
 );
 
 twitter_api_method reverse_geocode => (
@@ -1086,7 +1128,7 @@ request.
 
 );
 
-# new in 3.15000 2010-10-19
+# new in 3.16000 2010-10-19
 
 twitter_api_method account_totals => (
     path        => 'account/totals',

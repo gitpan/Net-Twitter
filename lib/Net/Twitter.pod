@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 3.15000
+This document describes Net::Twitter version 3.16000
 
 =head1 SYNOPSIS
 
@@ -1307,6 +1307,24 @@ C<user_id> parameters may be used instead of C<user>.
 
 Returns: DirectMessage
 
+=item B<no_retweet_ids>
+
+
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
+
+Returns an ARRAY ref of user IDs for which the authenticating user does not
+want to receive retweets.
+
+
+Returns: ArrayRef[UserIDs]
+
 =item B<public_timeline>
 
 
@@ -1812,6 +1830,25 @@ Returns the string "ok" status code.
 
 Returns: Str
 
+=item B<trends>
+
+
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
+
+Returns the top ten queries that are currently trending on Twitter.  The
+response includes the time of the request, the name of each trending topic, and
+the url to the Twitter Search results page for that topic.
+
+
+Returns: ArrayRef[Query]
+
 =item B<trends_available>
 
 
@@ -1838,6 +1875,44 @@ location.
 
 Returns: ArrayRef[Location]
 
+=item B<trends_current>
+
+=item B<trends_current(exclude)>
+
+
+
+=over 4
+
+=item Parameters: exclude
+
+=item Required: I<none>
+
+=back
+
+Returns the current top ten trending topics on Twitter.  The response includes
+the time of the request, the name of each trending topic, and query used on
+Twitter Search results page for that topic.
+
+
+Returns: HashRef
+
+=item B<trends_daily>
+
+
+
+=over 4
+
+=item Parameters: date, exclude
+
+=item Required: I<none>
+
+=back
+
+Returns the top 20 trending topics for each hour in a given day.
+
+
+Returns: HashRef
+
 =item B<trends_location>
 
 =item B<trends_location(woeid)>
@@ -1862,6 +1937,23 @@ available from this API by using a WOEID of 1.
 
 
 Returns: ArrayRef[Trend]
+
+=item B<trends_weekly>
+
+
+
+=over 4
+
+=item Parameters: date, exclude
+
+=item Required: I<none>
+
+=back
+
+Returns the top 30 trending topics for each day in a given week.
+
+
+Returns: HashRef
 
 =item B<update>
 
@@ -2182,7 +2274,7 @@ option to C<new>.
 
 =over 4
 
-=item Parameters: q, callback, lang, rpp, page, since_id, geocode, show_user
+=item Parameters: q, callback, lang, locale, rpp, page, since_id, until, geocode, show_user, result_type
 
 =item Required: q
 
@@ -2196,80 +2288,6 @@ C<results>.  To iterate over the results, use something similar to:
     for my $status ( @{$r->{results}} ) {
         print "$status->{text}\n";
     }
-
-
-Returns: HashRef
-
-=item B<trends>
-
-
-
-=over 4
-
-=item Parameters: I<none>
-
-=item Required: I<none>
-
-=back
-
-Returns the top ten queries that are currently trending on Twitter.  The
-response includes the time of the request, the name of each trending topic, and
-the url to the Twitter Search results page for that topic.
-
-
-Returns: ArrayRef[Query]
-
-=item B<trends_current>
-
-=item B<trends_current(exclude)>
-
-
-
-=over 4
-
-=item Parameters: exclude
-
-=item Required: I<none>
-
-=back
-
-Returns the current top ten trending topics on Twitter.  The response includes
-the time of the request, the name of each trending topic, and query used on
-Twitter Search results page for that topic.
-
-
-Returns: HashRef
-
-=item B<trends_daily>
-
-
-
-=over 4
-
-=item Parameters: date, exclude
-
-=item Required: I<none>
-
-=back
-
-Returns the top 20 trending topics for each hour in a given day.
-
-
-Returns: HashRef
-
-=item B<trends_weekly>
-
-
-
-=over 4
-
-=item Parameters: date, exclude
-
-=item Required: I<none>
-
-=back
-
-Returns the top 30 trending topics for each day in a given week.
 
 
 Returns: HashRef

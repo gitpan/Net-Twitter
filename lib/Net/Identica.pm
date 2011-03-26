@@ -2,7 +2,7 @@ package Net::Identica;
 use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.15000';
+our $VERSION = '3.16000';
 $VERSION     = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';
@@ -30,6 +30,33 @@ Net::Identica - A perl interface to the Identi.ca Twitter Compatible API
   $nt = Net::Identica->new(username => $user, password => $passwd);
 
   $nt->update('Hello, Identica friends!');
+
+=head1 DEPRECATED
+
+This module is a backwards compatibility wrapper for applications that used
+L<Net::Identica> packaged with C<Net::Twitter> versions 2.12 and earlier.
+Instead, use L<Net::Twitter> with the C<identica> option to gain all of the new
+features and functionality (OAuth, Search, exceptions on error, etc.).
+
+  use Net::Twitter;
+
+  # A simple, backwards compatible replacement for Net::Identica
+  my $identica = Net::Twitter->new(
+      legacy   => 1,
+      identica => 1,
+      username => $username,
+      password => $password,
+  );
+
+  # A more complex object with OAuth and some optional traits
+  my $identica = Net::Twitter->new(
+      traits => [qw/API::REST API::Search OAuth InflateObjects/],
+      identica            => 1,
+      consumer_key        => $consumer_key,
+      consumer_secret     => $consumer_secret,
+      access_token        => $token,
+      access_token_secret => $token_secret,
+  );
 
 =head1 DESCRIPTION
 

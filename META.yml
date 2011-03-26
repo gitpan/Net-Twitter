@@ -4,7 +4,7 @@ author:
   - 'Marc Mims <marc@questright.com> (@semifor on Twitter)'
 build_requires:
   ExtUtils::MakeMaker: 6.42
-  Test::Exception: 0
+  Test::Fatal: 0
   Test::More: 0.88
 configure_requires:
   ExtUtils::MakeMaker: 6.42
@@ -56,4 +56,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.15000
+version: 3.16000

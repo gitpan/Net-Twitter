@@ -4,6 +4,7 @@ version_from      'lib/Net/Twitter/Core.pm';
 perl_version_from 'lib/Net/Twitter/Core.pm';
 
 if ( $Module::Install::AUTHOR ) {
+    $ENV{NET_TWITTER_NO_TRENDS_WARNING} = 1;
     system $^X, "src/build.pl", version, 'src/net-twitter-pod.tt2', 'lib/Net/Twitter.pod';
     system 'pod2text lib/Net/Twitter.pod > README';
 }
@@ -44,7 +45,7 @@ requires    'URI'                       => 1.40;
 requires    'URI::Escape';
 requires    'Try::Tiny'                 => 0.03;
 
-test_requires 'Test::Exception';
+test_requires 'Test::Fatal';
 test_requires 'Test::More' => 0.88; # for done_testing
 
 # Don't rely on the JSON::Any requirement to pull in a suitable JSON backend.
