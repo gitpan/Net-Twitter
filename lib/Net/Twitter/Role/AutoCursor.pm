@@ -20,6 +20,8 @@ role {
 
         $args->{cursor} = -1 if !exists $args->{cursor} && $p->force_cursor;
 
+        my $max_calls = delete $args->{max_calls} || $p->max_calls;
+
         my $calls = 0;
         my $results;
         if ( !exists $args->{cursor} ) {
@@ -35,7 +37,7 @@ role {
             }
         }
 
-        while ( $args->{cursor} && $calls++ < $p->max_calls ) {
+        while ( $args->{cursor} && $calls++ < $max_calls ) {
             my $r = $orig->($self, $args);
             push @$results, @{$r->{$p->array_accessor}};
             $args->{cursor} = $r->{next_cursor};
@@ -120,6 +122,9 @@ methods.
 =item max_calls
 
 An integer specifying the maximum number of API calls to make. Default is 16.
+
+C<max_calls> can be overridden on a per-call basis by passing a C<max_calls>
+argument to the API method.
 
 =item force_cursor
 
