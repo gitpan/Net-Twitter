@@ -30,6 +30,7 @@ requires:
   Devel::StackTrace: 1.21
   Digest::HMAC_SHA1: 0
   Digest::SHA: 0
+  Digest::SHA1: 0
   Encode: 0
   File::Spec: 0
   HTML::Entities: 0
@@ -57,4 +58,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.17000
+version: 3.17001
