@@ -1,3 +1,15 @@
+3.18000_01 2011-09-21
+    - added update_with_media (Allen Haim)
+    - added get_privacy_policy and get_tos API methods
+    - added get_languages and get_settings API methods
+    - added contributors and contributees API methods
+    - added geo_search, geo_search, similar_places, and add_place API methods
+    - friends/followers API methods deprecated
+    - implemented the *new* Lists API in the API::REST trait
+    - replaced MX:MultiInitArg::Trait with MX:Aliases (Justin Hunter)
+    - fixed bad whatis entry (patch from debian, closes RT #67203)
+    - use Digest::SHA instead of Digest::SHA1 (patch from debian, closes RT #67202)
+
 3.17001 2011-03-31
     - fixed intermittent bug in AutoCursor (result of Class::MOP anon class caching)
 

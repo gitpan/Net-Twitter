@@ -2,7 +2,7 @@ package Net::Twitter;
 use Moose;
 use Carp;
 use Net::Twitter::Core;
-use Digest::SHA1 qw/sha1_hex/;
+use Digest::SHA qw/sha1_hex/;
 
 use namespace::autoclean;
 
@@ -12,7 +12,7 @@ has '_trait_namespace' => (
 );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.17001';
+our $VERSION = '3.18000_00';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
