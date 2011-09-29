@@ -1,6 +1,7 @@
 package Net::Twitter;
 use Moose;
 use Carp;
+use JSON;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
 
@@ -12,7 +13,7 @@ has '_trait_namespace' => (
 );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.18000_00';
+our $VERSION = '3.18001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -88,7 +89,7 @@ sub _create_anon_class {
             my $t = shift @t;
             if ( ref $t[0] eq 'HASH' ) {
                 my $params = shift @t;
-                my $sig = sha1_hex(JSON::Any->to_json($params));
+                my $sig = sha1_hex(JSON->new->utf8->encode($params));
                 my $sn  = $serial_for_params{$sig} ||= ++$serial_number;
                 $t .= "_$sn";
             }
@@ -96,7 +97,10 @@ sub _create_anon_class {
             push @comps, $t;
         }
 
-        return __PACKAGE__ . '::' .  join '__', 'with', sort @comps;
+        my $ver = $VERSION;
+        $ver =~ s/\W/_/g;
+
+        return __PACKAGE__ . "_v${ver}_" .  join '__', 'with', sort @comps;
     }
 }
 
