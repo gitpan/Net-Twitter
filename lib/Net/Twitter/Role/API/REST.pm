@@ -1,5 +1,6 @@
 package Net::Twitter::Role::API::REST;
 use Moose::Role;
+use Carp;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use URI;
@@ -266,7 +267,11 @@ authenticating user must be the author of the specified status.
 );
 
 twitter_api_method friends => (
+    deprecated  => 1,
     description => <<'EOT',
+This method has been deprecated.  Twitter intends to stop support for it on May
+14, 2012.  Use C<friends_ids> and C<lookup_users> instead.
+
 Returns a reference to an array of the user's friends.  If C<id>, C<user_id>,
 or C<screen_name> is not specified, the friends of the authenticating user are
 returned.  The returned users are ordered from most recently followed to least
@@ -296,6 +301,9 @@ EOT
 twitter_api_method followers => (
     deprecated  => 1,
     description => <<'EOT',
+This method has been deprecated.  Twitter intends to stop support for it on May
+14, 2012.  Use C<friends_ids> and C<lookup_users> instead.
+
 Returns a reference to an array of the user's followers.  If C<id>, C<user_id>,
 or C<screen_name> is not specified, the followers of the authenticating user are
 returned.  The returned users are ordered from most recently followed to least
@@ -497,8 +505,8 @@ want to receive retweets.
 
 twitter_api_method friends_ids => (
     description => <<'EOT',
-Returns a reference to an array of numeric IDs for every user followed the
-specified user.
+Returns a reference to an array of numeric IDs for every user followed by the
+specified user. The order of the IDs is reverse chronological.
 
 Use the optional C<cursor> parameter to retrieve IDs in pages of 5000.  When
 the C<cursor> parameter is used, the return value is a reference to a hash with
@@ -521,7 +529,8 @@ EOT
 twitter_api_method followers_ids => (
     description => <<'EOT',
 Returns a reference to an array of numeric IDs for every user following the
-specified user.
+specified user. The order of the IDs may change from call to call. To obtain
+the screen names, pass the arrayref to L</lookup_users>.
 
 Use the optional C<cursor> parameter to retrieve IDs in pages of 5000.  When
 the C<cursor> parameter is used, the return value is a reference to a hash with
@@ -999,7 +1008,26 @@ the url to the Twitter Search results page for that topic.
     required => [qw//],
     authenticate => 0,
     returns  => 'ArrayRef[Query]',
+    deprecated => 1,
 );
+
+my $trends_deprecation_warned = 0;
+around trends => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $args = ref $_[-1] eq ref {} ? pop : {};
+
+    $trends_deprecation_warned ||= do {
+        local $Carp::CarpLevel = 3;
+        carp "The 'trends' API method has been deprecated; instead, use trends_location({ woeid => 1 })";
+        1;
+    };
+
+    $args->{woeid} = 1;
+
+    return $self->trends_location(@_, $args);
+};
 
 twitter_api_method trends_current => (
     description => <<'',
@@ -1180,7 +1208,7 @@ twitter_api_method lookup_users => (
     required => [],
     returns => 'ArrayRef[User]',
     description => <<'EOT'
-Return up to 20 users worth of extended information, specified by either ID,
+Return up to 100 users worth of extended information, specified by either ID,
 screen name, or combination of the two. The author's most recent status (if the
 authenticating user has permission) will be returned inline.  This method is
 rate limited to 1000 calls per hour.
@@ -1394,13 +1422,13 @@ response. This method is only available to users who have access to
 
 ### Lists ###
 
-twitter_api_method list_subscriptions => (
+twitter_api_method all_subscriptions => (
     path        => 'lists/all',
     method      => 'GET',
-    params      => [qw/id user_id screen_name/],
-    required    => [qw/id/],
+    params      => [qw/user_id screen_name count cursor/],
+    required    => [],
     returns     => 'ArrayRef[List]',
-    aliases     => [qw/all_lists/],
+    aliases     => [qw/all_lists list_subscriptions/],
     description => <<'',
 Returns all lists the authenticating or specified user subscribes to, including
 their own. The user is specified using the user_id or screen_name parameters.
@@ -1527,6 +1555,27 @@ a time with this method.
 
 );
 
+twitter_api_method members_destroy_all => (
+    path        => 'lists/members/destroy_all',
+    method      => 'POST',
+    params      => [qw/list_id slug user_id screen_name owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    aliases     => [qw/remove_list_members/],
+    description => <<'EOT',
+Removes multiple members from a list, by specifying a reference to an array of
+member ids or screen names, or a string of comma separated user ids or screen
+names.  The authenticated user must own the list to be able to remove members
+from it. Note that lists can't have more than 500 members, and you are limited
+to removing up to 100 members to a list at a time with this method.
+
+Please note that there can be issues with lists that rapidly remove and add
+memberships. Take care when using these methods such that you are not too
+rapidly switching between removals and adds on the same list.
+
+EOT
+);
+
 twitter_api_method is_list_member => (
     path        => 'lists/members/show',
     method      => 'GET',
@@ -1636,6 +1685,19 @@ twitter_api_method get_list => (
     description => <<'',
 Returns the specified list. Private lists will only be shown if the
 authenticated user owns the specified list.
+
+);
+
+twitter_api_method subscriptions => (
+    path        => 'lists/subscriptions',
+    method      => 'GET',
+    params      => [qw/user_id screen_name count cursor/],
+    required    => [],
+    returns     => 'ArrayRef[List]',
+    aliases     => [],
+    description => <<'',
+Obtain a collection of the lists the specified user is subscribed to, 20 lists
+per page by default. Does not include the user's own lists.
 
 );
 
