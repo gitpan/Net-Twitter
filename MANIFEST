@@ -23,6 +23,7 @@ lib/Net/Twitter/Error.pm
 lib/Net/Twitter/OAuth.pm
 lib/Net/Twitter/Role/API/Lists.pm
 lib/Net/Twitter/Role/API/REST.pm
+lib/Net/Twitter/Role/API/RESTv1_1.pm
 lib/Net/Twitter/Role/API/Search.pm
 lib/Net/Twitter/Role/API/Search/Trends.pm
 lib/Net/Twitter/Role/API/TwitterVision.pm
@@ -46,6 +47,7 @@ src/build.pl
 src/net-twitter-pod.tt2
 t/00_load.t
 t/01_basic.t
+t/01_basic_v1_1.t
 t/02_fails.t
 t/10_net-twitter-regression.t
 t/11_useragent.t

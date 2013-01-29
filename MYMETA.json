@@ -37,6 +37,7 @@
       "runtime" : {
          "requires" : {
             "Carp" : "0",
+            "Carp::Clan" : "0",
             "Crypt::SSLeay" : "0.5",
             "Data::Visitor::Callback" : "0",
             "DateTime" : "0.51",
@@ -68,7 +69,7 @@
          }
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "bugtracker" : {
          "web" : "http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter"
@@ -78,8 +79,9 @@
          "http://dev.perl.org/licenses/"
       ],
       "repository" : {
+         "type" : "git",
          "url" : "git://github.com/semifor/Net-Twitter.git"
       }
    },
-   "version" : "3.18003"
+   "version" : "4.00000_01"
 }

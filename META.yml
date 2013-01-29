@@ -24,6 +24,7 @@ no_index:
     - t
 requires:
   Carp: 0
+  Carp::Clan: 0
   Crypt::SSLeay: 0.5
   Data::Visitor::Callback: 0
   DateTime: 0.51
@@ -57,4 +58,4 @@ resources:
   homepage: http://github.com/semifor/Net-Twitter
   license: http://dev.perl.org/licenses/
   repository: git://github.com/semifor/Net-Twitter.git
-version: 3.18004
+version: 4.00000_01

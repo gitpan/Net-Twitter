@@ -2,7 +2,7 @@ package Net::Identica;
 use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.18004';
+our $VERSION = '4.00000_01';
 $VERSION     = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';
@@ -50,7 +50,7 @@ features and functionality (OAuth, Search, exceptions on error, etc.).
 
   # A more complex object with OAuth and some optional traits
   my $identica = Net::Twitter->new(
-      traits => [qw/API::REST API::Search OAuth InflateObjects/],
+      traits => [qw/API::REST API::Search InflateObjects/],
       identica            => 1,
       consumer_key        => $consumer_key,
       consumer_secret     => $consumer_secret,

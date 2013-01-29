@@ -1,10 +1,10 @@
 #!perl
 use warnings;
 use strict;
+use HTTP::Response;
 use Test::More;
 use lib qw(t/lib);
 
-eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
 plan tests => 5;

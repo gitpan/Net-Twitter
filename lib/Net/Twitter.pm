@@ -1,6 +1,6 @@
 package Net::Twitter;
 use Moose;
-use Carp;
+use Carp::Clan qw/^Net::Twitter/;
 use JSON;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
@@ -13,7 +13,7 @@ has '_trait_namespace' => (
 );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.18004';
+our $VERSION = '4.00000_01';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

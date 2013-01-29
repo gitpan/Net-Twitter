@@ -1,7 +1,7 @@
 package Net::Twitter::Role::OAuth;
 use Moose::Role;
 use HTTP::Request::Common;
-use Carp;
+use Carp::Clan qw/^Net::Twitter/;
 use URI;
 use Digest::SHA;
 use List::Util qw/first/;
@@ -61,11 +61,10 @@ sub authorized {
 sub _get_auth_url {
     my ($self, $which_url, %params ) = @_;
 
-    my $callback = delete $params{callback} || 'oob';
-    $self->_request_request_token(callback => $callback);
+    $self->_request_request_token(%params);
 
     my $uri = $self->$which_url;
-    $uri->query_form(oauth_token => $self->request_token, %params);
+    $uri->query_form(oauth_token => $self->request_token);
     return $uri;
 }
 
@@ -101,6 +100,7 @@ sub _request_request_token {
     my ($self, %params) = @_;
 
     my $uri = $self->request_token_url;
+    $params{callback} ||= 'oob';
     my $request = $self->_make_oauth_request(
         'request token',
         request_url => $uri,
@@ -265,7 +265,7 @@ Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Bas
   use Net::Twitter;
 
   my $nt = Net::Twitter->new(
-      traits          => ['API::REST', 'OAuth'],
+      traits          => ['API::RESTv1_1', 'OAuth'],
       consumer_key    => "YOUR-CONSUMER-KEY",
       consumer_secret => "YOUR-CONSUMER-SECRET",
   );
@@ -299,7 +299,7 @@ Here's how to authorize users as a desktop app mode:
   use Net::Twitter;
 
   my $nt = Net::Twitter->new(
-      traits          => ['API::REST', 'OAuth'],
+      traits          => ['API::RESTv1_1', 'OAuth'],
       consumer_key    => "YOUR-CONSUMER-KEY",
       consumer_secret => "YOUR-CONSUMER-SECRET",
   );
@@ -331,7 +331,7 @@ authorization URL.
   sub twitter_authorize : Local {
       my($self, $c) = @_;
 
-      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
+      my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 OAuth/], %param);
       my $url = $nt->get_authorization_url(callback => $callbackurl);
 
       $c->response->cookies->{oauth} = {
@@ -353,7 +353,7 @@ secret to upgrade the request token to access token.
       my %cookie = $c->request->cookies->{oauth}->value;
       my $verifier = $c->req->params->{oauth_verifier};
 
-      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
+      my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 OAuth/], %param);
       $nt->request_token($cookie{token});
       $nt->request_token_secret($cookie{token_secret});
 
@@ -371,7 +371,7 @@ before calling any Twitter API methods.
 
       my($access_token, $access_token_secret) = ...;
 
-      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
+      my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 OAuth/], %param);
       $nt->access_token($access_token);
       $nt->access_token_secret($access_token_secret);
 
