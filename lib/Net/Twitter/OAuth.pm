@@ -2,7 +2,7 @@ package Net::Twitter::OAuth;
 use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '4.00000_01';
+our $VERSION = '4.00000_02';
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
 extends  'Net::Twitter::Core';
@@ -19,6 +19,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::OAuth - Net::Twitter with 'Legacy' and 'OAuth' roles for backwards compatibility
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 

@@ -4,7 +4,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 4.00000_01
+This document describes Net::Twitter version 4.00000_02
 
 =head1 SYNOPSIS
 

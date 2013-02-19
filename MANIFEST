@@ -1,4 +1,10 @@
 Changes
+LICENSE
+MANIFEST
+META.yml
+Makefile.PL
+README
+dist.ini
 examples/oauth_desktop.pl
 examples/oauth_webapp.pl
 inc/Module/AutoInstall.pm
@@ -37,14 +43,9 @@ lib/Net/Twitter/Role/RetryOnError.pm
 lib/Net/Twitter/Role/SimulateCursors.pm
 lib/Net/Twitter/Role/WrapError.pm
 lib/Net/Twitter/Search.pm
-Makefile.PL
-MANIFEST			This list of files
-META.yml
-MYMETA.json
-MYMETA.yml
-README
 src/build.pl
 src/net-twitter-pod.tt2
+t/00-compile.t
 t/00_load.t
 t/01_basic.t
 t/01_basic_v1_1.t
@@ -73,6 +74,8 @@ t/geo.t
 t/leak.t
 t/lib/TestUA.pm
 t/lookup_users.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
 t/retry.t
 t/stack_trace.t
 t/twitter_error.t

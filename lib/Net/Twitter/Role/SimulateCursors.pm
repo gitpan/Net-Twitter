@@ -1,4 +1,7 @@
 package Net::Twitter::Role::SimulateCursors;
+{
+  $Net::Twitter::Role::SimulateCursors::VERSION = '4.00000_02';
+}
 use Moose::Role;
 use namespace::autoclean;
 
@@ -38,6 +41,10 @@ __END__
 
 Net::Twitter::Role::SimulateCursors - Make paging work like cursoring
 
+=head1 VERSION
+
+version 4.00000_02
+
 =head1 SYNOPSIS
 
   use Net::Twitter;
@@ -76,4 +83,3 @@ it under the same terms as Perl itself.
 L<Net::Twitter>
 
 =cut
-

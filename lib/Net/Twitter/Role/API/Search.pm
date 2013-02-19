@@ -1,4 +1,7 @@
 package Net::Twitter::Role::API::Search;
+{
+  $Net::Twitter::Role::API::Search::VERSION = '4.00000_02';
+}
 
 use Moose::Role;
 use Net::Twitter::API;
@@ -46,6 +49,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::Role::API::Search - A definition of the Twitter Search API as a Moose role
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 

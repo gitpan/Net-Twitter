@@ -1,4 +1,7 @@
 package Net::Twitter::Role::OAuth;
+{
+  $Net::Twitter::Role::OAuth::VERSION = '4.00000_02';
+}
 use Moose::Role;
 use HTTP::Request::Common;
 use Carp::Clan qw/^Net::Twitter/;
@@ -61,10 +64,11 @@ sub authorized {
 sub _get_auth_url {
     my ($self, $which_url, %params ) = @_;
 
-    $self->_request_request_token(%params);
+    my $callback = delete $params{callback} || 'oob';
+    $self->_request_request_token(callback => $callback);
 
     my $uri = $self->$which_url;
-    $uri->query_form(oauth_token => $self->request_token);
+    $uri->query_form(oauth_token => $self->request_token, %params);
     return $uri;
 }
 
@@ -100,7 +104,6 @@ sub _request_request_token {
     my ($self, %params) = @_;
 
     my $uri = $self->request_token_url;
-    $params{callback} ||= 'oob';
     my $request = $self->_make_oauth_request(
         'request token',
         request_url => $uri,
@@ -259,6 +262,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Basic Authentication
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 
@@ -499,4 +506,3 @@ it under the same terms as Perl itself.
 L<Net::Twitter>, L<Net::Twitter::OAuth::Simple>, L<Net::OAuth::Simple>
 
 =cut
-

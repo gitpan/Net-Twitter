@@ -1,4 +1,7 @@
 package Net::Twitter::Role::AutoCursor;
+{
+  $Net::Twitter::Role::AutoCursor::VERSION = '4.00000_02';
+}
 use MooseX::Role::Parameterized;
 
 parameter max_calls      => isa => 'Int',  default => 16;
@@ -64,6 +67,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::Role::AutoCursor - Help transition to cursor based access to friends_ids and followers_ids methods
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 
@@ -175,4 +182,3 @@ Copyright (c) 2011 Marc Mims
 This library is free software and may be distributed under the same terms as perl itself.
 
 =cut
-

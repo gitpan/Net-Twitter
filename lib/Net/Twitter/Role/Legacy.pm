@@ -1,4 +1,7 @@
 package Net::Twitter::Role::Legacy;
+{
+  $Net::Twitter::Role::Legacy::VERSION = '4.00000_02';
+}
 use Moose::Role;
 
 use namespace::autoclean;
@@ -43,6 +46,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::Role::Legacy - A Net::Twitter legacy compatibility layer as a Moose role
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 

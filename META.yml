@@ -1,16 +1,24 @@
 ---
-abstract: 'A perl interface to the Twitter API'
+abstract: 'Net::Twitter implementation'
 author:
-  - 'Marc Mims <marc@questright.com> (@semifor on Twitter)'
+  - 'Marc Mims <semifor@cpan.org>'
 build_requires:
-  ExtUtils::MakeMaker: 6.59
+  Carp: 0
+  File::Find: 0
+  File::Spec: 0
+  File::Temp: 0
+  HTTP::Response: 0
+  LWP::UserAgent: 5.819
   Test::Fatal: 0
   Test::More: 0.88
+  Test::Simple: 0.98
+  base: 0
+  strict: 0
+  warnings: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.59
-distribution_type: module
-dynamic_config: 1
-generated_by: 'Module::Install version 1.06'
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -18,44 +26,44 @@ meta-spec:
 name: Net-Twitter
 no_index:
   directory:
-    - examples
-    - inc
     - src
-    - t
+    - examples
 requires:
-  Carp: 0
+  API::REST: 0
+  API::Search: 0
+  API::TwitterVision: 0
   Carp::Clan: 0
-  Crypt::SSLeay: 0.5
   Data::Visitor::Callback: 0
-  DateTime: 0.51
-  DateTime::Format::Strptime: 1.09
-  Devel::StackTrace: 1.21
-  Digest::HMAC_SHA1: 0
+  DateTime: 0
+  DateTime::Format::Strptime: 0
+  Devel::StackTrace: 0
   Digest::SHA: 0
   Encode: 0
-  File::Spec: 0
   HTML::Entities: 0
   HTTP::Request::Common: 0
   JSON: 0
-  LWP::UserAgent: 2.032
+  Legacy: 0
   List::Util: 0
-  Moose: 0.9
+  Moose: 0
   Moose::Exporter: 0
+  Moose::Meta::Method: 0
   Moose::Role: 0
   MooseX::Aliases: 0
   MooseX::Role::Parameterized: 0
   Net::Netrc: 0
-  Net::OAuth: 0.25
+  Net::OAuth: 0
+  OAuth: 0
   Scalar::Util: 0
   Time::HiRes: 0
-  Try::Tiny: 0.03
-  URI: 1.4
+  Try::Tiny: 0
+  URI: 0
   URI::Escape: 0
-  namespace::autoclean: 0.09
-  perl: 5.8.1
+  WrapError: 0
+  namespace::autoclean: 0
+  overload: 0
+  perl: 5.008001
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter
-  homepage: http://github.com/semifor/Net-Twitter
-  license: http://dev.perl.org/licenses/
-  repository: git://github.com/semifor/Net-Twitter.git
-version: 4.00000_01
+  homepage: https://github.com/semifor/Net-Twitter
+  repository: https://github.com/semifor/Net-Twitter.git
+version: 4.00000_02

@@ -1,4 +1,7 @@
 package Net::Twitter::Role::API::TwitterVision;
+{
+  $Net::Twitter::Role::API::TwitterVision::VERSION = '4.00000_02';
+}
 use Moose::Role;
 
 requires qw/credentials/;
@@ -43,6 +46,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::Role::API::TwitterVision - A definition of the TwitterVision API as a Moose role
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 

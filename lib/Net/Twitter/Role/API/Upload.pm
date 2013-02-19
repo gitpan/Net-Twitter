@@ -1,4 +1,7 @@
 package Net::Twitter::Role::API::Upload;
+{
+  $Net::Twitter::Role::API::Upload::VERSION = '4.00000_02';
+}
 use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
@@ -61,6 +64,10 @@ __END__
 =head1 NAME
 
 Net::Twitter::Role::API::Upload - A definition of the Twitter Upload API as a Moose role
+
+=head1 VERSION
+
+version 4.00000_02
 
 =head1 SYNOPSIS
 
