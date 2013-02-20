@@ -1,9 +1,8 @@
 package Net::Twitter::Search;
+{
+  $Net::Twitter::Search::VERSION = '4.00000_03'; # TRIAL
+}
 use Moose;
-
-# use *all* digits for fBSD ports
-our $VERSION = '4.00000_02';
-$VERSION = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';
 with    "Net::Twitter::Role::Legacy";
@@ -22,7 +21,7 @@ Net::Twitter::Search - A perl interface to the Twitter Search API
 
 =head1 VERSION
 
-version 4.00000_02
+version 4.00000_03
 
 =head1 SYNOPSIS
 

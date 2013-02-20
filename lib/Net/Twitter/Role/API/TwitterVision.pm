@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::TwitterVision;
 {
-  $Net::Twitter::Role::API::TwitterVision::VERSION = '4.00000_02';
+  $Net::Twitter::Role::API::TwitterVision::VERSION = '4.00000_03'; # TRIAL
 }
 use Moose::Role;
 
@@ -49,7 +49,7 @@ Net::Twitter::Role::API::TwitterVision - A definition of the TwitterVision API a
 
 =head1 VERSION
 
-version 4.00000_02
+version 4.00000_03
 
 =head1 SYNOPSIS
 

@@ -1,4 +1,7 @@
 package Net::Twitter;
+{
+  $Net::Twitter::VERSION = '4.00000_03'; # TRIAL
+}
 use Moose;
 use Carp::Clan qw/^Net::Twitter/;
 use JSON;
@@ -11,11 +14,6 @@ has '_trait_namespace' => (
     Moose->VERSION >= '0.85' ? (is => 'bare') : (),
     default => 'Net::Twitter::Role',
 );
-
-# use *all* digits for fBSD ports
-our $VERSION = '4.00000_02';
-
-$VERSION = eval $VERSION; # numify for warning-free dev releases
 
 # See Net/Twitter.pod for documentation, Net/Twitter/Core.pm for implementation.
 #
@@ -97,7 +95,7 @@ sub _create_anon_class {
             push @comps, $t;
         }
 
-        my $ver = $VERSION;
+        my $ver = $Net::Twitter::Core::VERSION;
         $ver =~ s/\W/_/g;
 
         return __PACKAGE__ . "_v${ver}_" .  join '__', 'with', sort @comps;

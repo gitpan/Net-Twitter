@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::Search;
 {
-  $Net::Twitter::Role::API::Search::VERSION = '4.00000_02';
+  $Net::Twitter::Role::API::Search::VERSION = '4.00000_03'; # TRIAL
 }
 
 use Moose::Role;
@@ -52,7 +52,7 @@ Net::Twitter::Role::API::Search - A definition of the Twitter Search API as a Mo
 
 =head1 VERSION
 
-version 4.00000_02
+version 4.00000_03
 
 =head1 SYNOPSIS
 

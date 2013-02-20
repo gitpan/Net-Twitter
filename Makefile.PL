@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker 6.30;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Net::Twitter implementation",
-  "AUTHOR" => "Marc Mims <semifor\@cpan.org>",
+  "AUTHOR" => "Marc Mims <mmims\@cpan.org>",
   "BUILD_REQUIRES" => {
     "Carp" => 0,
     "File::Find" => 0,
@@ -33,9 +33,6 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Net::Twitter",
   "PREREQ_PM" => {
-    "API::REST" => 0,
-    "API::Search" => 0,
-    "API::TwitterVision" => 0,
     "Carp::Clan" => 0,
     "Data::Visitor::Callback" => 0,
     "DateTime" => 0,
@@ -46,7 +43,6 @@ my %WriteMakefileArgs = (
     "HTML::Entities" => 0,
     "HTTP::Request::Common" => 0,
     "JSON" => 0,
-    "Legacy" => 0,
     "List::Util" => 0,
     "Moose" => 0,
     "Moose::Exporter" => 0,
@@ -56,17 +52,15 @@ my %WriteMakefileArgs = (
     "MooseX::Role::Parameterized" => 0,
     "Net::Netrc" => 0,
     "Net::OAuth" => 0,
-    "OAuth" => 0,
     "Scalar::Util" => 0,
     "Time::HiRes" => 0,
     "Try::Tiny" => 0,
     "URI" => 0,
     "URI::Escape" => 0,
-    "WrapError" => 0,
     "namespace::autoclean" => 0,
     "overload" => 0
   },
-  "VERSION" => "4.00000_02",
+  "VERSION" => "4.00000_03",
   "test" => {
     "TESTS" => "t/*.t"
   }

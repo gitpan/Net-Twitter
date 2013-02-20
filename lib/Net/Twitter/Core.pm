@@ -1,4 +1,11 @@
 package Net::Twitter::Core;
+{
+  $Net::Twitter::Core::VERSION = '4.00000_03'; # TRIAL
+}
+{
+    $Net::Twitter::Core::VERSION = '4.00000_03';
+}
+
 use 5.008001;
 use Moose;
 use MooseX::Aliases;
@@ -17,11 +24,6 @@ use Try::Tiny;
 
 use namespace::autoclean;
 
-# use *all* digits for fBSD ports
-our $VERSION = '4.00000_02';
-
-$VERSION = eval $VERSION; # numify for warning-free dev releases
-
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
 has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username',
@@ -32,11 +34,11 @@ has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
 has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' );
 has decode_html_entities => ( isa => 'Bool', is => 'rw', default => 0 );
-has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
+has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$Net::Twitter::Core::VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has ua              => ( isa => 'Object', is => 'rw', lazy => 1, builder => '_build_ua' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
-has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
+has clientver       => ( isa => 'Str', is => 'ro', default => $Net::Twitter::Core::VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 has _json_handler   => (
@@ -314,13 +316,15 @@ sub _user_or_undef {
 
 __END__
 
+=for Pod::Coverage BUILD credentials
+
 =head1 NAME
 
 Net::Twitter::Core - Net::Twitter implementation
 
 =head1 VERSION
 
-version 4.00000_02
+version 4.00000_03
 
 =head1 SYNOPSIS
 

@@ -1,9 +1,8 @@
 package Net::Identica;
+{
+  $Net::Identica::VERSION = '4.00000_03'; # TRIAL
+}
 use Moose;
-
-# use *all* digits for fBSD ports
-our $VERSION = '4.00000_02';
-$VERSION     = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';
 with map "Net::Twitter::Role::$_", qw/Legacy/;
@@ -25,7 +24,7 @@ Net::Identica - A perl interface to the Identi.ca Twitter Compatible API
 
 =head1 VERSION
 
-version 4.00000_02
+version 4.00000_03
 
 =head1 SYNOPSIS
 

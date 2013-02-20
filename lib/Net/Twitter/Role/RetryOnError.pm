@@ -1,6 +1,6 @@
 package Net::Twitter::Role::RetryOnError;
 {
-  $Net::Twitter::Role::RetryOnError::VERSION = '4.00000_02';
+  $Net::Twitter::Role::RetryOnError::VERSION = '4.00000_03'; # TRIAL
 }
 use Moose::Role;
 use namespace::autoclean;
@@ -14,7 +14,7 @@ Net::Twitter::Role::RetryOnError - Retry Twitter API calls on error
 
 =head1 VERSION
 
-version 4.00000_02
+version 4.00000_03
 
 =head1 SYNOPSIS
 
