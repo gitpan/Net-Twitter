@@ -1,10 +1,12 @@
+#!/usr/bin/env perl
+
 =head1 NAME
 
 Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-This document describes Net::Twitter version 4.00000_03
+This document describes Net::Twitter version 4.00001
 
 =head1 SYNOPSIS
 
@@ -38,6 +40,16 @@ This document describes Net::Twitter version 4.00000_03
            "HTTP Message......: ", $err->message, "\n",
            "Twitter error.....: ", $err->error, "\n";
   }
+
+=head1 TWITTER API V1.1 SUPPORT
+
+This version of Net::Twitter provides Twitter API v1.1 support. Enable it by
+including the C<API::RESTv1_1> trait instead of C<API::REST>. Using Twitter API
+v1.1 may require changes to you code! It is not completely backwards compatible
+with v1.
+
+For help migrating your application to Twitter API v1.1, see
+L<Net::Twitter:::Manual::MigratingToV1_1>.
 
 
 =head1 DESCRIPTION
@@ -919,7 +931,7 @@ The authenticating user must be the recipient of the specified direct
 message.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 
 
 Returns: DirectMessage
@@ -1028,7 +1040,7 @@ Returns a list of the 20 most recent direct messages sent to the authenticating
 user including detailed information about the sending and recipient users.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 
 
 Returns: ArrayRef[DirectMessage]
@@ -1243,7 +1255,7 @@ Returns: ArrayRef[Status]
 
 =back
 
-This method is provided for backwards compitibility with Twitter API V1.0.
+This method is provided for backwards compatibility with Twitter API V1.0.
 Twitter API V1.1 does not provide an endpoint for this call. Instead,
 C<show_friendship> is called, the result is inspected, and an appropriate value
 is returned which can be evaluated in a boolean context.
@@ -1715,7 +1727,7 @@ successful.  In order to support numeric screen names, the C<screen_name> or
 C<user_id> parameters may be used instead of C<user>.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 
 
 Returns: DirectMessage
@@ -1750,8 +1762,16 @@ Returns: ArrayRef[UserIDs]
 
 =back
 
-Updates the authenticating user's current status and attaches meda for upload.
-In other words, it creates a Tweet with a picture attached.    
+Returns information allowing the creation of an embedded representation of a
+Tweet on third party sites. See the L<oEmbed|http://oembed.com/> specification
+for information about the response format.
+
+While this endpoint allows a bit of customization for the final appearance of
+the embedded Tweet, be aware that the appearance of the rendered Tweet may
+change over time to be consistent with Twitter's L<Display
+Requirements|https://dev.twitter.com/terms/display-requirements>. Do not rely
+on any class or id parameters to stay constant in the returned markup.
+
 
 
 Returns: Status
@@ -1768,7 +1788,7 @@ Returns: Status
 
 =back
 
-Returns a hash reference mapping available size varations to URLs that can be
+Returns a hash reference mapping available size variations to URLs that can be
 used to retrieve each variation of the banner.
 
 
@@ -2157,7 +2177,7 @@ Returns a list of the 20 most recent direct messages sent by the authenticating
 user including detailed information about the sending and recipient users.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 
 
 Returns: ArrayRef[DirectMessage]
@@ -2181,7 +2201,7 @@ the C<direct_messages> request, this method will include the
 user objects of the sender and recipient.  Requires authentication.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 
 
 Returns: HashRef

@@ -1,9 +1,9 @@
 package Net::Twitter::Core;
 {
-  $Net::Twitter::Core::VERSION = '4.00000_03'; # TRIAL
+  $Net::Twitter::Core::VERSION = '4.00001';
 }
 {
-    $Net::Twitter::Core::VERSION = '4.00000_03';
+    $Net::Twitter::Core::VERSION = '4.00001';
 }
 
 use 5.008001;
@@ -324,7 +324,7 @@ Net::Twitter::Core - Net::Twitter implementation
 
 =head1 VERSION
 
-version 4.00000_03
+version 4.00001
 
 =head1 SYNOPSIS
 

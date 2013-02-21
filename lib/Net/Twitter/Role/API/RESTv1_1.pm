@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::RESTv1_1;
 {
-  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00000_03'; # TRIAL
+  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00001';
 }
 use Moose::Role;
 use Carp::Clan qw/^Net::Twitter/;
@@ -240,9 +240,18 @@ EOT
 );
 
 twitter_api_method oembed => (
-    description => <<'',
-Updates the authenticating user's current status and attaches meda for upload.
-In other words, it creates a Tweet with a picture attached.    
+    description => <<'EOT',
+Returns information allowing the creation of an embedded representation of a
+Tweet on third party sites. See the L<oEmbed|http://oembed.com/> specification
+for information about the response format.
+
+While this endpoint allows a bit of customization for the final appearance of
+the embedded Tweet, be aware that the appearance of the rendered Tweet may
+change over time to be consistent with Twitter's L<Display
+Requirements|https://dev.twitter.com/terms/display-requirements>. Do not rely
+on any class or id parameters to stay constant in the returned markup.
+
+EOT
 
     method   => 'GET',
     path     => 'statuses/oembed',
@@ -278,7 +287,7 @@ Returns a list of the 20 most recent direct messages sent to the authenticating
 user including detailed information about the sending and recipient users.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages',
@@ -295,7 +304,7 @@ Returns a list of the 20 most recent direct messages sent by the authenticating
 user including detailed information about the sending and recipient users.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     aliases  => [qw/direct_messages_sent/],
@@ -314,7 +323,7 @@ the C<direct_messages> request, this method will include the
 user objects of the sender and recipient.  Requires authentication.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages/show',
@@ -332,7 +341,7 @@ The authenticating user must be the recipient of the specified direct
 message.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages/destroy',
@@ -351,7 +360,7 @@ successful.  In order to support numeric screen names, the C<screen_name> or
 C<user_id> parameters may be used instead of C<user>.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages/new',
@@ -580,7 +589,7 @@ around show_friendship => sub {
 # provided for backwards compatibility
 twitter_api_method friendship_exists => (
     description => <<'EOT',
-This method is provided for backwards compitibility with Twitter API V1.0.
+This method is provided for backwards compatibility with Twitter API V1.0.
 Twitter API V1.1 does not provide an endpoint for this call. Instead,
 C<show_friendship> is called, the result is inspected, and an appropriate value
 is returned which can be evaluated in a boolean context.
@@ -624,6 +633,16 @@ around [qw/friendship_exists relationship_exists follows/] => sub {
             $$args{source_screen_name} = $user_a;
         }
     }
+    elsif ( $user_a = delete $$args{screen_name_a} ) {
+        $$args{source_screen_name} = $user_a;
+    }
+    elsif ( $user_a = delete $$args{user_id_a} ) {
+        $$args{source_user_id} = $user_a;
+    }
+    else {
+        croak "source user not specified";
+    }
+
     if ( $user_b ||= delete $$args{user_b} ) {
         if ( $user_b =~ /^\d+$/ ) {
             $$args{target_id} = $user_b;
@@ -631,6 +650,15 @@ around [qw/friendship_exists relationship_exists follows/] => sub {
         else {
             $$args{target_screen_name} = $user_b;
         }
+    }
+    elsif ( $user_b = delete $$args{screen_name_b} ) {
+        $$args{target_screen_name} = $user_b;
+    }
+    elsif ( $user_b = delete $$args{user_id_b} ) {
+        $$args{target_user_id} = $user_b;
+    }
+    else {
+        croak "target user not specified";
     }
 
     my $r = $self->$orig($args);
@@ -1272,7 +1300,7 @@ EOT
     returns     => 'List',
 );
 
-## saved searhces ##
+## saved searches ##
 
 twitter_api_method saved_searches => (
     description => <<'',
@@ -1962,7 +1990,7 @@ EOT
 
 twitter_api_method profile_banner => (
     description => <<'',
-Returns a hash reference mapping available size varations to URLs that can be
+Returns a hash reference mapping available size variations to URLs that can be
 used to retrieve each variation of the banner.
 
     path     => 'users/profile_banner',
@@ -1972,8 +2000,8 @@ used to retrieve each variation of the banner.
     returns  => 'HashRef',
 );
 
-# infer screen_name or user_id from positional args for backwards compat
-# and covenience
+# infer screen_name or user_id from positional args for backwards compatibility
+# and convenience
 around [qw/
     show_user
     create_friend
@@ -2013,7 +2041,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.00000_03
+version 4.00001
 
 =head1 SYNOPSIS
 

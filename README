@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 4.00000_03
+    This document describes Net::Twitter version 4.00001
 
 SYNOPSIS
       use Net::Twitter;
@@ -35,6 +35,15 @@ SYNOPSIS
                "HTTP Message......: ", $err->message, "\n",
                "Twitter error.....: ", $err->error, "\n";
       }
+
+TWITTER API V1.1 SUPPORT
+    This version of Net::Twitter provides Twitter API v1.1 support. Enable
+    it by including the "API::RESTv1_1" trait instead of "API::REST". Using
+    Twitter API v1.1 may require changes to you code! It is not completely
+    backwards compatible with v1.
+
+    For help migrating your application to Twitter API v1.1, see
+    Net::Twitter:::Manual::MigratingToV1_1.
 
 DESCRIPTION
     This module provides a perl interface to the Twitter APIs. See
@@ -728,7 +737,7 @@ REST API Methods
         direct message.
 
         Important: this method requires an access token with RWD (read,
-        write, and direct message) permisions.
+        write, and direct message) permissions.
 
         Returns: DirectMessage
 
@@ -792,7 +801,7 @@ REST API Methods
         and recipient users.
 
         Important: this method requires an access token with RWD (read,
-        write, and direct message) permisions.
+        write, and direct message) permissions.
 
         Returns: ArrayRef[DirectMessage]
 
@@ -929,7 +938,7 @@ REST API Methods
         user_a, user_b
         Required: user_a, user_b
 
-        This method is provided for backwards compitibility with Twitter API
+        This method is provided for backwards compatibility with Twitter API
         V1.0. Twitter API V1.1 does not provide an endpoint for this call.
         Instead, "show_friendship" is called, the result is inspected, and
         an appropriate value is returned which can be evaluated in a boolean
@@ -1241,7 +1250,7 @@ REST API Methods
         be used instead of "user".
 
         Important: this method requires an access token with RWD (read,
-        write, and direct message) permisions.
+        write, and direct message) permissions.
 
         Returns: DirectMessage
 
@@ -1261,9 +1270,17 @@ REST API Methods
         align, related, lang
         Required: *none*
 
-        Updates the authenticating user's current status and attaches meda
-        for upload. In other words, it creates a Tweet with a picture
-        attached.
+        Returns information allowing the creation of an embedded
+        representation of a Tweet on third party sites. See the oEmbed
+        <http://oembed.com/> specification for information about the
+        response format.
+
+        While this endpoint allows a bit of customization for the final
+        appearance of the embedded Tweet, be aware that the appearance of
+        the rendered Tweet may change over time to be consistent with
+        Twitter's Display Requirements
+        <https://dev.twitter.com/terms/display-requirements>. Do not rely on
+        any class or id parameters to stay constant in the returned markup.
 
         Returns: Status
 
@@ -1272,7 +1289,7 @@ REST API Methods
         Parameters: user_id, screen_name
         Required: *none*
 
-        Returns a hash reference mapping available size varations to URLs
+        Returns a hash reference mapping available size variations to URLs
         that can be used to retrieve each variation of the banner.
 
         Returns: HashRef
@@ -1516,7 +1533,7 @@ REST API Methods
         and recipient users.
 
         Important: this method requires an access token with RWD (read,
-        write, and direct message) permisions.
+        write, and direct message) permissions.
 
         Returns: ArrayRef[DirectMessage]
 
@@ -1531,7 +1548,7 @@ REST API Methods
         objects of the sender and recipient. Requires authentication.
 
         Important: this method requires an access token with RWD (read,
-        write, and direct message) permisions.
+        write, and direct message) permissions.
 
         Returns: HashRef
 

@@ -1,6 +1,6 @@
 package Net::Twitter;
 {
-  $Net::Twitter::VERSION = '4.00000_03'; # TRIAL
+  $Net::Twitter::VERSION = '4.00001';
 }
 use Moose;
 use Carp::Clan qw/^Net::Twitter/;

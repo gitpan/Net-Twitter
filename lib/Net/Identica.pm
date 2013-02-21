@@ -1,6 +1,6 @@
 package Net::Identica;
 {
-  $Net::Identica::VERSION = '4.00000_03'; # TRIAL
+  $Net::Identica::VERSION = '4.00001';
 }
 use Moose;
 
@@ -24,7 +24,7 @@ Net::Identica - A perl interface to the Identi.ca Twitter Compatible API
 
 =head1 VERSION
 
-version 4.00000_03
+version 4.00001
 
 =head1 SYNOPSIS
 

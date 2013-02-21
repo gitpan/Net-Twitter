@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::Search;
 {
-  $Net::Twitter::Role::API::Search::VERSION = '4.00000_03'; # TRIAL
+  $Net::Twitter::Role::API::Search::VERSION = '4.00001';
 }
 
 use Moose::Role;
@@ -8,6 +8,7 @@ use Net::Twitter::API;
 use DateTime::Format::Strptime;
 
 with 'Net::Twitter::Role::API::Search::Trends';
+excludes 'Net::Twitter::Role::API::RESTv1_1';
 
 has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
@@ -52,7 +53,7 @@ Net::Twitter::Role::API::Search - A definition of the Twitter Search API as a Mo
 
 =head1 VERSION
 
-version 4.00000_03
+version 4.00001
 
 =head1 SYNOPSIS
 
