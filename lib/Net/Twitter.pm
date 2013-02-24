@@ -1,6 +1,6 @@
 package Net::Twitter;
 {
-  $Net::Twitter::VERSION = '4.00001';
+  $Net::Twitter::VERSION = '4.00002';
 }
 use Moose;
 use Carp::Clan qw/^Net::Twitter/;
@@ -149,3 +149,17 @@ sub new {
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 1;
+
+__END__
+
+=head1 NAME
+
+Net::Twitter - A perl interface to the Twitter API
+
+=head1 VERSION
+
+version 4.00002
+
+=head1 DESCRIPTION
+
+See Net/Twitter.pod

@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 4.00001
+    version 4.00002
 
 SYNOPSIS
       use Net::Twitter;
@@ -43,7 +43,7 @@ TWITTER API V1.1 SUPPORT
     backwards compatible with v1.
 
     For help migrating your application to Twitter API v1.1, see
-    Net::Twitter:::Manual::MigratingToV1_1.
+    Net::Twitter::Manual::MigratingToV1_1.
 
 DESCRIPTION
     This module provides a perl interface to the Twitter APIs. See

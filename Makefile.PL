@@ -20,7 +20,6 @@ my %WriteMakefileArgs = (
     "LWP::UserAgent" => "5.819",
     "Test::Fatal" => 0,
     "Test::More" => "0.88",
-    "Test::NoWarnings" => 0,
     "Test::Simple" => "0.98",
     "Test::Warn" => 0,
     "base" => 0,
@@ -62,7 +61,7 @@ my %WriteMakefileArgs = (
     "namespace::autoclean" => 0,
     "overload" => 0
   },
-  "VERSION" => "4.00001",
+  "VERSION" => "4.00002",
   "test" => {
     "TESTS" => "t/*.t"
   }

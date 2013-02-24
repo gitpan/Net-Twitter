@@ -1,10 +1,6 @@
 package Net::Twitter::Core;
-{
-  $Net::Twitter::Core::VERSION = '4.00001';
-}
-{
-    $Net::Twitter::Core::VERSION = '4.00001';
-}
+
+our $VERSION = '4.00002';
 
 use 5.008001;
 use Moose;
@@ -324,7 +320,7 @@ Net::Twitter::Core - Net::Twitter implementation
 
 =head1 VERSION
 
-version 4.00001
+version 4.00002
 
 =head1 SYNOPSIS
 
