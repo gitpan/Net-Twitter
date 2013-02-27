@@ -1,6 +1,6 @@
 package Net::Twitter::OAuth;
 {
-  $Net::Twitter::OAuth::VERSION = '4.00002';
+  $Net::Twitter::OAuth::VERSION = '4.00003';
 }
 use Moose;
 
@@ -21,7 +21,7 @@ Net::Twitter::OAuth - Net::Twitter with 'Legacy' and 'OAuth' roles for backwards
 
 =head1 VERSION
 
-version 4.00002
+version 4.00003
 
 =head1 SYNOPSIS
 

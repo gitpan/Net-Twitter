@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::Upload;
 {
-  $Net::Twitter::Role::API::Upload::VERSION = '4.00002';
+  $Net::Twitter::Role::API::Upload::VERSION = '4.00003';
 }
 use Moose::Role;
 use Net::Twitter::API;
@@ -67,7 +67,7 @@ Net::Twitter::Role::API::Upload - A definition of the Twitter Upload API as a Mo
 
 =head1 VERSION
 
-version 4.00002
+version 4.00003
 
 =head1 SYNOPSIS
 

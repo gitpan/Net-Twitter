@@ -1,6 +1,8 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.00002';
+our $VERSION = '4.00003';
+
+# ABSTRACT: A perl interface to the Twitter API
 
 use 5.008001;
 use Moose;
@@ -17,6 +19,8 @@ use Encode qw/encode_utf8/;
 use DateTime;
 use Data::Visitor::Callback;
 use Try::Tiny;
+use Net::OAuth::Message;
+
 
 use namespace::autoclean;
 
@@ -155,7 +159,7 @@ sub _prepare_request {
     $self->_encode_args(\%natural_args);
 
     if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-        $uri->query_form(%natural_args);
+        $uri->query($self->_query_string_for(\%natural_args));
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
@@ -165,7 +169,7 @@ sub _prepare_request {
                     Content_Type => 'form-data',
                     Content      => \%natural_args,
                )
-             : POST($uri, \%natural_args)
+             : POST($uri, Content => $self->_query_string_for(\%natural_args))
              ;
     }
     else {
@@ -175,6 +179,19 @@ sub _prepare_request {
     $self->_add_authorization_header($msg, \%natural_args) if $authenticate;
 
     return $msg;
+}
+
+# Make sure we encode arguments *exactly* the same way Net::OAuth does
+# ...by letting Net::OAuth encode them.
+sub _query_string_for {
+    my ( $self, $args ) = @_;
+
+    my @pairs;
+    while ( my ($k, $v) = each %$args ) {
+        push @pairs, join '=', map Net::OAuth::Message::encode($_), $k, $v;
+    }
+
+    return join '&', @pairs;
 }
 
 # Basic Auth, overridden by Role::OAuth, if included
@@ -320,7 +337,7 @@ Net::Twitter::Core - Net::Twitter implementation
 
 =head1 VERSION
 
-version 4.00002
+version 4.00003
 
 =head1 SYNOPSIS
 

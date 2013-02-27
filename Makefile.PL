@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Net::Twitter implementation",
+  "ABSTRACT" => "A perl interface to the Twitter API",
   "AUTHOR" => "Marc Mims <mmims\@cpan.org>",
   "BUILD_REQUIRES" => {
     "Carp" => 0,
@@ -53,6 +53,7 @@ my %WriteMakefileArgs = (
     "MooseX::Role::Parameterized" => 0,
     "Net::Netrc" => 0,
     "Net::OAuth" => 0,
+    "Net::OAuth::Message" => 0,
     "Scalar::Util" => 0,
     "Time::HiRes" => 0,
     "Try::Tiny" => 0,
@@ -61,7 +62,7 @@ my %WriteMakefileArgs = (
     "namespace::autoclean" => 0,
     "overload" => 0
   },
-  "VERSION" => "4.00002",
+  "VERSION" => "4.00003",
   "test" => {
     "TESTS" => "t/*.t"
   }
