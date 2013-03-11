@@ -1,91 +1,63 @@
+use inc::Module::Install;
 
-use strict;
-use warnings;
+version_from      'lib/Net/Twitter/Core.pm';
+perl_version_from 'lib/Net/Twitter/Core.pm';
 
-use 5.008001;
-
-use ExtUtils::MakeMaker 6.30;
-
-
-
-my %WriteMakefileArgs = (
-  "ABSTRACT" => "A perl interface to the Twitter API",
-  "AUTHOR" => "Marc Mims <mmims\@cpan.org>",
-  "BUILD_REQUIRES" => {
-    "Carp" => 0,
-    "File::Find" => 0,
-    "File::Spec" => 0,
-    "File::Temp" => 0,
-    "HTTP::Response" => 0,
-    "LWP::UserAgent" => "5.819",
-    "Test::Fatal" => 0,
-    "Test::More" => "0.88",
-    "Test::Simple" => "0.98",
-    "Test::Warn" => 0,
-    "base" => 0,
-    "strict" => 0,
-    "warnings" => 0
-  },
-  "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => "6.30"
-  },
-  "DISTNAME" => "Net-Twitter",
-  "EXE_FILES" => [],
-  "LICENSE" => "perl",
-  "NAME" => "Net::Twitter",
-  "PREREQ_PM" => {
-    "Carp::Clan" => 0,
-    "Data::Visitor::Callback" => 0,
-    "DateTime" => 0,
-    "DateTime::Format::Strptime" => 0,
-    "Devel::StackTrace" => 0,
-    "Digest::SHA" => 0,
-    "Encode" => 0,
-    "HTML::Entities" => 0,
-    "HTTP::Request::Common" => 0,
-    "JSON" => 0,
-    "List::Util" => 0,
-    "Moose" => 0,
-    "Moose::Exporter" => 0,
-    "Moose::Meta::Method" => 0,
-    "Moose::Role" => 0,
-    "MooseX::Aliases" => 0,
-    "MooseX::Role::Parameterized" => 0,
-    "Net::Netrc" => 0,
-    "Net::OAuth" => 0,
-    "Net::OAuth::Message" => 0,
-    "Scalar::Util" => 0,
-    "Time::HiRes" => 0,
-    "Try::Tiny" => 0,
-    "URI" => 0,
-    "URI::Escape" => 0,
-    "namespace::autoclean" => 0,
-    "overload" => 0
-  },
-  "VERSION" => "4.00003",
-  "test" => {
-    "TESTS" => "t/*.t"
-  }
-);
-
-
-unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
-  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
-  my $pp = $WriteMakefileArgs{PREREQ_PM};
-  for my $mod ( keys %$br ) {
-    if ( exists $pp->{$mod} ) {
-      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
-    }
-    else {
-      $pp->{$mod} = $br->{$mod};
-    }
-  }
+if ( $Module::Install::AUTHOR ) {
+    $ENV{NET_TWITTER_NO_TRENDS_WARNING} = 1;
+    system $^X, "src/build.pl", version, 'src/net-twitter-pod.tt2', 'lib/Net/Twitter.pod';
+    system 'pod2text lib/Net/Twitter.pod > README';
 }
 
-delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
-  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+name        'Net-Twitter';
+all_from    'lib/Net/Twitter.pod';
 
-WriteMakefile(%WriteMakefileArgs);
+# core
+requires    'Carp';
+requires    'Digest::SHA';
+requires    'File::Spec';
+requires    'List::Util';
+requires    'Net::Netrc';
+requires    'Scalar::Util';
 
+# CPAN
+requires    'Carp::Clan';
+requires    'Crypt::SSLeay'             => 0.50;
+requires    'Data::Visitor::Callback';
+requires    'DateTime'                  => 0.51;
+requires    'DateTime::Format::Strptime'=> 1.09;
+requires    'Devel::StackTrace'         => 1.21;
+requires    'Digest::HMAC_SHA1';
+requires    'Encode';
+requires    'HTML::Entities';
+requires    'HTTP::Request::Common';
+requires    'JSON';
+requires    'LWP::UserAgent'            => 2.032;
+requires    'Moose'                     => 0.90;
+requires    'Moose::Exporter';
+requires    'Moose::Role';
+requires    'MooseX::Aliases';
+requires    'MooseX::Role::Parameterized';
+requires    'namespace::autoclean'      => 0.09;
+requires    'Net::OAuth'                => 0.25;
+requires    'Scalar::Util';
+requires    'Time::HiRes';
+requires    'URI'                       => 1.40;
+requires    'URI::Escape';
+requires    'Try::Tiny'                 => 0.03;
 
+test_requires 'Test::Fatal';
+test_requires 'Test::More' => 0.88; # for done_testing
 
+no_index    directory => 'src';
+no_index    directory => 'examples';
+
+# resources
+homepage   'http://github.com/semifor/Net-Twitter';
+bugtracker 'http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter';
+
+auto_set_repository;
+auto_manifest;
+auto_install;
+
+WriteAll;

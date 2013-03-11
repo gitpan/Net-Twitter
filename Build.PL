@@ -1,0 +1,75 @@
+
+use strict;
+use warnings;
+
+use Module::Build 0.3601;
+
+
+my %module_build_args = (
+  "build_requires" => {
+    "Carp" => 0,
+    "File::Find" => 0,
+    "File::Spec" => 0,
+    "File::Temp" => 0,
+    "HTTP::Response" => 0,
+    "LWP::UserAgent" => "5.819",
+    "Module::Build" => "0.3601",
+    "Test::Fatal" => 0,
+    "Test::More" => "0.88",
+    "Test::Simple" => "0.98",
+    "Test::Warn" => 0,
+    "base" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "configure_requires" => {
+    "Module::Build" => "0.3601"
+  },
+  "dist_abstract" => "A perl interface to the Twitter API",
+  "dist_author" => [
+    "Marc Mims <mmims\@cpan.org>"
+  ],
+  "dist_name" => "Net-Twitter",
+  "dist_version" => "4.00004",
+  "license" => "perl",
+  "module_name" => "Net::Twitter",
+  "recommends" => {},
+  "recursive_test_files" => 1,
+  "requires" => {
+    "Carp::Clan" => 0,
+    "Data::Visitor::Callback" => 0,
+    "DateTime" => 0,
+    "DateTime::Format::Strptime" => 0,
+    "Devel::StackTrace" => 0,
+    "Digest::SHA" => 0,
+    "Encode" => 0,
+    "HTML::Entities" => 0,
+    "HTTP::Request::Common" => 0,
+    "JSON" => 0,
+    "List::Util" => 0,
+    "Moose" => 0,
+    "Moose::Exporter" => 0,
+    "Moose::Meta::Method" => 0,
+    "Moose::Role" => 0,
+    "MooseX::Aliases" => 0,
+    "MooseX::Role::Parameterized" => 0,
+    "Net::HTTP" => ">= 0, != 6.04, != 6.05",
+    "Net::Netrc" => 0,
+    "Net::OAuth" => 0,
+    "Net::OAuth::Message" => 0,
+    "Scalar::Util" => 0,
+    "Time::HiRes" => 0,
+    "Try::Tiny" => 0,
+    "URI" => 0,
+    "URI::Escape" => 0,
+    "namespace::autoclean" => 0,
+    "overload" => 0,
+    "perl" => "5.008001"
+  },
+  "script_files" => []
+);
+
+
+my $build = Module::Build->new(%module_build_args);
+
+$build->create_build_script;

@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::RESTv1_1;
 {
-  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00003';
+  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00004';
 }
 use Moose::Role;
 use Carp::Clan qw/^Net::Twitter/;
@@ -2041,7 +2041,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.00003
+version 4.00004
 
 =head1 SYNOPSIS
 
