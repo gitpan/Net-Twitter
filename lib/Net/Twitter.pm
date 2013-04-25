@@ -1,6 +1,6 @@
 package Net::Twitter;
 {
-  $Net::Twitter::VERSION = '4.00004';
+  $Net::Twitter::VERSION = '4.00005';
 }
 use Moose;
 use Carp::Clan qw/^Net::Twitter/;
@@ -158,7 +158,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-version 4.00004
+version 4.00005
 
 =head1 DESCRIPTION
 

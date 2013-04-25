@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    version 4.00004
+    version 4.00005
 
 SYNOPSIS
       use Net::Twitter;
@@ -1061,13 +1061,22 @@ REST API Methods
     alias: list_lists
     alias: all_subscriptions
 
-        Parameters: user_id, screen_name
+        Parameters: user_id, screen_name, reverse
         Required: *none*
 
         Returns all lists the authenticating or specified user subscribes
-        to, including their own. The user is specified using the "user_id"
-        or "screen_name" parameters. If no user is given, the authenticating
-        user is used.
+        to, including their own. The user is specified using the user_id or
+        screen_name parameters. If no user is given, the authenticating user
+        is used.
+
+        A maximum of 100 results will be returned by this call. Subscribed
+        lists are returned first, followed by owned lists. This means that
+        if a user subscribes to 90 lists and owns 20 lists, this method
+        returns 90 subscriptions and 10 owned lists. The reverse method
+        returns owned lists first, so with "reverse =" 1>, 20 owned lists
+        and 80 subscriptions would be returned. If your goal is to obtain
+        every list a user owns or subscribes to, use <list_ownerships>
+        and/or "list_subscriptions" instead.
 
         Returns: Hashref
 
@@ -1123,6 +1132,17 @@ REST API Methods
 
         Returns: Hashref
 
+    list_ownerships
+
+        Parameters: user_id, screen_name, count, cursor
+        Required: *none*
+
+        Obtain a collection of the lists owned by the specified Twitter
+        user. Private lists will only be shown if the authenticated user is
+        also the owner of the lists.
+
+        Returns: ArrayRef[List]
+
     list_statuses
 
         Parameters: list_id, slug, owner_screen_name, owner_id, since_id,
@@ -1147,6 +1167,18 @@ REST API Methods
         specified list.
 
         Returns: Hashref
+
+    list_subscriptions
+    alias: subscriptions
+
+        Parameters: user_id, screen_name, count, cursor
+        Required: *none*
+
+        Obtain a collection of the lists the specified user is subscribed
+        to, 20 lists per page by default. Does not include the user's own
+        lists.
+
+        Returns: ArrayRef[List]
 
     lookup_friendships
 
@@ -1649,17 +1681,6 @@ REST API Methods
         Subscribes the authenticated user to the specified list.
 
         Returns: List
-
-    subscriptions
-
-        Parameters: user_id, screen_name, count, cursor
-        Required: *none*
-
-        Obtain a collection of the lists the specified user is subscribed
-        to, 20 lists per page by default. Does not include the user's own
-        lists.
-
-        Returns: ArrayRef[List]
 
     suggestion_categories
 

@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::Search::Trends;
 {
-  $Net::Twitter::Role::API::Search::Trends::VERSION = '4.00004';
+  $Net::Twitter::Role::API::Search::Trends::VERSION = '4.00005';
 }
 use Moose::Role;
 
@@ -28,7 +28,7 @@ Net::Twitter::Role::API::Search::Trends - DEPRECATED: use API::REST
 
 =head1 VERSION
 
-version 4.00004
+version 4.00005
 
 =head1 SYNOPSIS
 
