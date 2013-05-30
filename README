@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    version 4.00005
+    version 4.00006
 
 SYNOPSIS
       use Net::Twitter;
@@ -1547,7 +1547,7 @@ REST API Methods
         are returned in "results". To iterate over the results, use
         something similar to:
 
-            my $r = $nt->search($searh_term);
+            my $r = $nt->search($search_term);
             for my $status ( @{$r->{statuses}} ) {
                 print "$status->{text}\n";
             }

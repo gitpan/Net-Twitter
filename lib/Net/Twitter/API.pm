@@ -1,6 +1,6 @@
 package Net::Twitter::API;
 {
-  $Net::Twitter::API::VERSION = '4.00005';
+  $Net::Twitter::API::VERSION = '4.00006';
 }
 use Moose ();
 use Carp::Clan qw/^Net::Twitter/;
@@ -32,6 +32,7 @@ sub twitter_api_method {
         authenticate    => $do_auth,
         datetime_parser => $datetime_parser,
         base_url_method => $_base_url,
+        path_suffix     => '.json',
         @_,
     );
 
@@ -92,7 +93,7 @@ sub twitter_api_method {
         $local_path =~ s,/:id$,, unless exists $args->{id}; # remove optional trailing id
         $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
 
-        my $uri = URI->new($self->${ \$options{base_url_method} } . "/$local_path.json");
+        my $uri = URI->new($self->${ \$options{base_url_method} } . "/$local_path$options{path_suffix}");
 
         return $self->_json_request(
             $options{method},
@@ -118,7 +119,7 @@ sub twitter_api_method {
 
 package Net::Twitter::Meta::Method;
 {
-  $Net::Twitter::Meta::Method::VERSION = '4.00005';
+  $Net::Twitter::Meta::Method::VERSION = '4.00006';
 }
 use Moose;
 use Carp::Clan qw/^Net::Twitter/;
@@ -126,19 +127,20 @@ extends 'Moose::Meta::Method';
 
 use namespace::autoclean;
 
-has description => ( isa => 'Str', is => 'ro', required => 1 );
-has aliases     => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has path        => ( isa => 'Str', is => 'ro', required => 1 );
-has method      => ( isa => 'Str', is => 'ro', default => 'GET' );
-has add_source  => ( isa => 'Bool', is => 'ro', default => 0 );
-has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
-has deprecated  => ( isa => 'Bool|CodeRef', is => 'ro', default => 0 );
-has booleans    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
+has description     => ( isa => 'Str', is => 'ro', required => 1 );
+has aliases         => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has path            => ( isa => 'Str', is => 'ro', required => 1 );
+has method          => ( isa => 'Str', is => 'ro', default => 'GET' );
+has add_source      => ( isa => 'Bool', is => 'ro', default => 0 );
+has params          => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has required        => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has returns         => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
+has deprecated      => ( isa => 'Bool|CodeRef', is => 'ro', default => 0 );
+has booleans        => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has authenticate    => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );
 has base_url_method => ( isa => 'Str', is => 'ro', required => 1 );
+has path_suffix     => ( isa => 'Str', is => 'ro', required => 1 );
 
 # TODO: can MooseX::StrictConstructor be made to work here?
 my %valid_attribute_names = map { $_->init_arg => 1 }
@@ -164,7 +166,7 @@ Net::Twitter::API - Moose sugar for defining Twitter API methods
 
 =head1 VERSION
 
-version 4.00005
+version 4.00006
 
 =head1 SYNOPSIS
 
@@ -213,6 +215,8 @@ Specifies, by name, the attribute which contains the base URL for the defined AP
 
 Defines a Twitter API method.  Valid arguments are:
 
+=over 4
+
 =item authenticate
 
 Specifies whether, by default, API methods calls should authenticate.
@@ -221,8 +225,6 @@ Specifies whether, by default, API methods calls should authenticate.
 
 Specifies the Date::Time::Format derived parser to use for parsing and
 formatting date strings for the API being defined.
-
-=over 4
 
 =item description
 
@@ -235,6 +237,12 @@ An ARRAY ref of strings containing alternate names for the method.
 =item path
 
 A string containing the path part of the API URL
+
+=item path_suffix
+
+A string containing an additional suffix to append to the path (for
+legacy reasons).  If you want to suffix appended, pass the empty
+string.  Defaults to ".json".
 
 =item method
 

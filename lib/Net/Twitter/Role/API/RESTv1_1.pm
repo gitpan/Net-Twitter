@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::RESTv1_1;
 {
-  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00005';
+  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00006';
 }
 use Moose::Role;
 use Carp::Clan qw/^Net::Twitter/;
@@ -267,7 +267,7 @@ Returns a HASH reference with some meta-data about the query including the
 C<next_page>, C<refresh_url>, and C<max_id>. The statuses are returned in
 C<results>.  To iterate over the results, use something similar to:
 
-    my $r = $nt->search($searh_term);
+    my $r = $nt->search($search_term);
     for my $status ( @{$r->{statuses}} ) {
         print "$status->{text}\n";
     }
@@ -2063,7 +2063,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.00005
+version 4.00006
 
 =head1 SYNOPSIS
 

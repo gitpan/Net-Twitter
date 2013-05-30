@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::Lists;
 {
-  $Net::Twitter::Role::API::Lists::VERSION = '4.00005';
+  $Net::Twitter::Role::API::Lists::VERSION = '4.00006';
 }
 use Moose::Role;
 use Net::Twitter::API;
@@ -15,7 +15,7 @@ Net::Twitter::Role::API::Lists - Twitter Lists API support for Net::Twitter
 
 =head1 VERSION
 
-version 4.00005
+version 4.00006
 
 =head1 SYNOPSIS
 

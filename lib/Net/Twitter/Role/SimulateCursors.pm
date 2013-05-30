@@ -1,6 +1,6 @@
 package Net::Twitter::Role::SimulateCursors;
 {
-  $Net::Twitter::Role::SimulateCursors::VERSION = '4.00005';
+  $Net::Twitter::Role::SimulateCursors::VERSION = '4.00006';
 }
 use Moose::Role;
 use namespace::autoclean;
@@ -43,7 +43,7 @@ Net::Twitter::Role::SimulateCursors - Make paging work like cursoring
 
 =head1 VERSION
 
-version 4.00005
+version 4.00006
 
 =head1 SYNOPSIS
 
