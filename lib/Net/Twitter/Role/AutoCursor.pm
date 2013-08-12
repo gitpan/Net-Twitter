@@ -1,6 +1,6 @@
 package Net::Twitter::Role::AutoCursor;
 {
-  $Net::Twitter::Role::AutoCursor::VERSION = '4.00006';
+  $Net::Twitter::Role::AutoCursor::VERSION = '4.00007';
 }
 use MooseX::Role::Parameterized;
 
@@ -70,7 +70,7 @@ Net::Twitter::Role::AutoCursor - Help transition to cursor based access to frien
 
 =head1 VERSION
 
-version 4.00006
+version 4.00007
 
 =head1 SYNOPSIS
 

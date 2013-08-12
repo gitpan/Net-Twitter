@@ -1,6 +1,6 @@
 package Net::Twitter::Search;
 {
-  $Net::Twitter::Search::VERSION = '4.00006';
+  $Net::Twitter::Search::VERSION = '4.00007';
 }
 use Moose;
 
@@ -21,7 +21,7 @@ Net::Twitter::Search - A perl interface to the Twitter Search API
 
 =head1 VERSION
 
-version 4.00006
+version 4.00007
 
 =head1 SYNOPSIS
 

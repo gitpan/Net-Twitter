@@ -1,6 +1,6 @@
 package Net::Twitter::Role::OAuth;
 {
-  $Net::Twitter::Role::OAuth::VERSION = '4.00006';
+  $Net::Twitter::Role::OAuth::VERSION = '4.00007';
 }
 use Moose::Role;
 use HTTP::Request::Common;
@@ -265,7 +265,7 @@ Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Bas
 
 =head1 VERSION
 
-version 4.00006
+version 4.00007
 
 =head1 SYNOPSIS
 
