@@ -10,12 +10,14 @@ build_requires:
   HTTP::Response: 0
   LWP::UserAgent: 5.819
   Module::Build: 0.3601
+  Net::OAuth::Message: 0
   Test::Fatal: 0
   Test::More: 0.88
   Test::Simple: 0.98
   Test::Warn: 0
   base: 0
   strict: 0
+  utf8: 0
   warnings: 0
 configure_requires:
   Module::Build: 0.3601
@@ -32,6 +34,7 @@ no_index:
     - examples
 requires:
   Carp::Clan: 0
+  Class::Load: 0
   Data::Visitor::Callback: 0
   DateTime: 0
   DateTime::Format::Strptime: 0
@@ -41,17 +44,16 @@ requires:
   HTML::Entities: 0
   HTTP::Request::Common: 0
   JSON: 0
+  LWP::Protocol::https: 0
   List::Util: 0
   Moose: 0
   Moose::Exporter: 0
   Moose::Meta::Method: 0
   Moose::Role: 0
-  MooseX::Aliases: 0
   MooseX::Role::Parameterized: 0
   Net::HTTP: '>= 0, != 6.04, != 6.05'
   Net::Netrc: 0
   Net::OAuth: 0
-  Net::OAuth::Message: 0
   Scalar::Util: 0
   Time::HiRes: 0
   Try::Tiny: 0
@@ -64,4 +66,4 @@ resources:
   bugtracker: http://github.com/semifor/Net-Twitter/issues
   homepage: https://github.com/semifor/Net-Twitter
   repository: https://github.com/semifor/Net-Twitter.git
-version: 4.00007
+version: 4.01000

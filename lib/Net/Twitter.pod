@@ -6,7 +6,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-version 4.00007
+version 4.01000
 
 =head1 SYNOPSIS
 
@@ -1781,6 +1781,8 @@ Returns: DirectMessage
 =item B<no_retweet_ids>
 
 
+=item alias: no_retweets_ids
+
 
 =over 4
 
@@ -2058,6 +2060,29 @@ Does not require authentication, unless the user is protected.
 
 
 Returns: ArrayRef
+
+=item B<retweeters_ids>
+
+=item B<retweeters_ids(id)>
+
+
+
+=over 4
+
+=item Parameters: id, cursor, stringify_ids
+
+=item Required: id
+
+=back
+
+Returns a collection of up to 100 user IDs belonging to users who have
+retweeted the tweet specified by the id parameter.
+
+This method offers similar data to C<retweets> and replaces API v1's
+C<retweeted_by_ids> method.
+
+
+Returns: HashRef
 
 =item B<retweets>
 

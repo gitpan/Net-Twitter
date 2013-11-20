@@ -1,12 +1,13 @@
 package Net::Twitter;
 {
-  $Net::Twitter::VERSION = '4.00007';
+  $Net::Twitter::VERSION = '4.01000';
 }
 use Moose;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use JSON;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
+use Class::Load ();
 
 use namespace::autoclean;
 
@@ -43,7 +44,7 @@ sub _resolve_traits {
     return map {
         unless ( ref ) {
             $_ = $class->_transform_trait($_);
-            Class::MOP::load_class($_);
+            Class::Load::load_class($_);
         }
         $_;
     } @traits;
@@ -158,7 +159,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-version 4.00007
+version 4.01000
 
 =head1 DESCRIPTION
 

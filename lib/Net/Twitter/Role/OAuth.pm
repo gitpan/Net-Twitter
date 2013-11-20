@@ -1,10 +1,10 @@
 package Net::Twitter::Role::OAuth;
 {
-  $Net::Twitter::Role::OAuth::VERSION = '4.00007';
+  $Net::Twitter::Role::OAuth::VERSION = '4.01000';
 }
 use Moose::Role;
 use HTTP::Request::Common;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use URI;
 use Digest::SHA;
 use List::Util qw/first/;
@@ -60,7 +60,7 @@ sub authorized {
     return defined $self->has_access_token && $self->has_access_token_secret;
 }
 
-# get the athorization or authentication url
+# get the authorization or authentication url
 sub _get_auth_url {
     my ($self, $which_url, %params ) = @_;
 
@@ -178,9 +178,12 @@ override _add_authorization_header => sub {
 
     local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
 
+    my $uri = $msg->uri->clone;
+    $uri->query(undef);
+
     my $request = $self->_make_oauth_request(
         'protected resource',
-        request_url    => $msg->uri,
+        request_url    => $uri,
         request_method => $msg->method,
         token          => $self->access_token,
         token_secret   => $self->access_token_secret,
@@ -265,7 +268,7 @@ Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Bas
 
 =head1 VERSION
 
-version 4.00007
+version 4.01000
 
 =head1 SYNOPSIS
 

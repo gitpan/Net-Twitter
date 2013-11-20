@@ -52,6 +52,7 @@ t/51_rate_limit.t
 t/51_since.t
 t/60-api_lists.t
 t/99-pod_spelling.t
+t/aliases.t
 t/auto-cursor.t
 t/deprecated_v1_1.t
 t/geo.t

@@ -1,14 +1,14 @@
 package Net::Twitter::Role::API::RESTv1_1;
 {
-  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.00007';
+  $Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01000';
 }
 use Moose::Role;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use URI;
 
-# API v1.1 incorporoates the Search and Upload APIs
+# API v1.1 incorporates the Search and Upload APIs
 excludes map "Net::Twitter::Role::$_", qw/API::Search API::Upload Net::Twitter::Role::RateLimit/;
 
 has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1.1'  );
@@ -259,6 +259,22 @@ EOT
     required => [qw//],
     booleans => [qw/hide_media hide_thread omit_script/],
     returns  => 'Status',
+);
+
+twitter_api_method retweeters_ids => (
+    description => <<'EOT',
+Returns a collection of up to 100 user IDs belonging to users who have
+retweeted the tweet specified by the id parameter.
+
+This method offers similar data to C<retweets> and replaces API v1's
+C<retweeted_by_ids> method.
+EOT
+    method   => 'GET',
+    path     => 'statuses/retweeters/ids',
+    params   => [qw/id cursor stringify_ids/],
+    required => [qw/id/],
+    booleans => [qw/stringify_ids/],
+    returns  => 'HashRef',
 );
 
 twitter_api_method search => (
@@ -1674,7 +1690,7 @@ EOT
     returns  => 'RateLimitStatus',
 );
 
-# translate resources arrayref to to a comma separated string 
+# translate resources arrayref to a comma separated string 
 around rate_limit_status => sub {
     my $orig = shift;
     my $self = shift;
@@ -1747,6 +1763,7 @@ twitter_api_method no_retweet_ids => (
 Returns an ARRAY ref of user IDs for which the authenticating user does not
 want to receive retweets.
 
+    aliases  => [qw/no_retweets_ids/],
     path     => 'friendships/no_retweets/ids',
     method   => 'GET',
     params   => [],
@@ -2063,7 +2080,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.00007
+version 4.01000
 
 =head1 SYNOPSIS
 

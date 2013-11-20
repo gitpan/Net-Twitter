@@ -1,13 +1,12 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.00007';
+our $VERSION = '4.01000';
 
 # ABSTRACT: A perl interface to the Twitter API
 
 use 5.008001;
 use Moose;
-use MooseX::Aliases;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use JSON;
 use URI::Escape;
 use HTTP::Request::Common;
@@ -19,17 +18,13 @@ use Encode qw/encode_utf8/;
 use DateTime;
 use Data::Visitor::Callback;
 use Try::Tiny;
-use Net::OAuth::Message;
-
 
 use namespace::autoclean;
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
-has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username',
-                         alias => 'user' );
-has password        => ( isa => 'Str', is => 'rw', predicate => 'has_password',
-                         alias => 'pass' );
+has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' );
+has password        => ( isa => 'Str', is => 'rw', predicate => 'has_password' );
 has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
 has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' );
@@ -66,6 +61,19 @@ around BUILDARGS => sub {
     my $class   = shift;
 
     my %options = @_ == 1 ? %{$_[0]} : @_;
+
+    # aliases
+    for ( [ user => 'username' ], [ pass => 'password' ] ) {
+        my ( $alias, $base ) = @$_;
+        if ( exists $options{$alias} ) {
+            if ( !defined $options{$base} ) {
+                $options{$base} = delete $options{$alias};
+            }
+            else {
+                carp "Both $base and $alias provided. Ignoring $alias";
+            }
+        }
+    }
 
     if ( delete $options{identica} ) {
         %options = (
@@ -167,7 +175,9 @@ sub _prepare_request {
         $msg = (first { ref } values %natural_args)
              ? POST($uri,
                     Content_Type => 'form-data',
-                    Content      => \%natural_args,
+                    Content      => [
+                        map { ref $_ ? $_ : encode_utf8 $_ } %natural_args,
+                    ],
                )
              : POST($uri, Content => $self->_query_string_for(\%natural_args))
              ;
@@ -188,7 +198,7 @@ sub _query_string_for {
 
     my @pairs;
     while ( my ($k, $v) = each %$args ) {
-        push @pairs, join '=', map Net::OAuth::Message::encode($_), $k, $v;
+        push @pairs, join '=', map URI::Escape::uri_escape_utf8($_,'^\w.~-'), $k, $v;
     }
 
     return join '&', @pairs;
@@ -304,7 +314,7 @@ sub _filter_since {
     $visitor->visit($obj);
 }
 
-# check an arrayref to see if it contains satuses
+# check an arrayref to see if it contains statuses
 sub _contains_statuses {
     my ($self, $arrayref) = @_;
 
@@ -337,7 +347,7 @@ Net::Twitter::Core - Net::Twitter implementation
 
 =head1 VERSION
 
-version 4.00007
+version 4.01000
 
 =head1 SYNOPSIS
 
