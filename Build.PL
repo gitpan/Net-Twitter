@@ -18,7 +18,7 @@ my %module_build_args = (
     "Marc Mims <mmims\@cpan.org>"
   ],
   "dist_name" => "Net-Twitter",
-  "dist_version" => "4.01001",
+  "dist_version" => "4.01002",
   "license" => "perl",
   "module_name" => "Net::Twitter",
   "recommends" => {},

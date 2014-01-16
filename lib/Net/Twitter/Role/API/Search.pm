@@ -1,5 +1,5 @@
 package Net::Twitter::Role::API::Search;
-$Net::Twitter::Role::API::Search::VERSION = '4.01001';
+$Net::Twitter::Role::API::Search::VERSION = '4.01002';
 use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
@@ -50,7 +50,7 @@ Net::Twitter::Role::API::Search - A definition of the Twitter Search API as a Mo
 
 =head1 VERSION
 
-version 4.01001
+version 4.01002
 
 =head1 SYNOPSIS
 

@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    version 4.01001
+    version 4.01002
 
 SYNOPSIS
       use Net::Twitter;
@@ -38,7 +38,7 @@ SYNOPSIS
 
 TWITTER NOW REQUIRES SSL
     Deprecation cycle. Twitter now requires SSL connections for API calls.
-    To enable SSL, add "( ssl =" 1)> to the options passed to new. E.g.,
+    To enable SSL, add "( ssl => 1)" to the options passed to new. E.g.,
 
         my $nt = Net::Twitter->new(
             traits              => [qw/API::RESTv1_1 RetryOnError/],
@@ -52,7 +52,7 @@ TWITTER NOW REQUIRES SSL
     This version will warn if no "ssl" option is passed to "new". For
     backwards compatibility, the default in this version remains SSL
     disabled. A future release will change the default to SSL enabled and
-    remove the warning. Add "( ssl =" 0 )> to disable the warning and keep
+    remove the warning. Add "( ssl => 0 )" to disable the warning and keep
     SSL disabled.
 
     Why not just make the default SSL enabled, now? Net::Twitter has always
