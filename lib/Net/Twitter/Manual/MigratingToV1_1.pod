@@ -4,7 +4,7 @@ Net::Twitter::Manual::MigratingToV1_1 - Migrating from Twitter API v1 to v1.1
 
 =head1 VERSION
 
-version 4.01000
+version 4.01001
 
 =head1 SYNOPSIS
 
@@ -126,7 +126,7 @@ In v1.1, use C<max_id> and C<count> to get paged results:
 
     # With Twitter API v1.1
     for ( my %args = ( q => $query, count => 100 ), my $n = 0; $n < 1000; ) {
-        my $r = $nt->search({ %$args });
+        my $r = $nt->search({ %args });
         last unless @{$r->{statuses}};
 
         $args{max_id} = $r->{statuses}[-1]{id} - 1;

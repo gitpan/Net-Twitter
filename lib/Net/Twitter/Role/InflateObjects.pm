@@ -1,7 +1,5 @@
 package Net::Twitter::Role::InflateObjects;
-{
-  $Net::Twitter::Role::InflateObjects::VERSION = '4.01000';
-}
+$Net::Twitter::Role::InflateObjects::VERSION = '4.01001';
 use Moose::Role;
 use namespace::autoclean;
 use Data::Visitor::Callback;
@@ -13,7 +11,7 @@ Net::Twitter::Role::InflateObjects - Inflate Twitter API return values to Moose 
 
 =head1 VERSION
 
-version 4.01000
+version 4.01001
 
 =cut
 
