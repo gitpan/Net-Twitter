@@ -1,5 +1,5 @@
 package Net::Twitter::Error;
-$Net::Twitter::Error::VERSION = '4.01002';
+$Net::Twitter::Error::VERSION = '4.01003';
 use Moose;
 use Try::Tiny;
 use Devel::StackTrace;
@@ -30,28 +30,44 @@ sub error {
     # Don't walk on $@
     local $@;
 
-    # Twitter does not return a consistent error structure, so we have to
-    # try each known (or guessed) variant to find a suitable message...
-    my $error = $self->has_twitter_error && do {
-        my $e = $self->twitter_error;
-
-        # the newest: array of errors
-        try { exists $e->{errors} && exists $e->{errors}[0] && exists $e->{errors}[0]{message}
-            && $e->{errors}[0]{message} }
-
-        # it's single error variant
-        || try { exists $e->{error} && exists $e->{error}{message} && $e->{error}{message} }
-
-        # or maybe it's not that deep (documentation would be helpful, here, Twitter!)
-        || try { exists $e->{message} && $e->{message} }
-
-        # the original error structure
-        || try { exists $e->{error} && $e->{error} }
-    } || $self->http_response->status_line;
+    my $error = $self->has_twitter_error && $self->twitter_error_text
+      || $self->http_response->status_line;
 
     my ($location) = $self->stack_trace->frame(0)->as_string =~ /( at .*)/;
     return $self->_stringified($error . ($location || ''));
 }
+
+sub twitter_error_text {
+    my $self = shift;
+    # Twitter does not return a consistent error structure, so we have to
+    # try each known (or guessed) variant to find a suitable message...
+
+    return '' unless $self->has_twitter_error;
+    my $e = $self->twitter_error;
+
+    # the newest: array of errors
+    return try {
+             exists $e->{errors}
+          && exists $e->{errors}[0]
+          && exists $e->{errors}[0]{message}
+          && $e->{errors}[0]{message};
+    }
+
+    # it's single error variant
+      || try {
+        exists $e->{error}
+          && exists $e->{error}{message}
+          && $e->{error}{message};
+    }
+
+    # or maybe it's not that deep (documentation would be helpful, here, Twitter!)
+      || try { exists $e->{message} && $e->{message} }
+
+    # the original error structure
+      || try { exists $e->{error} && $e->{error} }
+      || '';
+}
+
 
 sub twitter_error_code {
     my $self = shift;
@@ -78,7 +94,7 @@ Net::Twitter::Error - A Net::Twitter exception object
 
 =head1 VERSION
 
-version 4.01002
+version 4.01003
 
 =head1 SYNOPSIS
 
@@ -143,7 +159,12 @@ Returns true if the object contains a Twitter error HASH.
 =item error
 
 Returns the C<error> value from the C<twitter_error> HASH ref if there is one.
-Otherwise, it returns the string "[unknown]".
+Otherwise, it returns the string "[unknown]". Includes a stack trace.
+
+=item twitter_error_text
+
+Returns the C<error> value from the C<twitter_error> HASH ref if there is one.
+Otherwise, returns an empty string
 
 =item twitter_error_code
 
