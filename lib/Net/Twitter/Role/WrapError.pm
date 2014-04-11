@@ -1,5 +1,5 @@
 package Net::Twitter::Role::WrapError;
-$Net::Twitter::Role::WrapError::VERSION = '4.01003';
+$Net::Twitter::Role::WrapError::VERSION = '4.01004';
 use Moose::Role;
 use Try::Tiny;
 use Scalar::Util qw/blessed/;
@@ -64,7 +64,7 @@ Net::Twitter::Role::WrapError - Wraps Net::Twitter exceptions
 
 =head1 VERSION
 
-version 4.01003
+version 4.01004
 
 =head1 SYNOPSIS
 

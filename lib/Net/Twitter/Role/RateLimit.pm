@@ -1,5 +1,5 @@
 package Net::Twitter::Role::RateLimit;
-$Net::Twitter::Role::RateLimit::VERSION = '4.01003';
+$Net::Twitter::Role::RateLimit::VERSION = '4.01004';
 use Moose::Role;
 use namespace::autoclean;
 use Try::Tiny;
@@ -11,7 +11,7 @@ Net::Twitter::Role::RateLimit - Rate limit features for Net::Twitter
 
 =head1 VERSION
 
-version 4.01003
+version 4.01004
 
 =head1 SYNOPSIS
 

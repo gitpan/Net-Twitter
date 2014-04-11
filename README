@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    version 4.01003
+    version 4.01004
 
 SYNOPSIS
       use Net::Twitter;
@@ -2405,6 +2405,8 @@ CONTRIBUTORS
     Allen Haim <allen@netherrealm.net>
 
     Joe Papperello (@antipasta on Github and Twitter)
+
+    Samuel Kaugman (ediblenergy on Github)
 
 LICENSE
     Copyright (c) 2009-2014 Marc Mims

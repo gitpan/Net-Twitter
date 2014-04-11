@@ -1,6 +1,6 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.01003';
+our $VERSION = '4.01004';
 
 # ABSTRACT: A perl interface to the Twitter API
 
@@ -182,8 +182,13 @@ sub _prepare_request {
     my %natural_args = $self->_natural_args($args);
 
     $self->_encode_args(\%natural_args);
-
-    if ( $http_method =~ /^(?:GET|DELETE|PUT)$/ ) {
+    if( $http_method eq 'PUT' ) {
+        $msg = PUT(
+            $uri,
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            Content        => $self->_query_string_for( \%natural_args ) );
+    }
+    elsif ( $http_method =~ /^(?:GET|DELETE)$/ ) {
         $uri->query($self->_query_string_for(\%natural_args));
         $msg = HTTP::Request->new($http_method, $uri);
     }
@@ -364,7 +369,7 @@ Net::Twitter::Core - Net::Twitter implementation
 
 =head1 VERSION
 
-version 4.01003
+version 4.01004
 
 =head1 SYNOPSIS
 

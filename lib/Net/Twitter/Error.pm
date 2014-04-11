@@ -1,5 +1,5 @@
 package Net::Twitter::Error;
-$Net::Twitter::Error::VERSION = '4.01003';
+$Net::Twitter::Error::VERSION = '4.01004';
 use Moose;
 use Try::Tiny;
 use Devel::StackTrace;
@@ -94,7 +94,7 @@ Net::Twitter::Error - A Net::Twitter exception object
 
 =head1 VERSION
 
-version 4.01003
+version 4.01004
 
 =head1 SYNOPSIS
 

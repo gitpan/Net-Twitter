@@ -6,7 +6,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-version 4.01003
+version 4.01004
 
 =head1 SYNOPSIS
 
@@ -3438,6 +3438,8 @@ Justin Hunter <justin.d.hunter@gmail.com>
 Allen Haim <allen@netherrealm.net>
 
 Joe Papperello (@antipasta on Github and Twitter)
+
+Samuel Kaugman (ediblenergy on Github)
 
 =head1 LICENSE
 
