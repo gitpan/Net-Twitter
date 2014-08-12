@@ -6,7 +6,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 VERSION
 
-version 4.01004
+version 4.01005
 
 =head1 SYNOPSIS
 
@@ -2661,7 +2661,7 @@ Returns: List
 
 =over 4
 
-=item Parameters: status, lat, long, place_id, display_coordinates, in_reply_to_status_id, trim_user
+=item Parameters: media_ids, status, lat, long, place_id, display_coordinates, in_reply_to_status_id, trim_user
 
 =item Required: status
 
@@ -2982,6 +2982,24 @@ will return an HTTP 403 error.
 
 
 Returns: Status
+
+=item B<upload>
+
+=item B<upload(media)>
+
+
+
+=over 4
+
+=item Parameters: media
+
+=item Required: media
+
+=back
+
+Upload images to twitter without posting them on the timeline
+
+Returns: Image
 
 =item B<user_suggestions>
 

@@ -22,6 +22,7 @@ lib/Net/Twitter/Role/API/Search.pm
 lib/Net/Twitter/Role/API/Search/Trends.pm
 lib/Net/Twitter/Role/API/TwitterVision.pm
 lib/Net/Twitter/Role/API/Upload.pm
+lib/Net/Twitter/Role/API/UploadMedia.pm
 lib/Net/Twitter/Role/AutoCursor.pm
 lib/Net/Twitter/Role/InflateObjects.pm
 lib/Net/Twitter/Role/Legacy.pm

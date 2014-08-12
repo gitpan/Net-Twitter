@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    version 4.01004
+    version 4.01005
 
 SYNOPSIS
       use Net::Twitter;
@@ -1846,8 +1846,8 @@ REST API Methods
     update
     update(status)
 
-        Parameters: status, lat, long, place_id, display_coordinates,
-        in_reply_to_status_id, trim_user
+        Parameters: media_ids, status, lat, long, place_id,
+        display_coordinates, in_reply_to_status_id, trim_user
         Required: status
 
         Updates the authenticating user's status. Requires the status
@@ -2073,6 +2073,16 @@ REST API Methods
         will be rejected and this method will return an HTTP 403 error.
 
         Returns: Status
+
+    upload
+    upload(media)
+
+        Parameters: media
+        Required: media
+
+        Upload images to twitter without posting them on the timeline
+
+        Returns: Image
 
     user_suggestions
     user_suggestions(category)

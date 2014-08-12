@@ -1,5 +1,5 @@
 package Net::Identica;
-$Net::Identica::VERSION = '4.01004';
+$Net::Identica::VERSION = '4.01005';
 use Moose;
 
 extends 'Net::Twitter::Core';
@@ -22,7 +22,7 @@ Net::Identica - A perl interface to the Identi.ca Twitter Compatible API
 
 =head1 VERSION
 
-version 4.01004
+version 4.01005
 
 =head1 SYNOPSIS
 

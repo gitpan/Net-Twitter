@@ -1,10 +1,12 @@
 package Net::Twitter::Role::API::RESTv1_1;
-$Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01004';
+$Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01005';
 use Moose::Role;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use URI;
+
+with 'Net::Twitter::Role::API::UploadMedia';
 
 # API v1.1 incorporates the Search and Upload APIs
 excludes map "Net::Twitter::Role::$_", qw/API::Search API::Upload Net::Twitter::Role::RateLimit/;
@@ -130,7 +132,7 @@ authenticating user must be the author of the specified status.
 twitter_api_method update => (
     path       => 'statuses/update',
     method     => 'POST',
-    params     => [qw/status lat long place_id display_coordinates in_reply_to_status_id trim_user/],
+    params     => [qw/media_ids status lat long place_id display_coordinates in_reply_to_status_id trim_user/],
     required   => [qw/status/],
     booleans   => [qw/display_coordinates trim_user/],
     add_source => 1,
@@ -2078,7 +2080,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.01004
+version 4.01005
 
 =head1 SYNOPSIS
 
