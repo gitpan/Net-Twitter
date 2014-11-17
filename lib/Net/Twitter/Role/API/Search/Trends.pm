@@ -1,5 +1,5 @@
 package Net::Twitter::Role::API::Search::Trends;
-$Net::Twitter::Role::API::Search::Trends::VERSION = '4.01005';
+$Net::Twitter::Role::API::Search::Trends::VERSION = '4.01006';
 use Moose::Role;
 
 after BUILD => sub {
@@ -26,7 +26,7 @@ Net::Twitter::Role::API::Search::Trends - DEPRECATED: use API::REST
 
 =head1 VERSION
 
-version 4.01005
+version 4.01006
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,5 @@
 package Net::Twitter::Role::API::RESTv1_1;
-$Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01005';
+$Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01006';
 use Moose::Role;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Net::Twitter::API;
@@ -2039,6 +2039,19 @@ used to retrieve each variation of the banner.
     returns  => 'HashRef',
 );
 
+twitter_api_method mutes => (
+    description => <<'',
+Returns an array of numeric user ids the authenticating user has muted.
+
+    path     => 'mutes/users/ids',
+    aliases  => [qw/muting_ids muted_ids/],
+    method   => 'GET',
+    params   => [qw/cursor/],
+    required => [qw//],
+    booleans => [qw//],
+    returns  => 'ArrayRef[Int]',
+);
+
 # infer screen_name or user_id from positional args for backwards compatibility
 # and convenience
 around [qw/
@@ -2080,7 +2093,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.01005
+version 4.01006
 
 =head1 SYNOPSIS
 

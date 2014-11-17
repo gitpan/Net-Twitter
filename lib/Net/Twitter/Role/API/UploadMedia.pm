@@ -1,5 +1,5 @@
 package Net::Twitter::Role::API::UploadMedia;
-$Net::Twitter::Role::API::UploadMedia::VERSION = '4.01005';
+$Net::Twitter::Role::API::UploadMedia::VERSION = '4.01006';
 use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
@@ -36,7 +36,7 @@ Net::Twitter::Role::API::UploadImage - A definition of the Twitter Upload API as
 
 =head1 VERSION
 
-version 4.01005
+version 4.01006
 
 =head1 SYNOPSIS
 
