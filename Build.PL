@@ -18,7 +18,7 @@ my %module_build_args = (
     "Marc Mims <mmims\@cpan.org>"
   ],
   "dist_name" => "Net-Twitter",
-  "dist_version" => "4.01006",
+  "dist_version" => "4.01007",
   "license" => "perl",
   "module_name" => "Net::Twitter",
   "recommends" => {},
@@ -34,6 +34,7 @@ my %module_build_args = (
     "Encode" => 0,
     "HTML::Entities" => 0,
     "HTTP::Request::Common" => 0,
+    "IO::Socket::SSL" => "2.005",
     "JSON" => 0,
     "LWP::Protocol::https" => 0,
     "List::Util" => 0,

@@ -1,5 +1,5 @@
 package Net::Twitter::Role::OAuth;
-$Net::Twitter::Role::OAuth::VERSION = '4.01006';
+$Net::Twitter::Role::OAuth::VERSION = '4.01007';
 use Moose::Role;
 use HTTP::Request::Common;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
@@ -266,7 +266,7 @@ Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Bas
 
 =head1 VERSION
 
-version 4.01006
+version 4.01007
 
 =head1 SYNOPSIS
 

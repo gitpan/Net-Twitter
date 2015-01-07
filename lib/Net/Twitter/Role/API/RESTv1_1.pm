@@ -1,5 +1,5 @@
 package Net::Twitter::Role::API::RESTv1_1;
-$Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01006';
+$Net::Twitter::Role::API::RESTv1_1::VERSION = '4.01007';
 use Moose::Role;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Net::Twitter::API;
@@ -2052,6 +2052,17 @@ Returns an array of numeric user ids the authenticating user has muted.
     returns  => 'ArrayRef[Int]',
 );
 
+twitter_api_method lookup_statuses => (
+    description => <<'',
+Returns a hash reference of tweets from an arbitrary set of ids.
+
+    path     => 'statuses/lookup',
+    method   => 'GET',
+    params   => [qw/id include_entities trim_user map/],
+    required => [qw/id/],
+    returns  => 'HashRef',
+);
+
 # infer screen_name or user_id from positional args for backwards compatibility
 # and convenience
 around [qw/
@@ -2093,7 +2104,7 @@ Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as
 
 =head1 VERSION
 
-version 4.01006
+version 4.01007
 
 =head1 SYNOPSIS
 

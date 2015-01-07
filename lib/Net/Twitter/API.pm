@@ -1,5 +1,5 @@
 package Net::Twitter::API;
-$Net::Twitter::API::VERSION = '4.01006';
+$Net::Twitter::API::VERSION = '4.01007';
 use Moose ();
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Moose::Exporter;
@@ -53,7 +53,7 @@ sub twitter_api_method {
         my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
 
         # flatten array arguments
-        for ( qw/user_id screen_name/ ) {
+        for ( qw/id user_id screen_name/ ) {
             $args->{$_} = join ',' => @{ $args->{$_} } if ref $args->{$_} eq 'ARRAY';
         }
 
@@ -116,7 +116,7 @@ sub twitter_api_method {
 }
 
 package Net::Twitter::Meta::Method;
-$Net::Twitter::Meta::Method::VERSION = '4.01006';
+$Net::Twitter::Meta::Method::VERSION = '4.01007';
 use Moose;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 extends 'Moose::Meta::Method';
@@ -162,7 +162,7 @@ Net::Twitter::API - Moose sugar for defining Twitter API methods
 
 =head1 VERSION
 
-version 4.01006
+version 4.01007
 
 =head1 SYNOPSIS
 

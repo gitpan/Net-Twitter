@@ -1,5 +1,5 @@
 package Net::Twitter::Role::API::Search;
-$Net::Twitter::Role::API::Search::VERSION = '4.01006';
+$Net::Twitter::Role::API::Search::VERSION = '4.01007';
 use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
@@ -27,7 +27,7 @@ Returns a HASH reference with some meta-data about the query including the
 C<next_page>, C<refresh_url>, and C<max_id>. The statuses are returned in
 C<results>.  To iterate over the results, use something similar to:
 
-    my $r = $nt->search($searh_term);
+    my $r = $nt->search($search_term);
     for my $status ( @{$r->{results}} ) {
         print "$status->{text}\n";
     }
@@ -50,7 +50,7 @@ Net::Twitter::Role::API::Search - A definition of the Twitter Search API as a Mo
 
 =head1 VERSION
 
-version 4.01006
+version 4.01007
 
 =head1 SYNOPSIS
 

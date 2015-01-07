@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    version 4.01006
+    version 4.01007
 
 SYNOPSIS
       use Net::Twitter;
@@ -1192,6 +1192,16 @@ REST API Methods
 
         Returns: ArrayRef
 
+    lookup_statuses
+    lookup_statuses(id)
+
+        Parameters: id, include_entities, trim_user, map
+        Required: id
+
+        Returns a hash reference of tweets from an arbitrary set of ids.
+
+        Returns: HashRef
+
     lookup_users
 
         Parameters: user_id, screen_name, include_entities
@@ -2182,7 +2192,7 @@ Search API Methods
         are returned in "results". To iterate over the results, use
         something similar to:
 
-            my $r = $nt->search($searh_term);
+            my $r = $nt->search($search_term);
             for my $status ( @{$r->{results}} ) {
                 print "$status->{text}\n";
             }
